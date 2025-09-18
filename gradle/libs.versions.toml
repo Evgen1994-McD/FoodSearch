@@ -10,6 +10,12 @@ activityCompose = "1.11.0"
 composeBom = "2024.09.00"
 navigationFragmentKtx = "2.9.4"
 navigationUiKtx = "2.9.4"
+gson-version ="2.10.1"
+retrofit-version = "2.9.0"
+gson-converter-version = "2.9.0"
+annotationProcessor-version = "4.14.2"
+
+
 
 daggerVersion = "2.56.1"
 legacySupportV4 = "1.0.0"
@@ -42,6 +48,13 @@ androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
+
+gson ={ group ="com.google.code.gson", name = "gson", version.ref="gson-version"}
+retrofit ={group="com.squareup.retrofit2", name ="retrofit", version.ref = "retrofit-version"}
+gson-converter ={group="com.squareup.retrofit2", name="converter-gson",version.ref="gson-converter-version"}
+annotation-processor = { group="com.github.bumptech.glide", name = "compiler", version.ref ="annotationProcessor-version"}
+
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
