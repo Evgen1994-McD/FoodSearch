@@ -1,10 +1,15 @@
 package com.example.foodsearch.di
 
 import android.app.Application
+import com.example.foodsearch.data.search.impl.SearchRepositoryImpl
 import com.example.foodsearch.data.search.network.NetworkClient
 import com.example.foodsearch.data.search.network.RetrofitNetworkClient
 import com.example.foodsearch.data.search.network.SpoonacularApi
+import com.example.foodsearch.domain.search.SearchInteractor
+import com.example.foodsearch.domain.search.SearchRepository
+import com.example.foodsearch.domain.search.impl.SearchInteractorImpl
 import com.google.gson.Gson
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,6 +55,15 @@ object MainModule {
 }
 
 
+    @Module
+    @InstallIn(SingletonComponent::class)
+    abstract class SearchModule {
+        @Binds
+        abstract fun bindSearchRepository(searchRepositoryImpl: SearchRepositoryImpl): SearchRepository
+
+        @Binds
+        abstract fun bindSearchInteractor(searchInteractorImpl: SearchInteractorImpl): SearchInteractor
+    }
 
 
 
