@@ -1,6 +1,9 @@
 package com.example.foodsearch.data.search.impl
 
+import com.example.foodsearch.data.search.dto.RecipeResponse
+import com.example.foodsearch.data.search.dto.RecipeSearchRequest
 import com.example.foodsearch.data.search.network.NetworkClient
+import com.example.foodsearch.domain.models.Recipe
 import com.example.foodsearch.domain.search.SearchRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -14,7 +17,7 @@ class SearchRepositoryImpl @Inject constructor(
         val response = networkClient.doRequest(RecipeSearchRequest(expression))
         when (response.resultCode) {
             200 -> {
-                with(response as Response) {
+                with(response as RecipeResponse) {
                     val data = results.map{ it ->
                         Recipe(
                             it.id,
