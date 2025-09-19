@@ -1,6 +1,7 @@
 package com.example.foodsearch.presentation.search.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
@@ -12,10 +13,13 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.foodsearch.R
 import com.example.foodsearch.domain.models.Recipe
 
-class RecipeViewHolder(itemView: View, listener: OnRecipeClickListener) :
+class RecipeViewHolder(itemView: View, listener: OnRecipeClickListener, private val context:Context) :
     RecyclerView.ViewHolder(itemView) { // Добавили листенер в конструктор класса
 
     private val name: TextView = itemView.findViewById(R.id.name)
+    private val summary: TextView = itemView.findViewById(R.id.tvsummary)
+    private val servings: TextView = itemView.findViewById(R.id.tvServings)
+    private val cookingTime: TextView = itemView.findViewById(R.id.tvCookingTime)
     private val image: ImageView = itemView.findViewById(R.id.imMine)
 
     private val options = RequestOptions().centerCrop()
@@ -33,7 +37,19 @@ class RecipeViewHolder(itemView: View, listener: OnRecipeClickListener) :
 
     @SuppressLint("CheckResult")
     fun bind(recipe: Recipe) {
+        val tempSummary = recipe.summary
+
+        val index = tempSummary?.indexOf(".")
+        val tempResult = tempSummary?.substring(0, (index?.plus(".".length) ?: "") as Int)
+        val result = tempResult?.let { Regex("<[^>]*>").replace(it, "") }
+/*
+Выше выборка с кратким описанием из строки
+
+ */
         name.text = recipe.title
+        summary.text = result
+        servings.text= recipe.servings.toString() +" "+  context.getString(R.string.servings)
+        cookingTime.text=recipe.readyInMinutes.toString() + " "+ context.getString(R.string.minutes)
 
 
 

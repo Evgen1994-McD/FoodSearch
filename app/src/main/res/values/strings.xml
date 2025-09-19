@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">FoodSearch</string>
+    <string name="greetings">Hello, Friend!</string>
+    <string name="servings"> Servings</string>
+    <string name="minutes"> Minutes</string>
 </resources>

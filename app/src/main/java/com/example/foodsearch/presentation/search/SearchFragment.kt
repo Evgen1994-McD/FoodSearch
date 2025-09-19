@@ -10,6 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodsearch.R
@@ -31,6 +33,11 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
     private lateinit var txtForSearch: String
     private lateinit var searchDebounce: (String) -> Unit
     private var oldText: CharSequence = ""
+    private var ab: ActionBar? =
+        null // добавили переменную для ActionBar, будем показывать счетчик упражнений
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -47,6 +54,10 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ab =
+            (activity as AppCompatActivity).supportActionBar
+
+
 pbs = binding.pbs
         textChangeListener()
         searchDebounce =
@@ -157,7 +168,7 @@ pbs = binding.pbs
             private fun displayRecipes(recipes: List<Recipe>) = with(binding) {
 
         rcView.layoutManager = LinearLayoutManager(requireContext())
-        rcView.adapter = RecipeAdapter(recipes, this@SearchFragment)
+        rcView.adapter = RecipeAdapter(recipes, this@SearchFragment, requireContext())
         rcView.makeVisible()
             }
 

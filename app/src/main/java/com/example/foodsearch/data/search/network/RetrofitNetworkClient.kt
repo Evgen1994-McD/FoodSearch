@@ -17,7 +17,7 @@ private val apiKey = "91225f5085c54860b6c9d5d0298b460b"
             try {
 
 
-                val response = spoonacularApi.getRecipes(dto.expression, apiKey = apiKey)
+                val response = spoonacularApi.getRecipes(dto.expression, true, apiKey = apiKey)
                 response.apply { resultCode = 200 }
             } catch (e: Throwable) {
                 Response().apply { resultCode = 500 }

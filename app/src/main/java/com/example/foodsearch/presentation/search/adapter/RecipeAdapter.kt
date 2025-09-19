@@ -1,5 +1,6 @@
 package com.example.foodsearch.presentation.search.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,14 +9,15 @@ import com.example.foodsearch.domain.models.Recipe
 
 class RecipeAdapter(
     private var recipes: List<Recipe>?,
-    private val listener: OnRecipeClickListener  // тоже добавили листенер в конструктор класса
+    private val listener: OnRecipeClickListener,  // тоже добавили листенер в конструктор класса
+    private val context : Context
 ) : RecyclerView.Adapter<RecipeViewHolder>() {
 
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recipe_item, parent, false)
-        return RecipeViewHolder(view, listener)
+        return RecipeViewHolder(view, listener, context)
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {

@@ -89,6 +89,7 @@ dependencies {
     implementation(libs.view.model)
     // liveData
     implementation(libs.live.data)
+    implementation(libs.logger.interceptor)
 
 
 }

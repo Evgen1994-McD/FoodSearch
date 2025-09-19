@@ -17,6 +17,7 @@ annotationProcessor-version = "4.14.2"
 glide-version = "4.14.2"
 lifecycle-version = "2.9.2"
 recycler-view-version = "[1.2.1](1.2.1)"
+logger-interceptor-version = "4.10.0"
 
 
 
@@ -46,6 +47,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
+logger-interceptor ={group="com.squareup.okhttp3", name = "logging-interceptor", version.ref="logger-interceptor-version"}
 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "daggerVersion" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "daggerVersion" }
