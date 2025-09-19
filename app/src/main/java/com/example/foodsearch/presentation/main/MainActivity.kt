@@ -51,6 +51,11 @@ class MainActivity : AppCompatActivity() {
 
                 }
 
+                R.id.detailsRecipe ->{
+                    supportActionBar?.title =getString(R.string.info)
+                    binding.materialToolbar.navigationIcon = getDrawable(R.drawable.ic_backblack_16)
+                }
+
 
 
 

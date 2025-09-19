@@ -13,6 +13,7 @@ import android.widget.ProgressBar
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodsearch.R
 import com.example.foodsearch.databinding.FragmentSearchBinding
@@ -186,7 +187,7 @@ pbs = binding.pbs
             }
 
     override fun onRecipeClicker(recipe: Recipe) {
-        TODO("Not yet implemented")
+      findNavController().navigate(R.id.action_searchFragment_to_detailsRecipe)
     }
 
 
