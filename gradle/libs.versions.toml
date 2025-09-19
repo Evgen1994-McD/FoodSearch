@@ -14,6 +14,9 @@ gson-version ="2.10.1"
 retrofit-version = "2.9.0"
 gson-converter-version = "2.9.0"
 annotationProcessor-version = "4.14.2"
+glide-version = "4.14.2"
+lifecycle-version = "2.9.2"
+recycler-view-version = "[1.2.1](1.2.1)"
 
 
 
@@ -25,6 +28,8 @@ fragmentKtx = "1.8.9"
 
 
 [libraries]
+recycler-view ={group="androidx.recyclerview", name="recyclerview", version.ref="recycler-view-version"}
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -54,6 +59,10 @@ retrofit ={group="com.squareup.retrofit2", name ="retrofit", version.ref = "retr
 gson-converter ={group="com.squareup.retrofit2", name="converter-gson",version.ref="gson-converter-version"}
 annotation-processor = { group="com.github.bumptech.glide", name = "compiler", version.ref ="annotationProcessor-version"}
 
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide-version"}
+
+view-model ={group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycle-version"}
+live-data = {group= "androidx.lifecycle", name = "lifecycle-livedata", version.ref = "lifecycle-version"}
 
 
 [plugins]

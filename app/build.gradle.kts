@@ -75,9 +75,20 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.glide)
 
-//    annotationProcessor(libs.annotation.processor)
+    annotationProcessor(libs.annotation.processor)
     implementation(libs.gson)
     implementation(libs.retrofit)
     implementation(libs.gson.converter)
+
+
+    implementation(libs.recycler.view)
+
+    // ViewModel
+    implementation(libs.view.model)
+    // liveData
+    implementation(libs.live.data)
+
+
 }

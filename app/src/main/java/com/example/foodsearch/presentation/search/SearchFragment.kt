@@ -15,11 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodsearch.R
 import com.example.foodsearch.databinding.FragmentSearchBinding
 import com.example.foodsearch.domain.models.Recipe
+import com.example.foodsearch.presentation.search.adapter.OnRecipeClickListener
+import com.example.foodsearch.presentation.search.adapter.RecipeAdapter
 import com.example.foodsearch.utils.debounce
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(), OnRecipeClickListener {
 
 
     private val viewModel: SearchViewModel by viewModels()
@@ -100,11 +102,7 @@ pbs = binding.pbs
                         searchDebounce(txtForSearch)
 
 
-//                    phForNothingToShow.makeGone()
 
-//                    msgTopTxt.makeGone()
-//                    msgBotTxt.makeGone()
-//                    buttonNoInternet.makeGone()
 
                     }
                 }
@@ -157,11 +155,10 @@ pbs = binding.pbs
 
 
             private fun displayRecipes(recipes: List<Recipe>) = with(binding) {
-                id.text = recipes[0].title.toString()
-//
-//        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-//        recyclerView.adapter = TrackAdapter(tracks, this)
-//        recyclerView.makeVisible()
+
+        rcView.layoutManager = LinearLayoutManager(requireContext())
+        rcView.adapter = RecipeAdapter(recipes, this@SearchFragment)
+        rcView.makeVisible()
             }
 
 
@@ -177,9 +174,12 @@ pbs = binding.pbs
                 this.visibility = View.INVISIBLE // функция для вью инвизибл
             }
 
-
-
+    override fun onRecipeClicker(recipe: Recipe) {
+        TODO("Not yet implemented")
     }
+
+
+}
 
 
 

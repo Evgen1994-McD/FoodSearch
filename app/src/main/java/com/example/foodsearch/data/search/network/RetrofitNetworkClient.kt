@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : NetworkClient {
-private val ApiKey = "91225f5085c54860b6c9d5d0298b460b"
+private val apiKey = "91225f5085c54860b6c9d5d0298b460b"
 
     override suspend fun doRequest(dto: Any): Response {
         if (dto !is RecipeSearchRequest) {
@@ -17,7 +17,7 @@ private val ApiKey = "91225f5085c54860b6c9d5d0298b460b"
             try {
 
 
-                val response = spoonacularApi.getRecipes(ApiKey,dto.expression)
+                val response = spoonacularApi.getRecipes(dto.expression, apiKey = apiKey)
                 response.apply { resultCode = 200 }
             } catch (e: Throwable) {
                 Response().apply { resultCode = 500 }

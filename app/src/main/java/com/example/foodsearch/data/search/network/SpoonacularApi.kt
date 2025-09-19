@@ -8,8 +8,8 @@ import retrofit2.http.Query
 interface SpoonacularApi {
     @GET("recipes/complexSearch")
     suspend fun getRecipes(
-        @Query("apiKey") apiKey: String, // Передаем как отдельный параметр
         @Query("query") query: String,
+        @Query("apiKey") apiKey: String // Передаем как отдельный параметр
 //        @Query("maxFat") maxFat: Int?,
 //        @Query("number") number: Int?
     ): RecipeResponse
