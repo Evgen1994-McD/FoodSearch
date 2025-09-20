@@ -18,5 +18,10 @@
         android:id="@+id/detailsRecipe"
         android:name="com.example.foodsearch.presentation.details.DetailsRecipe"
         android:label="fragment_details_recipe"
-        tools:layout="@layout/fragment_details_recipe" />
+        tools:layout="@layout/fragment_details_recipe">
+    <argument
+        android:name="id"
+        app:argType="integer" />
+    </fragment>
+
 </navigation>

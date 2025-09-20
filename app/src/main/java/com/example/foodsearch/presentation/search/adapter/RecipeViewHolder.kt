@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.foodsearch.R
-import com.example.foodsearch.domain.models.Recipe
+import com.example.foodsearch.domain.models.RecipeSummary
 
 class RecipeViewHolder(itemView: View, listener: OnRecipeClickListener, private val context:Context) :
     RecyclerView.ViewHolder(itemView) { // Добавили листенер в конструктор класса
@@ -36,8 +36,8 @@ class RecipeViewHolder(itemView: View, listener: OnRecipeClickListener, private 
 
 
     @SuppressLint("CheckResult")
-    fun bind(recipe: Recipe) {
-        val tempSummary = recipe.summary
+    fun bind(recipeSummary: RecipeSummary) {
+        val tempSummary = recipeSummary.summary
 
         val index = tempSummary?.indexOf(".")
         val tempResult = tempSummary?.substring(0, (index?.plus(".".length) ?: "") as Int)
@@ -46,15 +46,15 @@ class RecipeViewHolder(itemView: View, listener: OnRecipeClickListener, private 
 Выше выборка с кратким описанием из строки
 
  */
-        name.text = recipe.title
+        name.text = recipeSummary.title
         summary.text = result
-        servings.text= recipe.servings.toString() +" "+  context.getString(R.string.servings)
-        cookingTime.text=recipe.readyInMinutes.toString() + " "+ context.getString(R.string.minutes)
+        servings.text= recipeSummary.servings.toString() +" "+  context.getString(R.string.servings)
+        cookingTime.text=recipeSummary.readyInMinutes.toString() + " "+ context.getString(R.string.minutes)
 
 
 
         Glide.with(image.context)
-            .load(recipe.image)
+            .load(recipeSummary.image)
             .transform(RoundedCorners(radiusInPX.toInt()))
             .apply(options)
 //            .placeholder(R.drawable.ic_placeholder_45)

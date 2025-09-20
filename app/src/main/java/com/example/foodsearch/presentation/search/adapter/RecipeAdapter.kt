@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.foodsearch.R
-import com.example.foodsearch.domain.models.Recipe
+import com.example.foodsearch.domain.models.RecipeSummary
 
 class RecipeAdapter(
-    private var recipes: List<Recipe>?,
+    private var recipeSummaries: List<RecipeSummary>?,
     private val listener: OnRecipeClickListener,  // тоже добавили листенер в конструктор класса
     private val context : Context
 ) : RecyclerView.Adapter<RecipeViewHolder>() {
@@ -22,13 +22,13 @@ class RecipeAdapter(
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         holder.itemView.setOnClickListener {
-            listener.onRecipeClicker(recipes!![position])
+            listener.onRecipeClicker(recipeSummaries!![position])
         }
-        holder.bind(recipes!![position])
+        holder.bind(recipeSummaries!![position])
     }
 
     override fun getItemCount(): Int {
-        return recipes!!.size
+        return recipeSummaries!!.size
     }
 
 }

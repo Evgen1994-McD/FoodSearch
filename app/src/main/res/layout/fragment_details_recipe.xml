@@ -1,122 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <androidx.coordinatorlayout.widget.CoordinatorLayout
-
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".presentation.details.DetailsRecipe"
-
-    >
-
-
-<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#DED6C8"
+    android:layout_height="match_parent"
+    tools:context=".presentation.details.DetailsRecipe">
 
-    >
+    <!-- Прокручиваемую верхнюю часть помещаем в ScrollView -->
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#DED6C8">
 
-    <TextView
-        android:id="@+id/tv_serv2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="24 Minutes"
-        app:layout_constraintEnd_toEndOf="@+id/imageView8"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/imageView8"
-        app:layout_constraintTop_toBottomOf="@+id/imageView8" />
+            <!-- Содержимое верхней части -->
+            <TextView
+                android:id="@+id/tv_serv2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="24 Minutes"
+                app:layout_constraintEnd_toEndOf="@+id/imageView8"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/imageView8"
+                app:layout_constraintTop_toBottomOf="@+id/imageView8" />
 
-    <ImageView
-        android:id="@+id/imageView8"
-        android:layout_width="31dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="60dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView7"
-        app:layout_constraintStart_toEndOf="@+id/imageView7"
-        app:layout_constraintTop_toTopOf="@+id/imageView7"
-        app:srcCompat="@drawable/ic_time_24" />
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="31dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="60dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView7"
+                app:layout_constraintStart_toEndOf="@+id/imageView7"
+                app:layout_constraintTop_toTopOf="@+id/imageView7"
+                app:srcCompat="@drawable/ic_time_24" />
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="172dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name"
-        app:srcCompat="@drawable/ic_servings_24" />
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="172dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_name"
+                app:srcCompat="@drawable/ic_servings_24" />
 
-    <ImageView
-        android:id="@+id/addInBook"
-        android:layout_width="51dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name"
-        app:srcCompat="@drawable/ic_plus_51dp" />
+            <ImageView
+                android:id="@+id/addInBook"
+                android:layout_width="51dp"
+                android:layout_height="51dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="30dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_name"
+                app:srcCompat="@drawable/ic_plus_51dp" />
 
-    <ImageView
-        android:id="@+id/ic_like"
-        android:layout_width="51dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="188dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintBottom_toBottomOf="@+id/addInBook"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/addInBook"
-        app:layout_constraintTop_toTopOf="@+id/addInBook"
-        app:srcCompat="@drawable/ic_like_51dp" />
+            <ImageView
+                android:id="@+id/ic_like"
+                android:layout_width="51dp"
+                android:layout_height="51dp"
+                android:layout_marginStart="188dp"
+                android:layout_marginEnd="32dp"
+                app:layout_constraintBottom_toBottomOf="@+id/addInBook"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/addInBook"
+                app:layout_constraintTop_toTopOf="@+id/addInBook"
+                app:srcCompat="@drawable/ic_like_51dp" />
 
-    <TextView
-        android:id="@+id/tv_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:text="Best Recipe name"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imMineDetail" />
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Best Recipe name"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imMineDetail" />
 
-    <ImageView
-        android:id="@+id/imMineDetail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="fitXY"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars"
+            <ImageView
+                android:id="@+id/imMineDetail"
+                android:layout_width="0dp"
+                android:layout_height="400dp"
+                android:scaleType="fitXY"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/avatars" />
 
-        />
+            <TextView
+                android:id="@+id/tv_serv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="8 Servings"
+                app:layout_constraintEnd_toEndOf="@+id/imageView7"
+                app:layout_constraintStart_toStartOf="@+id/imageView7"
+                app:layout_constraintTop_toBottomOf="@+id/imageView7" />
 
-    <TextView
-        android:id="@+id/tv_serv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="8 Servings"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/imageView7" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
-
+    <!-- Подключаем BottomSheet OUTSIDE ScrollView -->
     <include
         android:id="@+id/included_layout"
         layout="@layout/bottom_sheet_menu"
-
         android:visibility="visible"
-        tools:visibility="gone">
-
-    </include>
+        tools:visibility="gone"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-

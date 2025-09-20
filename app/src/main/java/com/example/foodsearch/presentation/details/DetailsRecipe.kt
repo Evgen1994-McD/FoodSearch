@@ -10,13 +10,15 @@ import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.foodsearch.R
 import com.example.foodsearch.databinding.FragmentDetailsRecipeBinding
+import com.example.foodsearch.presentation.search.SearchScreenState
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class DetailsRecipe : Fragment() {
-private var tempUrl = "https://img.spoonacular.com/recipe-cards/recipe-card-1758354479442.png"
-private lateinit var binding: FragmentDetailsRecipeBinding
+    private lateinit var binding: FragmentDetailsRecipeBinding
+    private var lastState = null
+
     private val viewModel: DetailsRecipeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +30,7 @@ private lateinit var binding: FragmentDetailsRecipeBinding
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentDetailsRecipeBinding.inflate(inflater,container,false)
+        binding = FragmentDetailsRecipeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -37,52 +39,83 @@ private lateinit var binding: FragmentDetailsRecipeBinding
         super.onViewCreated(view, savedInstanceState)
 
         observeState()
+viewModel.getDetailsRecipeInfo()
+
 
         val btStandartContainer = binding.includedLayout.bottomSheet
         val btStBeh = BottomSheetBehavior.from(btStandartContainer)
         btStBeh.state = BottomSheetBehavior.STATE_HIDDEN
 
-binding.addInBook.setOnClickListener {
-    expandBottomSheet()
-}
+        binding.addInBook.setOnClickListener {
+            expandBottomSheet()
+        }
 
 
         binding.icLike.setOnClickListener {
-            viewModel.getRecipeCard()
+
         }
-
-        Glide.with(binding.imMineDetail.context)
-            .load(tempUrl)
-            .centerInside()
-
-            .into(binding.imMineDetail)
 
 
     }
 
-    private fun expandBottomSheet(){
+    private fun expandBottomSheet() {
         val btStandartContainer = binding.includedLayout.bottomSheet
         val btStBeh = BottomSheetBehavior.from(btStandartContainer)
-//        val displayMetrics = resources.displayMetrics
-//        val screenHeightInDp = displayMetrics.heightPixels / displayMetrics.densityDpi * 320f
-//        val peekHeightPercentage = (screenHeightInDp * 0.2f).toInt() // 10%
-//        btStBeh.peekHeight = peekHeightPercentage
-btStBeh.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+
+        btStBeh.state = BottomSheetBehavior.STATE_HALF_EXPANDED
 
     }
 
 
-    private fun observeState()= with(binding){
-        viewModel.getLiveData.observe(viewLifecycleOwner){ uri ->
-            Glide.with(imMineDetail.context)
-                .load(uri)
-//                .transform(RoundedCorners(radiusInPX.toInt()))
-//                .apply(options)
-//                .placeholder(R.drawable.ic_placeholder_45)
-//                .error(R.drawable.ic_placeholder_45)
+    private fun observeState() = with(binding) {
+        viewModel.getLiveData.observe(viewLifecycleOwner) { newState ->
+
+            when (newState) {
+                is DetailsSearchScreenState.Loading -> {
+//                    pbs.makeVisible()
+                }
+
+                is DetailsSearchScreenState.ErrorNoEnternet -> {
+                    if (newState.message == "Exception") {
+//                        pbs.makeGone()
+                    }
+                }
+
+                is DetailsSearchScreenState.ErrorNotFound -> {
+                    if (newState.message == "retry") {
+//                        pbs.makeGone()
+                    } else if (newState.message == null) {
+//                        pbs.makeGone()
+                    }
+                }
+
+
+                is DetailsSearchScreenState.SearchResults -> {
+//                    pbs.makeGone()
+                    val recipeToDisplay = newState.data
+
+
+                                Glide.with(imMineDetail.context)
+                .load(recipeToDisplay?.image)
+                .placeholder(R.drawable.ic_ph_kitchen)
+                .error(R.drawable.ic_ph_kitchen)
                 .into(imMineDetail)
 
+
+
+
+//                    recipeToDisplay?.let { displayRecipes(it) }
+
+                }
+
+
+//
+
+                null -> TODO()
+            }
         }
+
     }
+
 
 }

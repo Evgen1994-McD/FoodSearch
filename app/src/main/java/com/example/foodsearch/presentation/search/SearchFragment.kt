@@ -4,7 +4,6 @@ import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,12 +11,13 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodsearch.R
 import com.example.foodsearch.databinding.FragmentSearchBinding
-import com.example.foodsearch.domain.models.Recipe
+import com.example.foodsearch.domain.models.RecipeSummary
 import com.example.foodsearch.presentation.search.adapter.OnRecipeClickListener
 import com.example.foodsearch.presentation.search.adapter.RecipeAdapter
 import com.example.foodsearch.utils.debounce
@@ -30,7 +30,7 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
     private val viewModel: SearchViewModel by viewModels()
     private lateinit var binding: FragmentSearchBinding
     private lateinit var pbs: ProgressBar
-    private var lastState: List<Recipe> = emptyList()
+    private var lastState: List<RecipeSummary> = emptyList()
     private lateinit var txtForSearch: String
     private lateinit var searchDebounce: (String) -> Unit
     private var oldText: CharSequence = ""
@@ -174,10 +174,10 @@ pbs = binding.pbs
             }
 
 
-            private fun displayRecipes(recipes: List<Recipe>) = with(binding) {
+            private fun displayRecipes(recipeSummaries: List<RecipeSummary>) = with(binding) {
 
         rcView.layoutManager = LinearLayoutManager(requireContext())
-        rcView.adapter = RecipeAdapter(recipes, this@SearchFragment, requireContext())
+        rcView.adapter = RecipeAdapter(recipeSummaries, this@SearchFragment, requireContext())
         rcView.makeVisible()
             }
 
@@ -194,8 +194,9 @@ pbs = binding.pbs
                 this.visibility = View.INVISIBLE // функция для вью инвизибл
             }
 
-    override fun onRecipeClicker(recipe: Recipe) {
-      findNavController().navigate(R.id.action_searchFragment_to_detailsRecipe)
+    override fun onRecipeClicker(recipeSummary: RecipeSummary) {
+
+      findNavController().navigate(R.id.action_searchFragment_to_detailsRecipe, bundleOf("id" to (recipeSummary.id)))
 
     }
 
