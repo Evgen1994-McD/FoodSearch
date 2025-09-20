@@ -55,6 +55,14 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        binding.btTest.setOnClickListener {
+            findNavController().navigate(R.id.action_searchFragment_to_detailsRecipe)
+
+
+        }
+
         ab =
             (activity as AppCompatActivity).supportActionBar
 
@@ -188,6 +196,7 @@ pbs = binding.pbs
 
     override fun onRecipeClicker(recipe: Recipe) {
       findNavController().navigate(R.id.action_searchFragment_to_detailsRecipe)
+
     }
 
 

@@ -25,4 +25,9 @@ class SearchInteractorImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun searchRecipeCard(id:Int):String?{
+
+        return searchRepository.searchRecipeCard(id)
+    }
 }

@@ -9,7 +9,7 @@
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical"
-    app:behavior_hideable="false"
+    app:behavior_hideable="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     android:id="@+id/bottom_sheet"
 

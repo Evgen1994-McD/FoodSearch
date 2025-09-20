@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface SearchInteractor {
 
     fun searchRecipe(expression: String): Flow<Pair<List<Recipe>?, String?>>
+    suspend fun searchRecipeCard(id: Int): String?
 }

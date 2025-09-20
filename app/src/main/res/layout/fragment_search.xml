@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".presentation.search.SearchFragment">
 
+    <Button
+        android:id="@+id/btTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputEditText" />
+
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/inputEditText"
         style="@style/Search_Base_style"
@@ -30,10 +39,9 @@
         android:id="@+id/rcView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/btTest" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
