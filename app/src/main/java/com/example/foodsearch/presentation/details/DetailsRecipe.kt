@@ -108,6 +108,7 @@ viewModel.getDetailsRecipeInfo()
                     binding.tvServ.text = recipeToDisplay?.servings.toString()+" "+ getString(R.string.servings)
                     binding.tvTime.text = recipeToDisplay?.readyInMinutes.toString()+" "+ getString(R.string.minutes)
                     binding.tvCost.text = recipeToDisplay?.pricePerServing.toString()+" "+ getString(R.string.cost)
+                    binding.dishType.text = recipeToDisplay?.dishTypes.toString()
 
 
 
