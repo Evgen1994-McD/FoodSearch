@@ -7,11 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.foodsearch.R
 import com.example.foodsearch.databinding.FragmentDetailsRecipeBinding
 import com.example.foodsearch.domain.models.RecipeDetails
+import com.example.foodsearch.presentation.details.adapters.IngredientAdapter
+import com.example.foodsearch.presentation.search.SearchFragment
 import com.example.foodsearch.presentation.search.SearchScreenState
+import com.example.foodsearch.presentation.search.adapter.RecipeAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -110,6 +114,10 @@ viewModel.getDetailsRecipeInfo()
                     binding.tvCost.text = recipeToDisplay?.pricePerServing.toString()+" "+ getString(R.string.cost)
                     binding.dishType.text = recipeToDisplay?.dishTypes.toString()
 
+
+
+                    rcViewIngredients.layoutManager = LinearLayoutManager(requireContext())
+                    rcViewIngredients.adapter = IngredientAdapter(recipeToDisplay?.extendedIngredients, requireContext())
 
 
 //                    recipeToDisplay?.let { displayRecipes(it) }
