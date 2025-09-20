@@ -23,9 +23,6 @@ class DetailsRecipeViewModel @Inject constructor(
     private val mutableScreenState = MutableLiveData<DetailsSearchScreenState?>()
     val getLiveData: LiveData<DetailsSearchScreenState?> get() = mutableScreenState
 
-//   fun getRecipeCard() = viewModelScope.launch {
-//       mutableScreenState.postValue( searchInteractor.searchRecipeCard(id))
-//       }.toString()
 
 
 

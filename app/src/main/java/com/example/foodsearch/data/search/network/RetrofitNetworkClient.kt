@@ -3,13 +3,14 @@ package com.example.foodsearch.data.search.network
 import com.example.foodsearch.data.search.dto.card.RecipeCardRequest
 import com.example.foodsearch.data.search.dto.summary.RecipeSummarySearchRequest
 import com.example.foodsearch.data.search.dto.Response
+import com.example.foodsearch.data.search.dto.details.RecipeDetailsDto
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : NetworkClient {
-private val apiKey2 = "91225f5085c54860b6c9d5d0298b460b"
-private val apiKey = "9c69449bd45d4cb0abc8dedbcff5867c"
+    private val apiKey2 = "91225f5085c54860b6c9d5d0298b460b"
+    private val apiKey = "9c69449bd45d4cb0abc8dedbcff5867c"
 
 
     override suspend fun doRequest(dto: Any): Response {
@@ -46,22 +47,13 @@ private val apiKey = "9c69449bd45d4cb0abc8dedbcff5867c"
         }
     }
 
-    override suspend fun doRecipeDetailsInfoRequest(dto: Any): Response {
+    override suspend fun doRecipeDetailsInfoRequest(dto: Any): RecipeDetailsDto? {
         if (dto !is RecipeDetailsRequest) {
-            return Response().apply { resultCode = 400 }
+            return null
+        } else {
+            return spoonacularApi.getRecipeInfo(dto.id, apiKey2)
         }
 
-        return withContext(Dispatchers.IO) {
-            try {
 
-
-                val response = spoonacularApi.getRecipeInfo(dto.id, apiKey2)
-                response.apply { resultCode = 200 }
-            } catch (e: Throwable) {
-                Response().apply { resultCode = 500 }
-            }
-        }
     }
-
-
 }

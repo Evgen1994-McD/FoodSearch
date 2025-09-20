@@ -1,6 +1,7 @@
 package com.example.foodsearch.data.search.network
 
 import com.example.foodsearch.data.search.dto.card.RecipeCardResponse
+import com.example.foodsearch.data.search.dto.details.RecipeDetailsDto
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsResponse
 import com.example.foodsearch.data.search.dto.summary.RecipeSummryResponse
 import com.example.foodsearch.domain.models.RecipeDetails
@@ -27,7 +28,7 @@ interface SpoonacularApi {
     suspend fun getRecipeInfo(
         @Path("recipeId") recipeId: Int,
         @Query("apiKey") apiKey: String // Передаем как отдельный параметр
-    ): RecipeDetailsResponse
+    ): RecipeDetailsDto
 
 
 

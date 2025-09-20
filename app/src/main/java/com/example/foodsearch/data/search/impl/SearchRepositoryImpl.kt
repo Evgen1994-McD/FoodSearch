@@ -3,8 +3,8 @@ package com.example.foodsearch.data.search.impl
 import android.util.Log
 import com.example.foodsearch.data.search.dto.card.RecipeCardRequest
 import com.example.foodsearch.data.search.dto.card.RecipeCardResponse
+import com.example.foodsearch.data.search.dto.details.RecipeDetailsDto
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsRequest
-import com.example.foodsearch.data.search.dto.details.RecipeDetailsResponse
 import com.example.foodsearch.data.search.dto.summary.RecipeSummryResponse
 import com.example.foodsearch.data.search.dto.summary.RecipeSummarySearchRequest
 import com.example.foodsearch.data.search.network.NetworkClient
@@ -70,10 +70,8 @@ class SearchRepositoryImpl @Inject constructor(
 
     override suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails? {
         val response = networkClient.doRecipeDetailsInfoRequest(RecipeDetailsRequest(id))
-        when (response.resultCode) {
-            200 -> {
-                with(response as RecipeDetailsResponse) {
-                  val recipeDetailsDto = result
+
+                  val recipeDetailsDto = response as RecipeDetailsDto
 
                     val data =
                         RecipeDetails(
@@ -118,17 +116,11 @@ class SearchRepositoryImpl @Inject constructor(
                     return data
 
 
-                }
+//                }
             }
 
-            400 -> {
-                return null
-            }
 
-            else -> return null
 
-        }
 
-    }
 }
 
