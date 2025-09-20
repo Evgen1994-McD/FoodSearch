@@ -9,8 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : NetworkClient {
-    private val apiKey2 = "91225f5085c54860b6c9d5d0298b460b"
+    private val apiKey3 = "91225f5085c54860b6c9d5d0298b460b"
     private val apiKey = "9c69449bd45d4cb0abc8dedbcff5867c"
+    private val apiKey2 = "132e04b6aa4d4bddb00fc04b0fe73967"
 
 
     override suspend fun doRequest(dto: Any): Response {

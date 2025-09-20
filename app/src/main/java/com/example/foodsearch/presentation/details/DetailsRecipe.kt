@@ -10,6 +10,7 @@ import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.foodsearch.R
 import com.example.foodsearch.databinding.FragmentDetailsRecipeBinding
+import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.presentation.search.SearchScreenState
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
@@ -101,6 +102,12 @@ viewModel.getDetailsRecipeInfo()
                 .error(R.drawable.ic_ph_kitchen)
                 .into(imMineDetail)
 
+                  val tags = getTags(recipeToDisplay)
+                    binding.tags.text = tags.toString()
+                    binding.tvName.text = recipeToDisplay?.title.toString()
+                    binding.tvServ.text = recipeToDisplay?.servings.toString()+" "+ getString(R.string.servings)
+                    binding.tvTime.text = recipeToDisplay?.readyInMinutes.toString()+" "+ getString(R.string.minutes)
+                    binding.tvCost.text = recipeToDisplay?.pricePerServing.toString()+" "+ getString(R.string.cost)
 
 
 
@@ -115,6 +122,24 @@ viewModel.getDetailsRecipeInfo()
             }
         }
 
+    }
+
+
+
+    private fun getTags(recipe: RecipeDetails?): List<String> {
+        val tags = mutableListOf<String>()
+
+        if (recipe?.vegetarian ?: false) tags.add("[vegetarian]")
+        if (recipe?.vegan ?: false) tags.add("[vegan]")
+        if (recipe?.glutenFree ?: false) tags.add("[glutenFree]")
+        if (recipe?.dairyFree ?: false) tags.add("[dairyFree]")
+        if (recipe?.veryHealthy ?: false) tags.add("[veryHealthy]")
+        if (recipe?.cheap ?: false) tags.add("[cheap]")
+        if (recipe?.veryPopular ?: false) tags.add("[veryPopular]")
+        if (recipe?.sustainable ?: false) tags.add("[sustainable]")
+        if (recipe?.lowFodmap ?: false) tags.add("[lowFodmap]")
+
+        return tags
     }
 
 

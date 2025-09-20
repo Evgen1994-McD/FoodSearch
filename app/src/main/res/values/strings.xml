@@ -3,5 +3,6 @@
     <string name="greetings">Hello, Friend!</string>
     <string name="servings"> Servings</string>
     <string name="minutes"> Minutes</string>
+    <string name="cost"> $</string>
     <string name="info">Information</string>
 </resources>
