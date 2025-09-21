@@ -15,7 +15,10 @@ import com.example.foodsearch.data.db.entity.extendEntity.MetricMeasuresEntity
 import com.example.foodsearch.data.db.entity.extendEntity.StepEntity
 import com.example.foodsearch.data.db.entity.extendEntity.UsMeasuresEntity
 
-@Database(entities = [RecipeSummaryEntity::class,RecipeDetailsEntity::class, IngredientEntity::class, UsMeasuresEntity::class, MetricMeasuresEntity::class, AnalyzedInstructionEntity::class, StepEntity::class, EquipmentEntity::class], version = 1)
+@Database(
+    entities = [RecipeSummaryEntity::class, RecipeDetailsEntity::class, IngredientEntity::class, UsMeasuresEntity::class, MetricMeasuresEntity::class, AnalyzedInstructionEntity::class, StepEntity::class, EquipmentEntity::class],
+    version = 1
+)
 @TypeConverters(ExtendConverters::class)
 abstract class MainDb : RoomDatabase() {
     abstract fun recipeDetailsDao(): RecipeDetailsDao
