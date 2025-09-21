@@ -3,6 +3,7 @@ package com.example.foodsearch.di
 import android.app.Application
 import androidx.room.Room
 import com.example.foodsearch.data.db.MainDb
+import com.example.foodsearch.data.db.converters.ExtendConverters
 import com.example.foodsearch.data.db.converters.RecipeDetailsDbConvertor
 import com.example.foodsearch.data.db.converters.RecipeSummaryDbConvertor
 import com.example.foodsearch.data.search.impl.SearchRepositoryImpl
@@ -23,6 +24,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
+import kotlin.jvm.java
 
 
 @Module
@@ -42,6 +44,9 @@ object MainModule {
             "recipe.db" //Имя
         ).build()
     }
+
+
+
 
     @Provides
     @Singleton
