@@ -10,7 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -33,6 +37,8 @@ class DetailsRecipe : Fragment() {
     private lateinit var arrowInstructions: ImageView
     private var isExpanded = false
     private var isExpandedInstructions = false
+    private var ab: ActionBar? =
+        null
 
     private val viewModel: DetailsRecipeViewModel by viewModels()
 
@@ -52,11 +58,16 @@ class DetailsRecipe : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ab =
+            (activity as AppCompatActivity).supportActionBar
+
+
+
 
         observeState()
-viewModel.getDetailsRecipeInfo()
+viewModel.getDetailsRecipeInfo(
 
-
+)
 
         arrow = binding.btArrowIngredients
         arrowInstructions=binding.btArrowInstructions

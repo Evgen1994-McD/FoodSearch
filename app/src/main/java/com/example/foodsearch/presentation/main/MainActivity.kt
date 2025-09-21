@@ -1,12 +1,14 @@
 package com.example.foodsearch.presentation.main
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.foodsearch.R
 import com.example.foodsearch.databinding.ActivityMainBinding
@@ -28,20 +30,18 @@ class MainActivity : AppCompatActivity() {
         val toolbar = binding.materialToolbar
         setSupportActionBar(toolbar)
 
-
-
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-
-
         navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         navController =  navHostFragment.navController
+
+        toolbar.setNavigationOnClickListener {
+         navController.popBackStack()
+        }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
