@@ -1,6 +1,6 @@
 package com.example.foodsearch.data.search.impl
 
-import android.util.Log
+
 import com.example.foodsearch.data.db.MainDb
 import com.example.foodsearch.data.db.converters.RecipeDetailsDbConvertor
 import com.example.foodsearch.data.db.converters.RecipeSummaryDbConvertor
@@ -39,7 +39,7 @@ class SearchRepositoryImpl @Inject constructor(
         mainDb.recipeSummaryDao().insertRecipe(recipeToSave)
     }
 
-    private suspend fun getRecipeSummaryFromMemory(): List<RecipeSummary>{
+    private suspend fun getRecipeSummaryFromMemory(): List<RecipeSummary>? {
         return  mainDb.recipeSummaryDao().getAllRecipes().map{ entity->
             recipeSummaryDbConvertor.map(entity)
         }
@@ -93,8 +93,7 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
     override fun getRandomRecipes(): Flow<List<RecipeSummary>?> = flow {
-val test = getRecipeDetailsFromMemoryById(634070)
-        Log.d("MyLog", "${test?.glutenFree}")
+
         val response = networkClient.doRandomRecipe()
         when (response.resultCode) {
             200 -> {
@@ -111,7 +110,7 @@ val test = getRecipeDetailsFromMemoryById(634070)
 
                         )
                     }
-//
+
                     emit(data)
 
 
@@ -121,16 +120,13 @@ val test = getRecipeDetailsFromMemoryById(634070)
             400 -> {
 
                 emit(getRecipeSummaryFromMemory())
-//             emit(emptyList())
+
             }
 
             else ->
 
                 emit(getRecipeSummaryFromMemory())
-//                emit(null)
-            /*
-            эмичу эмпти лист чтобы отработать ошибку отсутствия интернета
-             */
+
         }
     }
 
@@ -153,69 +149,73 @@ val test = getRecipeDetailsFromMemoryById(634070)
 
     override suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails? {
 
-
-        val response = networkClient.doRecipeDetailsInfoRequest(RecipeDetailsRequest(id))
-
-            val recipeDetailsDto = response as RecipeDetailsDto
-            if (recipeDetailsDto!=null) {
-
-                val data =
-                    RecipeDetails(
-                        id = recipeDetailsDto.id,
-                        image = recipeDetailsDto.image,
-                        imageType = recipeDetailsDto.imageType,
-                        title = recipeDetailsDto.title,
-                        readyInMinutes = recipeDetailsDto.readyInMinutes,
-                        servings = recipeDetailsDto.servings,
-                        sourceUrl = recipeDetailsDto.sourceUrl,
-                        vegetarian = recipeDetailsDto.vegetarian,
-                        vegan = recipeDetailsDto.vegan,
-                        glutenFree = recipeDetailsDto.glutenFree,
-                        dairyFree = recipeDetailsDto.dairyFree,
-                        veryHealthy = recipeDetailsDto.veryHealthy,
-                        cheap = recipeDetailsDto.cheap,
-                        veryPopular = recipeDetailsDto.veryPopular,
-                        sustainable = recipeDetailsDto.sustainable,
-                        lowFodmap = recipeDetailsDto.lowFodmap,
-                        weightWatcherSmartPoints = recipeDetailsDto.weightWatcherSmartPoints,
-                        gaps = recipeDetailsDto.gaps,
-                        preparationMinutes = recipeDetailsDto.preparationMinutes,
-                        cookingMinutes = recipeDetailsDto.cookingMinutes,
-                        aggregateLikes = recipeDetailsDto.aggregateLikes,
-                        healthScore = recipeDetailsDto.healthScore,
-                        creditsText = recipeDetailsDto.creditsText,
-                        license = recipeDetailsDto.license,
-                        sourceName = recipeDetailsDto.sourceName,
-                        pricePerServing = recipeDetailsDto.pricePerServing,
-                        extendedIngredients = recipeDetailsDto.extendedIngredients,
-                        summary = recipeDetailsDto.summary,
-                        cuisines = recipeDetailsDto.cuisines,
-                        dishTypes = recipeDetailsDto.dishTypes,
-                        diets = recipeDetailsDto.diets,
-                        occasions = recipeDetailsDto.occasions,
-                        instructions = recipeDetailsDto.instructions,
-                        analyzedInstructions = recipeDetailsDto.analyzedInstructions,
-                        spoonacularScore = recipeDetailsDto.spoonacularScore,
-                        spoonacularSourceUrl = recipeDetailsDto.spoonacularSourceUrl
-                    )
-                val recipeSummaryToSave = RecipeSummary(
-                    data.id,
-                    data.image,
-                    data.title,
-                    data.readyInMinutes,
-                    data.servings,
-                    data.summary
-                )
-                insertRecipeSummary(recipeSummaryToSave)
-                insertRecipeDetails(data)
+try {
 
 
-                return data
-//                return getRecipeDetailsFromMemoryById(id)
+    val response = networkClient.doRecipeDetailsInfoRequest(RecipeDetailsRequest(id))
+
+    val recipeDetailsDto = response as RecipeDetailsDto
 
 
-            }
-        else return getRecipeDetailsFromMemoryById(id)
+    val data =
+        RecipeDetails(
+            id = recipeDetailsDto.id,
+            image = recipeDetailsDto.image,
+            imageType = recipeDetailsDto.imageType,
+            title = recipeDetailsDto.title,
+            readyInMinutes = recipeDetailsDto.readyInMinutes,
+            servings = recipeDetailsDto.servings,
+            sourceUrl = recipeDetailsDto.sourceUrl,
+            vegetarian = recipeDetailsDto.vegetarian,
+            vegan = recipeDetailsDto.vegan,
+            glutenFree = recipeDetailsDto.glutenFree,
+            dairyFree = recipeDetailsDto.dairyFree,
+            veryHealthy = recipeDetailsDto.veryHealthy,
+            cheap = recipeDetailsDto.cheap,
+            veryPopular = recipeDetailsDto.veryPopular,
+            sustainable = recipeDetailsDto.sustainable,
+            lowFodmap = recipeDetailsDto.lowFodmap,
+            weightWatcherSmartPoints = recipeDetailsDto.weightWatcherSmartPoints,
+            gaps = recipeDetailsDto.gaps,
+            preparationMinutes = recipeDetailsDto.preparationMinutes,
+            cookingMinutes = recipeDetailsDto.cookingMinutes,
+            aggregateLikes = recipeDetailsDto.aggregateLikes,
+            healthScore = recipeDetailsDto.healthScore,
+            creditsText = recipeDetailsDto.creditsText,
+            license = recipeDetailsDto.license,
+            sourceName = recipeDetailsDto.sourceName,
+            pricePerServing = recipeDetailsDto.pricePerServing,
+            extendedIngredients = recipeDetailsDto.extendedIngredients,
+            summary = recipeDetailsDto.summary,
+            cuisines = recipeDetailsDto.cuisines,
+            dishTypes = recipeDetailsDto.dishTypes,
+            diets = recipeDetailsDto.diets,
+            occasions = recipeDetailsDto.occasions,
+            instructions = recipeDetailsDto.instructions,
+            analyzedInstructions = recipeDetailsDto.analyzedInstructions,
+            spoonacularScore = recipeDetailsDto.spoonacularScore,
+            spoonacularSourceUrl = recipeDetailsDto.spoonacularSourceUrl
+        )
+    val recipeSummaryToSave = RecipeSummary(
+        data.id,
+        data.image,
+        data.title,
+        data.readyInMinutes,
+        data.servings,
+        data.summary
+    )
+    insertRecipeSummary(recipeSummaryToSave)
+    insertRecipeDetails(data)
+
+
+    return data
+} catch (e:Exception){
+
+    return getRecipeDetailsFromMemoryById(id)
+}
+
+
+
 
     }
 

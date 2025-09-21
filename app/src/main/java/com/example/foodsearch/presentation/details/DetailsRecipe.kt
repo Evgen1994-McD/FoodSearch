@@ -60,6 +60,8 @@ viewModel.getDetailsRecipeInfo()
 
         arrow = binding.btArrowIngredients
         arrowInstructions=binding.btArrowInstructions
+        expandRecyclerView(binding.rcViewIngredients, arrow)
+        expandRecyclerView(binding.rcViewInstructions,arrowInstructions)
 
         arrow.setOnClickListener {
             if (isExpanded) {
@@ -119,26 +121,21 @@ viewModel.getDetailsRecipeInfo()
 
             when (newState) {
                 is DetailsSearchScreenState.Loading -> {
-//                    pbs.makeVisible()
                 }
 
                 is DetailsSearchScreenState.ErrorNoEnternet -> {
                     if (newState.message == "Exception") {
-//                        pbs.makeGone()
                     }
                 }
 
                 is DetailsSearchScreenState.ErrorNotFound -> {
                     if (newState.message == "retry") {
-//                        pbs.makeGone()
                     } else if (newState.message == null) {
-//                        pbs.makeGone()
                     }
                 }
 
 
                 is DetailsSearchScreenState.SearchResults -> {
-//                    pbs.makeGone()
                     val recipeToDisplay = newState.data
 
 
@@ -160,6 +157,7 @@ viewModel.getDetailsRecipeInfo()
 
                     rcViewIngredients.layoutManager = LinearLayoutManager(requireContext())
                     rcViewIngredients.adapter = IngredientAdapter(recipeToDisplay?.extendedIngredients, requireContext())
+
 
 val steps = recipeToDisplay?.analyzedInstructions?.flatMap { it.steps }
                     rcViewInstructions.layoutManager = LinearLayoutManager(requireContext())
@@ -198,7 +196,6 @@ val steps = recipeToDisplay?.analyzedInstructions?.flatMap { it.steps }
 
 
     private fun expandRecyclerView(recyclerView: RecyclerView, imageView: ImageView) = with(binding) {
-//        isExpanded = true
         recyclerView.visibility = View.VISIBLE
         ObjectAnimator.ofFloat(recyclerView, "translationY", 0f).apply {
             duration = 300
@@ -208,7 +205,6 @@ val steps = recipeToDisplay?.analyzedInstructions?.flatMap { it.steps }
     }
 
     private fun collapseRecyclerView(recyclerView: RecyclerView, imageView: ImageView) = with(binding){
-//        isExpanded = false
         ObjectAnimator.ofFloat(recyclerView, "translationY", recyclerView.height.toFloat()).apply {
             duration = 300
             addListener(object : AnimatorListenerAdapter() {
