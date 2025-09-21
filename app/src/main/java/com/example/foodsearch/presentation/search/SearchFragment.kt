@@ -18,6 +18,7 @@ import android.widget.ProgressBar
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,7 +43,7 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
     private var oldText: CharSequence = ""
     private var ab: ActionBar? =
         null // добавили переменную для ActionBar, будем показывать счетчик упражнений
-
+    private var isRandomSeachComplete=false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,10 +63,12 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeRecipeSearchResults()
-        viewModel.getRandomRecipes()
 
 
-
+if (!isRandomSeachComplete){
+                viewModel.getRandomRecipes()
+    isRandomSeachComplete=true
+}
 
 
         ab =
@@ -138,7 +141,6 @@ private fun textChangeListener()=with(binding){
     }
             private fun observeRecipeSearchResults() {
                 viewModel.getLiveData.observe(viewLifecycleOwner) { newState ->
-Log.d("MyLog", "$newState")
                     when (newState){
                         is SearchScreenState.Loading -> {
                             binding.rcView.makeGone()
