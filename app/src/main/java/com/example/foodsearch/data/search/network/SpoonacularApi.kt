@@ -15,7 +15,9 @@ interface SpoonacularApi {
     suspend fun getRecipes(
         @Query("query") query: String,
         @Query("addRecipeInformation") addRecipeInformation: Boolean,
-        @Query("apiKey") apiKey: String // Передаем как отдельный параметр
+        @Query("pageNumber") pageNumber: Int, // Номер страницы
+        @Query("pageSize") pageSize: Int,     // Размер страницы
+        @Query("apiKey") apiKey: String       // Передаем как отдельный параметр
     ): RecipeSummryResponse
 
 

@@ -1,5 +1,7 @@
 package com.example.foodsearch.domain.search.impl
 
+import android.util.Log
+import androidx.paging.PagingData
 import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.domain.models.RecipeSummary
 import com.example.foodsearch.domain.search.SearchInteractor
@@ -15,16 +17,10 @@ class SearchInteractorImpl @Inject constructor(
         private const val exceptionStateString = "Exception"
     }
 
-    override fun searchRecipe(expression: String): Flow<Pair<List<RecipeSummary>?, String?>> {
+    override fun searchRecipe(expression: String): Flow<PagingData<RecipeSummary>>{
 
 
-        return searchRepository.searchRecipe(expression).map { results ->
-            if (results != null) {
-                Pair(results, null)
-            } else {
-                Pair(null, exceptionStateString)
-            }
-        }
+        return searchRepository.searchRecipe(expression)
     }
 
    override fun getRandomRecipes(): Flow<Pair<List<RecipeSummary>?, String?>> {

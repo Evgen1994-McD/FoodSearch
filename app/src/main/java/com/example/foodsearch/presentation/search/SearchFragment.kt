@@ -29,6 +29,8 @@ import com.example.foodsearch.presentation.search.adapter.OnRecipeClickListener
 import com.example.foodsearch.presentation.search.adapter.RecipeAdapter
 import com.example.foodsearch.utils.debounce
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchFragment : Fragment(), OnRecipeClickListener {
@@ -43,7 +45,7 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
     private var oldText: CharSequence = ""
     private var ab: ActionBar? =
         null // добавили переменную для ActionBar, будем показывать счетчик упражнений
-    private var isRandomSeachComplete=false
+    private var isRandomSeachComplete=true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,13 +64,38 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeRecipeSearchResults()
+//        observeRecipeSearchResults()
+
 
 
 if (!isRandomSeachComplete){
                 viewModel.getRandomRecipes()
     isRandomSeachComplete=true
 }
+
+
+        // Подписываемся на поток данных, используя строку поиска
+        lifecycleScope.launch {
+            viewModel.searchRecipes(binding.inputEditText.text.toString()).collectLatest { pagingData ->
+                binding.rcView.layoutManager = LinearLayoutManager(requireContext())
+                binding.rcView.adapter = RecipeAdapter(this@SearchFragment, requireContext()).also { adapter ->
+                    adapter.submitData(lifecycle, pagingData)
+                }
+            }
+        }
+
+        // Добавляем обработчик изменений текста
+       binding.inputEditText.doAfterTextChanged { editable ->
+            editable?.let { text ->
+                if (text.isNotEmpty()) {
+                    viewModel.searchRecipes(text.toString())
+                }
+            }
+        }
+
+
+
+
 
 
         ab =
@@ -80,6 +107,13 @@ pbs = binding.pbs
         searchDebounce =
             debounce(2000L, viewLifecycleOwner.lifecycleScope, true) { txtForSearch ->
                 viewModel.searchRecipes(txtForSearch)
+                lifecycleScope.launch {
+                    viewModel.searchRecipes(txtForSearch).collectLatest { pagingData ->
+                        binding.rcView.adapter = RecipeAdapter(this@SearchFragment, requireContext()).also { adapter ->
+                            adapter.submitData(lifecycle, pagingData)
+                        }
+                    }
+                }
             }
 
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
@@ -195,11 +229,20 @@ binding.tvNothingToShow.makeVisible()
                 }
             }
 
+    private suspend fun observeRecipeSearchResultsFlow(string: String) {
+        viewModel.searchRecipes(string).collectLatest { pagingData ->
+            binding.rcView.adapter = RecipeAdapter(this, requireContext()).also { adapter ->
+                adapter.submitData(lifecycle, pagingData)
+            }
+        }
+    }
+
+
 
             private fun displayRecipes(recipeSummaries: List<RecipeSummary>) = with(binding) {
 
         rcView.layoutManager = LinearLayoutManager(requireContext())
-        rcView.adapter = RecipeAdapter(recipeSummaries, this@SearchFragment, requireContext())
+        rcView.adapter = RecipeAdapter( this@SearchFragment, requireContext())
         rcView.makeVisible()
             }
 

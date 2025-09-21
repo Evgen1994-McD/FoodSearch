@@ -47,6 +47,12 @@ android {
 
 dependencies {
 
+    dependencies {
+        implementation ("androidx.paging:paging-runtime:3.3.6")
+    }
+    
+
+
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
 

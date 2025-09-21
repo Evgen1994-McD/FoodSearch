@@ -1,12 +1,13 @@
 package com.example.foodsearch.domain.search
 
+import androidx.paging.PagingData
 import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.domain.models.RecipeSummary
 import kotlinx.coroutines.flow.Flow
 
 interface SearchInteractor {
 
-    fun searchRecipe(expression: String): Flow<Pair<List<RecipeSummary>?, String?>>
+    fun searchRecipe(expression: String):  Flow<PagingData<RecipeSummary>>
 
     fun getRandomRecipes():  Flow<Pair<List<RecipeSummary>?, String?>>
     suspend fun searchRecipeCard(id: Int): String?

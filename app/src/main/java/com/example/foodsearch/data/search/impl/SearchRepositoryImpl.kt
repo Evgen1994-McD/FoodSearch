@@ -1,6 +1,11 @@
 package com.example.foodsearch.data.search.impl
 
 
+import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.example.foodsearch.data.db.MainDb
 import com.example.foodsearch.data.db.converters.RecipeDetailsDbConvertor
 import com.example.foodsearch.data.db.converters.RecipeSummaryDbConvertor
@@ -9,14 +14,17 @@ import com.example.foodsearch.data.search.dto.card.RecipeCardResponse
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsDto
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsRequest
 import com.example.foodsearch.data.search.dto.random.RecipeRandomResponse
+import com.example.foodsearch.data.search.dto.summary.RecipeSummaryDto
 import com.example.foodsearch.data.search.dto.summary.RecipeSummryResponse
 import com.example.foodsearch.data.search.dto.summary.RecipeSummarySearchRequest
+import com.example.foodsearch.data.search.dto.summary.RecipesPagingSource
 import com.example.foodsearch.data.search.network.NetworkClient
 import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.domain.models.RecipeSummary
 import com.example.foodsearch.domain.search.SearchRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class SearchRepositoryImpl @Inject constructor(
@@ -62,41 +70,7 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
 
-    override fun searchRecipe(expression: String): Flow<List<RecipeSummary>?> = flow {
 
-        val response = networkClient.doRequest(RecipeSummarySearchRequest(expression))
-        when (response.resultCode) {
-            200 -> {
-                with(response as RecipeSummryResponse) {
-                    val data = results.map { it ->
-                        RecipeSummary(
-                            it.id,
-                            it.image,
-                            it.title,
-                            it.readyInMinutes,
-                            it.servings,
-                            it.summary
-
-
-                        )
-                    }
-
-                    emit(data)
-
-                }
-            }
-
-            400 -> {
-
-                emit(searchRecipeFromDbByTitle(expression))
-
-
-            }
-
-            else -> emit(searchRecipeFromDbByTitle(expression))
-
-        }
-    }
 
     override fun getRandomRecipes(): Flow<List<RecipeSummary>?> = flow {
 
@@ -132,6 +106,19 @@ class SearchRepositoryImpl @Inject constructor(
             else ->
 
                 emit(getRecipeSummaryFromMemory())
+
+        }
+    }
+
+    override fun searchRecipe(expression: String): Flow<PagingData<RecipeSummary>> {
+
+        return Pager(
+            config = PagingConfig(pageSize = 10),
+            pagingSourceFactory = { RecipesPagingSource(networkClient, expression) }
+        ).flow.map { pagingData ->
+            pagingData.map { dto ->
+                mapToDomain(dto)
+            }
 
         }
     }
@@ -222,6 +209,18 @@ class SearchRepositoryImpl @Inject constructor(
 
     }
 
+
+
+   private fun mapToDomain(dto: RecipeSummaryDto): RecipeSummary {
+        return RecipeSummary(
+            dto.id,
+            dto.image,
+            dto.title,
+            dto.readyInMinutes,
+            dto.servings,
+            dto.summary
+        )
+    }
 
 }
 
