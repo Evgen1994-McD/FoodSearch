@@ -4,5 +4,9 @@
     <string name="servings"> Servings</string>
     <string name="minutes"> Minutes</string>
     <string name="cost"> $</string>
+    <string name="nothing_to_show">Ничего не нашлось</string>
     <string name="info">Information</string>
+
+
+
 </resources>

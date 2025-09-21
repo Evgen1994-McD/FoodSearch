@@ -1,5 +1,6 @@
 package com.example.foodsearch.presentation.search
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -46,6 +47,8 @@ class SearchViewModel @Inject constructor(
             mutableScreenState.postValue(SearchScreenState.Loading) // при начале запроса - выставляем лоадинг в тру
             searchInteractor.getRandomRecipes()
                 .collect{ pair->
+                    Log.d("MyLog", "${pair.second}")
+                    Log.d("MyLog", "${pair.first}")
                     if(pair.first==null && pair.second == "Exception" ){
                         mutableScreenState.postValue(SearchScreenState.ErrorNoEnternet(pair.second.toString()))
                     }

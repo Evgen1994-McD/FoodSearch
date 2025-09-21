@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -137,29 +138,45 @@ private fun textChangeListener()=with(binding){
     }
             private fun observeRecipeSearchResults() {
                 viewModel.getLiveData.observe(viewLifecycleOwner) { newState ->
-
-                    when (newState) {
+Log.d("MyLog", "$newState")
+                    when (newState){
                         is SearchScreenState.Loading -> {
+                            binding.rcView.makeGone()
                             pbs.makeVisible()
+
                         }
 
                         is SearchScreenState.ErrorNoEnternet -> {
                             if (newState.message == "Exception") {
+binding.im404.makeVisible()
+binding.tvNothingToShow.makeVisible()
                                 pbs.makeGone()
                             }
                         }
 
                         is SearchScreenState.ErrorNotFound -> {
                             if (newState.message == "retry") {
+                                binding.im404.makeVisible()
+                                binding.tvNothingToShow.makeVisible()
+
                                 pbs.makeGone()
                             } else if (newState.message == null) {
                                 pbs.makeGone()
+                                binding.im404.makeVisible()
+                                binding.tvNothingToShow.makeVisible()
+
                             }
                         }
 
 
                         is SearchScreenState.SearchResults -> {
                             pbs.makeGone()
+                            binding.im404.makeGone()
+                            binding.tvNothingToShow.makeGone()
+
+                            binding.rcView.makeVisible()
+
+
                             val recipeToDisplay = newState.data
                             if (recipeToDisplay != null) {
                                 lastState = recipeToDisplay
