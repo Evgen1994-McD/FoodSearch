@@ -1,6 +1,9 @@
 package com.example.foodsearch.data.search.impl
 
 import android.util.Log
+import com.example.foodsearch.data.db.MainDb
+import com.example.foodsearch.data.db.converters.RecipeDetailsDbConvertor
+import com.example.foodsearch.data.db.converters.RecipeSummaryDbConvertor
 import com.example.foodsearch.data.search.dto.card.RecipeCardRequest
 import com.example.foodsearch.data.search.dto.card.RecipeCardResponse
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsDto
@@ -17,8 +20,33 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class SearchRepositoryImpl @Inject constructor(
-    private val networkClient: NetworkClient
+    private val networkClient: NetworkClient,
+    private val mainDb: MainDb,
+    private val recipeSummaryDbConvertor: RecipeSummaryDbConvertor,
+    private val recipeDetailsDbConvertor: RecipeDetailsDbConvertor
 ):SearchRepository {
+
+    private suspend fun insertRecipeDetails(recipe: RecipeDetails) {
+
+        val recipeToSave = recipeDetailsDbConvertor.map(recipe)
+        mainDb.recipeDetailsDao().insertRecipe(recipeToSave)
+    }
+
+
+    private suspend fun insertRecipeSummary(recipe: RecipeSummary) {
+
+       val recipeToSave = recipeSummaryDbConvertor.map(recipe)
+        mainDb.recipeSummaryDao().insertRecipe(recipeToSave)
+    }
+
+    private suspend fun getRecipeSummaryFromMemory(): List<RecipeSummary>{
+        return  mainDb.recipeSummaryDao().getAllRecipes().map{ entity->
+            recipeSummaryDbConvertor.map(entity)
+        }
+    }
+
+
+
     override fun searchRecipe(expression: String): Flow<List<RecipeSummary>?> = flow {
 
         val response = networkClient.doRequest(RecipeSummarySearchRequest(expression))
@@ -37,6 +65,7 @@ class SearchRepositoryImpl @Inject constructor(
 
                         )
                     }
+
                     emit(data)
 
 
@@ -72,6 +101,7 @@ class SearchRepositoryImpl @Inject constructor(
 
                         )
                     }
+//
                     emit(data)
 
 
@@ -79,10 +109,13 @@ class SearchRepositoryImpl @Inject constructor(
             }
 
             400 -> {
-                emit(emptyList())
+
+             emit(emptyList())
             }
 
-            else -> emit(null)
+            else ->
+
+                emit(null)
             /*
             эмичу эмпти лист чтобы отработать ошибку отсутствия интернета
              */
@@ -150,7 +183,16 @@ class SearchRepositoryImpl @Inject constructor(
                             spoonacularScore = recipeDetailsDto.spoonacularScore,
                             spoonacularSourceUrl = recipeDetailsDto.spoonacularSourceUrl
                         )
-
+        val recipeSummaryToSave = RecipeSummary(
+            data.id,
+            data.image,
+            data.title,
+            data.readyInMinutes,
+            data.servings,
+            data.summary
+        )
+        insertRecipeSummary(recipeSummaryToSave)
+insertRecipeDetails(data)
                     return data
 
 

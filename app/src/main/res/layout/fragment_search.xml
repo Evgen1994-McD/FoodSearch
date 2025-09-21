@@ -44,13 +44,13 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="10dp"
-        android:visibility="visible"
+        android:src="@drawable/ph_not_found"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/tv_nothing_to_show"
         app:layout_constraintStart_toStartOf="@+id/tv_nothing_to_show"
-        app:layout_constraintTop_toBottomOf="@+id/tv_nothing_to_show"
 
-        android:src="@drawable/ph_not_found"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_nothing_to_show"
+        tools:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_nothing_to_show"
@@ -62,10 +62,11 @@
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/inputEditText"
+        tools:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

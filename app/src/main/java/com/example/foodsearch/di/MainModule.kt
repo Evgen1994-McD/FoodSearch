@@ -1,6 +1,10 @@
 package com.example.foodsearch.di
 
 import android.app.Application
+import androidx.room.Room
+import com.example.foodsearch.data.db.MainDb
+import com.example.foodsearch.data.db.converters.RecipeDetailsDbConvertor
+import com.example.foodsearch.data.db.converters.RecipeSummaryDbConvertor
 import com.example.foodsearch.data.search.impl.SearchRepositoryImpl
 import com.example.foodsearch.data.search.network.NetworkClient
 import com.example.foodsearch.data.search.network.RetrofitNetworkClient
@@ -26,6 +30,32 @@ import javax.inject.Singleton
 object MainModule {
 
     private const val BASE_URL = "https://api.spoonacular.com/"
+
+
+
+    @Provides
+    @Singleton
+    fun provideMainDb(app: Application): MainDb {
+        return Room.databaseBuilder(
+            app,//Контекст
+            MainDb::class.java, //Класс
+            "recipe.db" //Имя
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecipeSummaryDbConvertor(): RecipeSummaryDbConvertor{
+        return RecipeSummaryDbConvertor()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecipeDetailsDbConvertor(): RecipeDetailsDbConvertor{
+        return RecipeDetailsDbConvertor()
+    }
+
+
 
     @Provides
     @Singleton

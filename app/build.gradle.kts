@@ -47,6 +47,10 @@ android {
 
 dependencies {
 
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+
+
     // Dagger Hilt
 
     implementation(libs.hilt.android)

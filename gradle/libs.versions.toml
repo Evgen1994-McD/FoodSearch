@@ -18,6 +18,7 @@ glide-version = "4.14.2"
 lifecycle-version = "2.9.2"
 recycler-view-version = "[1.2.1](1.2.1)"
 logger-interceptor-version = "4.10.0"
+roomRuntime = "2.7.2"
 
 
 
@@ -66,6 +67,10 @@ glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "gl
 view-model ={group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycle-version"}
 live-data = {group= "androidx.lifecycle", name = "lifecycle-livedata", version.ref = "lifecycle-version"}
 
+
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

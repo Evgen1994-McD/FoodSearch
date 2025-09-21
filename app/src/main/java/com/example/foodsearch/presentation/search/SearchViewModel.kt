@@ -47,8 +47,7 @@ class SearchViewModel @Inject constructor(
             mutableScreenState.postValue(SearchScreenState.Loading) // при начале запроса - выставляем лоадинг в тру
             searchInteractor.getRandomRecipes()
                 .collect{ pair->
-                    Log.d("MyLog", "${pair.second}")
-                    Log.d("MyLog", "${pair.first}")
+
                     if(pair.first==null && pair.second == "Exception" ){
                         mutableScreenState.postValue(SearchScreenState.ErrorNoEnternet(pair.second.toString()))
                     }
