@@ -1,18 +1,24 @@
 package com.example.foodsearch.presentation.details
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.foodsearch.R
 import com.example.foodsearch.databinding.FragmentDetailsRecipeBinding
 import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.presentation.details.adapters.IngredientAdapter
+import com.example.foodsearch.presentation.details.adapters.StepAdapter
 import com.example.foodsearch.presentation.search.SearchFragment
 import com.example.foodsearch.presentation.search.SearchScreenState
 import com.example.foodsearch.presentation.search.adapter.RecipeAdapter
@@ -23,6 +29,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class DetailsRecipe : Fragment() {
     private lateinit var binding: FragmentDetailsRecipeBinding
     private var lastState = null
+    private lateinit var arrow: ImageView
+    private lateinit var arrowInstructions: ImageView
+    private var isExpanded = false
+    private var isExpandedInstructions = false
 
     private val viewModel: DetailsRecipeViewModel by viewModels()
 
@@ -45,6 +55,38 @@ class DetailsRecipe : Fragment() {
 
         observeState()
 viewModel.getDetailsRecipeInfo()
+
+
+
+        arrow = binding.btArrowIngredients
+        arrowInstructions=binding.btArrowInstructions
+
+        arrow.setOnClickListener {
+            if (isExpanded) {
+                collapseRecyclerView(binding.rcViewIngredients, arrow)
+                isExpanded = false
+            } else {
+                expandRecyclerView(binding.rcViewIngredients, arrow)
+                isExpanded = true
+
+            }
+        }
+
+        arrowInstructions.setOnClickListener {
+            if (isExpandedInstructions) {
+                collapseRecyclerView(binding.rcViewInstructions, arrowInstructions)
+                isExpandedInstructions = false
+
+            } else {
+                expandRecyclerView(binding.rcViewInstructions,arrowInstructions)
+                isExpandedInstructions = true
+
+            }
+
+        }
+
+
+
 
 
         val btStandartContainer = binding.includedLayout.bottomSheet
@@ -119,13 +161,16 @@ viewModel.getDetailsRecipeInfo()
                     rcViewIngredients.layoutManager = LinearLayoutManager(requireContext())
                     rcViewIngredients.adapter = IngredientAdapter(recipeToDisplay?.extendedIngredients, requireContext())
 
+val steps = recipeToDisplay?.analyzedInstructions?.flatMap { it.steps }
+                    rcViewInstructions.layoutManager = LinearLayoutManager(requireContext())
+                    rcViewInstructions.adapter =
+                        StepAdapter(steps, requireContext())
 
-//                    recipeToDisplay?.let { displayRecipes(it) }
 
                 }
 
 
-//
+
 
                 null -> TODO()
             }
@@ -150,6 +195,34 @@ viewModel.getDetailsRecipeInfo()
 
         return tags
     }
+
+
+    private fun expandRecyclerView(recyclerView: RecyclerView, imageView: ImageView) = with(binding) {
+//        isExpanded = true
+        recyclerView.visibility = View.VISIBLE
+        ObjectAnimator.ofFloat(recyclerView, "translationY", 0f).apply {
+            duration = 300
+            start()
+        }
+        imageView.animate().rotation(180f).setDuration(300).start()
+    }
+
+    private fun collapseRecyclerView(recyclerView: RecyclerView, imageView: ImageView) = with(binding){
+//        isExpanded = false
+        ObjectAnimator.ofFloat(recyclerView, "translationY", recyclerView.height.toFloat()).apply {
+            duration = 300
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    recyclerView.visibility = View.GONE
+                }
+            })
+            start()
+        }
+        imageView.animate().rotation(0f).setDuration(300).start()
+    }
+
+
+
 
 
 }

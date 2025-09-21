@@ -1,5 +1,8 @@
 package com.example.foodsearch.presentation.search
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.text.Editable
@@ -8,6 +11,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.ProgressBar
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
@@ -57,6 +62,10 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
         super.onViewCreated(view, savedInstanceState)
 
 
+
+
+
+
         ab =
             (activity as AppCompatActivity).supportActionBar
 
@@ -80,7 +89,7 @@ pbs = binding.pbs
     }
 
 
-    private fun textChangeListener()=with(binding){
+private fun textChangeListener()=with(binding){
         inputEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
 
