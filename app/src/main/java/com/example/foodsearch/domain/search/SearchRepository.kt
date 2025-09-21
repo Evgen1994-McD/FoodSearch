@@ -1,5 +1,6 @@
 package com.example.foodsearch.domain.search
 
+import com.example.foodsearch.data.db.entity.RecipeSummaryEntity
 import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.domain.models.RecipeSummary
 import kotlinx.coroutines.flow.Flow
@@ -12,4 +13,9 @@ interface SearchRepository {
     suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails?
     fun getRandomRecipes(): Flow<List<RecipeSummary>?>
 
+    suspend fun searchRecipeFromDbByTitle(title: String): List<RecipeSummary>?
+    suspend fun insertRecipeDetails(recipe: RecipeDetails)
+    suspend fun insertRecipeSummary(recipe: RecipeSummary)
+    suspend fun getRecipeSummaryFromMemory(): List<RecipeSummary>?
+    suspend fun getRecipeDetailsFromMemoryById(id: Int): RecipeDetails?
 }

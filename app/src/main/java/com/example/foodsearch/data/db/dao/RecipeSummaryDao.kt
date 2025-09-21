@@ -19,8 +19,12 @@ interface RecipeSummaryDao {
     @Query("SELECT * FROM recipe_summary_table")
     suspend fun getAllRecipes(): List<RecipeSummaryEntity>
 
+ @Query("SELECT * FROM recipe_summary_table WHERE title LIKE '%'||:title||'%'" )
+    suspend fun getRecipesByName(title:String): List<RecipeSummaryEntity>
+
 
    @Query("SELECT * FROM recipe_summary_table WHERE id=:id")
     suspend fun getRecipeById(id: Int): List<RecipeSummaryEntity>
 
 }
+
