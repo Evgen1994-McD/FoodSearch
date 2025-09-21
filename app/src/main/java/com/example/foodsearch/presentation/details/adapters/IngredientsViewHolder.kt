@@ -21,6 +21,7 @@ class IngredientsViewHolder(itemView: View,
 
     private val name: TextView = itemView.findViewById(R.id.ingredient_name)
     private val value: TextView = itemView.findViewById(R.id.ingredient_value)
+    private val unit: TextView = itemView.findViewById(R.id.ingredient_metric)
     private val image: ImageView = itemView.findViewById(R.id.ingredient_image)
 
 
@@ -44,6 +45,7 @@ val extendIngredientLinks = "https://spoonacular.com/cdn/ingredients_100x100/"+ 
 
         name.text = ingredient.name
         value.text = ingredient.amount.toString()
+        unit.text = ingredient.unit
 
 
 
@@ -51,8 +53,8 @@ val extendIngredientLinks = "https://spoonacular.com/cdn/ingredients_100x100/"+ 
             .load(extendIngredientLinks)
             .transform(RoundedCorners(radiusInPX.toInt()))
             .apply(options)
-//            .placeholder(R.drawable.ic_placeholder_45)
-//            .error(R.drawable.ic_placeholder_45)
+           .placeholder(R.drawable.ic_ph_kitchen)
+           .error(R.drawable.ic_ph_kitchen)
             .into(image)
 
 

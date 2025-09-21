@@ -11,8 +11,8 @@ import kotlinx.coroutines.withContext
 class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : NetworkClient {
     private val apiKey3 = "91225f5085c54860b6c9d5d0298b460b"
     private val apiKey = "9c69449bd45d4cb0abc8dedbcff5867c"
-    private val apiKey4 = "132e04b6aa4d4bddb00fc04b0fe73967"
-    private val apiKey2 = "fc9779e7ffdb4a0394b69e0af48c6392"
+    private val apiKey2 = "132e04b6aa4d4bddb00fc04b0fe73967"
+    private val apiKey4 = "fc9779e7ffdb4a0394b69e0af48c6392"
 
 
     override suspend fun doRequest(dto: Any): Response {
@@ -58,4 +58,18 @@ class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : Networ
 
 
     }
+
+    override suspend fun doRandomRecipe(): Response {
+        return withContext(Dispatchers.IO) {
+            try {
+
+
+                val response = spoonacularApi.getRandomRecipes(apiKey = apiKey2, number = 5)
+                response.apply { resultCode = 200 }
+            } catch (e: Throwable) {
+                Response().apply { resultCode = 500 }
+            }
+        }
+    }
+
 }

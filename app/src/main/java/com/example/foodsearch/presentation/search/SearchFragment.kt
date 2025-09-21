@@ -60,7 +60,8 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        observeRecipeSearchResults()
+        viewModel.getRandomRecipes()
 
 
 
@@ -79,8 +80,7 @@ pbs = binding.pbs
 
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
 
-            observeRecipeSearchResults(hasFocus)
-
+            observeRecipeSearchResults()
 
             // Наблюдаем сразу за обоими источниками данных
 
@@ -135,7 +135,7 @@ private fun textChangeListener()=with(binding){
 
         })
     }
-            private fun observeRecipeSearchResults(hasFocus: Boolean) {
+            private fun observeRecipeSearchResults() {
                 viewModel.getLiveData.observe(viewLifecycleOwner) { newState ->
 
                     when (newState) {

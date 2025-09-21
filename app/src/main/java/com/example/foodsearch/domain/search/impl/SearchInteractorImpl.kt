@@ -27,6 +27,19 @@ class SearchInteractorImpl @Inject constructor(
         }
     }
 
+   override fun getRandomRecipes(): Flow<Pair<List<RecipeSummary>?, String?>> {
+
+
+        return searchRepository.getRandomRecipes().map { results ->
+            if (results != null) {
+                Pair(results, null)
+            } else {
+                Pair(null, exceptionStateString)
+            }
+        }
+    }
+
+
     override suspend fun searchRecipeCard(id:Int):String?{
         return searchRepository.searchRecipeCard(id)
     }

@@ -57,8 +57,8 @@ class RecipeViewHolder(itemView: View, listener: OnRecipeClickListener, private 
             .load(recipeSummary.image)
             .transform(RoundedCorners(radiusInPX.toInt()))
             .apply(options)
-//            .placeholder(R.drawable.ic_placeholder_45)
-//            .error(R.drawable.ic_placeholder_45)
+            .placeholder(R.drawable.ic_ph_kitchen)
+            .error(R.drawable.ic_ph_kitchen)
             .into(image)
 
 

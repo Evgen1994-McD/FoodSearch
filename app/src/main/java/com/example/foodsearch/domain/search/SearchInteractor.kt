@@ -7,6 +7,10 @@ import kotlinx.coroutines.flow.Flow
 interface SearchInteractor {
 
     fun searchRecipe(expression: String): Flow<Pair<List<RecipeSummary>?, String?>>
+
+    fun getRandomRecipes():  Flow<Pair<List<RecipeSummary>?, String?>>
     suspend fun searchRecipeCard(id: Int): String?
     suspend fun searchRecipeDetailsInfo(id: Int): Pair<RecipeDetails?, String?>
+
+
 }

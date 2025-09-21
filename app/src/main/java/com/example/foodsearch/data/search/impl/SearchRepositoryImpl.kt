@@ -5,6 +5,7 @@ import com.example.foodsearch.data.search.dto.card.RecipeCardRequest
 import com.example.foodsearch.data.search.dto.card.RecipeCardResponse
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsDto
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsRequest
+import com.example.foodsearch.data.search.dto.random.RecipeRandomResponse
 import com.example.foodsearch.data.search.dto.summary.RecipeSummryResponse
 import com.example.foodsearch.data.search.dto.summary.RecipeSummarySearchRequest
 import com.example.foodsearch.data.search.network.NetworkClient
@@ -52,6 +53,43 @@ class SearchRepositoryImpl @Inject constructor(
              */
         }
     }
+
+    override fun getRandomRecipes(): Flow<List<RecipeSummary>?> = flow {
+
+        val response = networkClient.doRandomRecipe()
+        when (response.resultCode) {
+            200 -> {
+                with(response as RecipeRandomResponse) {
+                    val data = recipes.map { it ->
+                        RecipeSummary(
+                            it.id,
+                            it.image,
+                            it.title,
+                            it.readyInMinutes,
+                            it.servings,
+                            it.summary
+
+
+                        )
+                    }
+                    emit(data)
+
+
+                }
+            }
+
+            400 -> {
+                emit(emptyList())
+            }
+
+            else -> emit(null)
+            /*
+            эмичу эмпти лист чтобы отработать ошибку отсутствия интернета
+             */
+        }
+    }
+
+
 
     override suspend fun searchRecipeCard(id: Int): String? {
         val response = networkClient.doRecipeCardRequest(RecipeCardRequest(id))

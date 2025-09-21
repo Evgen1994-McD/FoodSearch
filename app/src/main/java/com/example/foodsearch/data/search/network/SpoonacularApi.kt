@@ -2,6 +2,7 @@ package com.example.foodsearch.data.search.network
 
 import com.example.foodsearch.data.search.dto.card.RecipeCardResponse
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsDto
+import com.example.foodsearch.data.search.dto.random.RecipeRandomResponse
 import com.example.foodsearch.data.search.dto.summary.RecipeSummryResponse
 import com.example.foodsearch.domain.models.RecipeDetails
 import retrofit2.http.GET
@@ -16,6 +17,13 @@ interface SpoonacularApi {
         @Query("addRecipeInformation") addRecipeInformation: Boolean,
         @Query("apiKey") apiKey: String // Передаем как отдельный параметр
     ): RecipeSummryResponse
+
+
+    @GET("recipes/random")
+    suspend fun getRandomRecipes(
+        @Query("apiKey") apiKey: String, // Передаем как отдельный параметр
+        @Query("number") number: Int // Передаем как отдельный параметр
+    ): RecipeRandomResponse
 
     @GET("recipes/{recipeId}/card")
     suspend fun getRecipeCard(
