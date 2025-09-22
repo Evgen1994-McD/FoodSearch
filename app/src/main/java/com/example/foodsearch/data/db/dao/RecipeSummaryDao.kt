@@ -28,5 +28,8 @@ suspend fun getAllRecipes(offset: Int, limit: Int): List<RecipeSummaryEntity>
    @Query("SELECT * FROM recipe_summary_table WHERE id=:id")
     suspend fun getRecipeById(id: Int): List<RecipeSummaryEntity>
 
+    @Query("SELECT * FROM recipe_summary_table WHERE isLike=:isLike")
+    suspend fun getFavoriteRecipes(isLike: Boolean): List<RecipeSummaryEntity>
+
 }
 

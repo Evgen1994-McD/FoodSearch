@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodsearch.R
 import com.example.foodsearch.databinding.FragmentSearchBinding
 import com.example.foodsearch.domain.models.RecipeSummary
+import com.example.foodsearch.presentation.book.BookFragment
 import com.example.foodsearch.presentation.search.adapter.OnRecipeClickListener
 import com.example.foodsearch.presentation.search.adapter.RecipeAdapter
 import com.example.foodsearch.utils.debounce
@@ -42,11 +43,13 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class SearchFragment : Fragment(), OnRecipeClickListener {
 
+companion object{
+    fun newInstance() = SearchFragment()
 
+}
     private val viewModel: SearchViewModel by viewModels()
     private lateinit var binding: FragmentSearchBinding
     private lateinit var pbs: ProgressBar
-    private var lastState: List<RecipeSummary> = emptyList()
     private lateinit var txtForSearch: String
     private lateinit var searchDebounce: (String) -> Unit
     private var oldText: CharSequence = ""
@@ -54,13 +57,9 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
         null // добавили переменную для ActionBar, будем показывать счетчик упражнений
     private var isRandomSeachComplete=false
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -68,96 +67,50 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
        binding = FragmentSearchBinding.inflate(layoutInflater, container,false)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeRecipeSearchResults()
-
-
-
 if (!isRandomSeachComplete){
-//observeRandomRecipes()
     viewModel.getRandomRecipes()
-
     isRandomSeachComplete=true
 }
-
-
-
-
-
         ab =
             (activity as AppCompatActivity).supportActionBar
-
-
 pbs = binding.pbs
         textChangeListener()
         searchDebounce =
             debounce(2000L, viewLifecycleOwner.lifecycleScope, true) { txtForSearch ->
            viewModel.searchRecipes(txtForSearch)
             }
-
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
-
             observeRecipeSearchResults()
-
-            // Наблюдаем сразу за обоими источниками данных
-
         }
-
     }
-
-
 private fun textChangeListener()=with(binding){
         inputEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
-
             }
-
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-
             }
-
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-
                 if (!p0.isNullOrEmpty()) {
                     // инициализ переменную таск в текст ватчере, иначе происходит вылет
                     txtForSearch = p0.toString()
                     if (oldText == txtForSearch) {
                         inputEditText.requestFocus()
-                        /*
-                        передаю фокус на эдит текст, чтобы при возврате на экран если зашел посмотерть песню,
-                        не приходилось выбирать строку чтобы отобразить результаты поиска, а сразу перебирать
-                        уже песни в RecyclerView
-                         */
-
                     }
                     else if (oldText != txtForSearch && txtForSearch.isNotEmpty()) {
                         oldText = txtForSearch
-                        /*
-                        C помощью текст ватчера проверяю изменился ли текст после возвращения через popBackStack()
-                        и выполняю поисковый запрос только при наличии изменений ( убрал неприятный прогресс бар при возврате на экран -
-                        - появлялся на пару секунд выполняя повторный запрос)
-                         */
+
                         searchDebounce(txtForSearch)
-
-
-
-
                     }
                 }
-
-
             }
 
         })
     }
             private fun observeRecipeSearchResults() {
                 viewModel.getLiveData.observe(viewLifecycleOwner) { newState ->
-Log.d("Observe_State", "$newState")
-
                     when (newState){
                         is SearchScreenState.Loading -> {
                             binding.rcView.makeGone()
@@ -165,49 +118,21 @@ Log.d("Observe_State", "$newState")
 
                         }
 
-                        is SearchScreenState.ErrorNoEnternet -> {
-                            if (newState.message == "Exception") {
-binding.im404.makeVisible()
-binding.tvNothingToShow.makeVisible()
-                                pbs.makeGone()
-                            }
-                        }
-
                         is SearchScreenState.ErrorNotFound -> {
-//                            if (newState.message == "retry") {
-                                binding.im404.makeVisible()
-                                binding.tvNothingToShow.makeVisible()
-
-                                pbs.makeGone()
-//                            } else if (newState.message == null) {
-//                                pbs.makeGone()
-//                                binding.im404.makeVisible()
-//                                binding.tvNothingToShow.makeVisible()
-//
-//                            }
+                            binding.im404.makeVisible()
+                            binding.tvNothingToShow.makeVisible()
+                            pbs.makeGone()
                         }
-
-
                         is SearchScreenState.SearchResults -> {
                             pbs.makeGone()
                             binding.im404.makeGone()
                             binding.tvNothingToShow.makeGone()
 
                             binding.rcView.makeVisible()
-
-
 observeRecipeSearchResultsFlow(newState.data)
-
-
-
 
                         }
                     }
-
-
-
-
-
                 }
             }
 
@@ -259,10 +184,6 @@ observeRecipeSearchResultsFlow(newState.data)
             }
         }
     }
-
-
-
-
 
             private fun View.makeGone() {
                 this.visibility = View.GONE // функция для вью гон

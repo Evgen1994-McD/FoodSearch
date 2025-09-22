@@ -196,7 +196,8 @@ class SearchRepositoryImpl @Inject constructor(
                 data.title,
                 data.readyInMinutes,
                 data.servings,
-                data.summary
+                data.summary,
+                false
             )
             insertRecipeSummary(recipeSummaryToSave)
             insertRecipeDetails(data)
@@ -211,6 +212,12 @@ class SearchRepositoryImpl @Inject constructor(
 
     }
 
+  override suspend fun getFavoriteRecipes():List<RecipeSummary>{
+       return mainDb.recipeSummaryDao().getFavoriteRecipes(true).map {
+            recipeSummaryDbConvertor.map(it)
+        }
+    }
+
 
 
    private fun mapToDomain(dto: RecipeSummaryDto): RecipeSummary {
@@ -220,7 +227,8 @@ class SearchRepositoryImpl @Inject constructor(
             dto.title,
             dto.readyInMinutes,
             dto.servings,
-            dto.summary
+            dto.summary,
+            false
         )
     }
 

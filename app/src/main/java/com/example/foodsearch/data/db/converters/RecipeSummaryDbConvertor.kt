@@ -11,7 +11,9 @@ class RecipeSummaryDbConvertor {
             title = recipe.title,
             readyInMinutes = recipe.readyInMinutes,
             servings = recipe.servings,
-            summary = recipe.summary
+            summary = recipe.summary,
+            isLike = recipe.isLike
+
         )
 
     }
@@ -23,7 +25,8 @@ class RecipeSummaryDbConvertor {
             title = recipe.title,
             readyInMinutes = recipe.readyInMinutes,
             servings = recipe.servings,
-            summary = recipe.summary
+            summary = recipe.summary,
+            isLike = recipe.isLike
         )
 
     }

@@ -41,8 +41,6 @@ class SearchViewModel @Inject constructor(
     }
 
 
-
-
     fun getRandomRecipes() {
         mutableScreenState.postValue(SearchScreenState.Loading)
 
@@ -60,7 +58,6 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
-
      fun getRecipeFromDb(query: String?)=viewModelScope.launch{
         searchInteractor.getRecipeFromMemory(query)
             .cachedIn(viewModelScope)
@@ -68,9 +65,6 @@ class SearchViewModel @Inject constructor(
                 mutableScreenState.value = SearchScreenState.SearchResults(data)
             }
     }
-
-
-
 
 }
 

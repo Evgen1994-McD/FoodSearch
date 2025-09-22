@@ -9,7 +9,6 @@ sealed class SearchScreenState {
         object Loading : SearchScreenState()
         data class SearchResults(val data: PagingData<RecipeSummary>) : SearchScreenState()
         data class ErrorNotFound(val error:PagingData<Any>) : SearchScreenState()
-        data class ErrorNoEnternet(val message: String?) : SearchScreenState()
 
 
 }

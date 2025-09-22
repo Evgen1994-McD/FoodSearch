@@ -23,5 +23,11 @@
         android:name="id"
         app:argType="integer" />
     </fragment>
+    <fragment
+        android:id="@+id/bookFragment"
+        android:name="com.example.foodsearch.presentation.book.BookFragment"
+        android:label="BookFragment"
+        tools:layout="@layout/fragment_book"
+        />
 
 </navigation>

@@ -1,0 +1,7 @@
+<!-- res/color/your_color_selector.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="@color/purple_200"/>
+    <item android:color="@color/black"/>
+
+   />
+</selector>

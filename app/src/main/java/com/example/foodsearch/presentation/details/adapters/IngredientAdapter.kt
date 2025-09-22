@@ -12,7 +12,8 @@ import com.example.foodsearch.presentation.search.adapter.RecipeViewHolder
 
 class IngredientAdapter(
     private var ingredients: List<OtherModels.Ingredient>?,
-    private val context : Context
+    private val context : Context,
+
 ) : RecyclerView.Adapter<IngredientsViewHolder>() {
 
 
