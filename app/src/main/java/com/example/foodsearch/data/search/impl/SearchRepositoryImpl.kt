@@ -144,66 +144,57 @@ class SearchRepositoryImpl @Inject constructor(
     override suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails? {
 
 
-        suspend fun controlIsLike(id: Int) : Boolean {
-            val foundRecipe = id?.let { getRecipeDetailsFromMemoryById(it) }
-            if (foundRecipe?.isLike ==true ) {
-                return true
-            } else {
-                return false
-            }
+        suspend fun controlIsLike(id: Int?): Boolean {
+            if (id == null) return false
+            val foundRecipe = getRecipeDetailsFromMemoryById(id)
+            return foundRecipe?.isLike ?: false
         }
 
-
-
         try {
-
-
             val response = networkClient.doRecipeDetailsInfoRequest(RecipeDetailsRequest(id))
-
             val recipeDetailsDto = response as RecipeDetailsDto
-val isLike = recipeDetailsDto.id?.let { controlIsLike(it) }
+            val isLike = controlIsLike(recipeDetailsDto.id)
 
-            val data =
-                RecipeDetails(
-                    id = recipeDetailsDto.id,
-                    image = recipeDetailsDto.image,
-                    imageType = recipeDetailsDto.imageType,
-                    title = recipeDetailsDto.title,
-                    readyInMinutes = recipeDetailsDto.readyInMinutes,
-                    servings = recipeDetailsDto.servings,
-                    sourceUrl = recipeDetailsDto.sourceUrl,
-                    vegetarian = recipeDetailsDto.vegetarian,
-                    vegan = recipeDetailsDto.vegan,
-                    glutenFree = recipeDetailsDto.glutenFree,
-                    dairyFree = recipeDetailsDto.dairyFree,
-                    veryHealthy = recipeDetailsDto.veryHealthy,
-                    cheap = recipeDetailsDto.cheap,
-                    veryPopular = recipeDetailsDto.veryPopular,
-                    sustainable = recipeDetailsDto.sustainable,
-                    lowFodmap = recipeDetailsDto.lowFodmap,
-                    weightWatcherSmartPoints = recipeDetailsDto.weightWatcherSmartPoints,
-                    gaps = recipeDetailsDto.gaps,
-                    preparationMinutes = recipeDetailsDto.preparationMinutes,
-                    cookingMinutes = recipeDetailsDto.cookingMinutes,
-                    aggregateLikes = recipeDetailsDto.aggregateLikes,
-                    healthScore = recipeDetailsDto.healthScore,
-                    creditsText = recipeDetailsDto.creditsText,
-                    license = recipeDetailsDto.license,
-                    sourceName = recipeDetailsDto.sourceName,
-                    pricePerServing = recipeDetailsDto.pricePerServing,
-                    extendedIngredients = recipeDetailsDto.extendedIngredients,
-                    summary = recipeDetailsDto.summary,
-                    cuisines = recipeDetailsDto.cuisines,
-                    dishTypes = recipeDetailsDto.dishTypes,
-                    diets = recipeDetailsDto.diets,
-                    occasions = recipeDetailsDto.occasions,
-                    instructions = recipeDetailsDto.instructions,
-                    analyzedInstructions = recipeDetailsDto.analyzedInstructions,
-                    spoonacularScore = recipeDetailsDto.spoonacularScore,
-                    spoonacularSourceUrl = recipeDetailsDto.spoonacularSourceUrl,
-                    isLike =  isLike ?: false
+            val data = RecipeDetails(
+                id = recipeDetailsDto.id,
+                image = recipeDetailsDto.image,
+                imageType = recipeDetailsDto.imageType,
+                title = recipeDetailsDto.title,
+                readyInMinutes = recipeDetailsDto.readyInMinutes,
+                servings = recipeDetailsDto.servings,
+                sourceUrl = recipeDetailsDto.sourceUrl,
+                vegetarian = recipeDetailsDto.vegetarian,
+                vegan = recipeDetailsDto.vegan,
+                glutenFree = recipeDetailsDto.glutenFree,
+                dairyFree = recipeDetailsDto.dairyFree,
+                veryHealthy = recipeDetailsDto.veryHealthy,
+                cheap = recipeDetailsDto.cheap,
+                veryPopular = recipeDetailsDto.veryPopular,
+                sustainable = recipeDetailsDto.sustainable,
+                lowFodmap = recipeDetailsDto.lowFodmap,
+                weightWatcherSmartPoints = recipeDetailsDto.weightWatcherSmartPoints,
+                gaps = recipeDetailsDto.gaps,
+                preparationMinutes = recipeDetailsDto.preparationMinutes,
+                cookingMinutes = recipeDetailsDto.cookingMinutes,
+                aggregateLikes = recipeDetailsDto.aggregateLikes,
+                healthScore = recipeDetailsDto.healthScore,
+                creditsText = recipeDetailsDto.creditsText,
+                license = recipeDetailsDto.license,
+                sourceName = recipeDetailsDto.sourceName,
+                pricePerServing = recipeDetailsDto.pricePerServing,
+                extendedIngredients = recipeDetailsDto.extendedIngredients,
+                summary = recipeDetailsDto.summary,
+                cuisines = recipeDetailsDto.cuisines,
+                dishTypes = recipeDetailsDto.dishTypes,
+                diets = recipeDetailsDto.diets,
+                occasions = recipeDetailsDto.occasions,
+                instructions = recipeDetailsDto.instructions,
+                analyzedInstructions = recipeDetailsDto.analyzedInstructions,
+                spoonacularScore = recipeDetailsDto.spoonacularScore,
+                spoonacularSourceUrl = recipeDetailsDto.spoonacularSourceUrl,
+                isLike = isLike
+            )
 
-                )
             val recipeSummaryToSave = RecipeSummary(
                 data.id,
                 data.image,
