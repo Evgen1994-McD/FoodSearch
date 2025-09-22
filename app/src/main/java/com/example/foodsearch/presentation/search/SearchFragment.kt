@@ -17,11 +17,13 @@ import android.widget.PopupMenu
 import android.widget.ProgressBar
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.snapshotFlow
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodsearch.R
@@ -209,12 +211,50 @@ observeRecipeSearchResultsFlow(newState.data)
                 }
             }
 
-    private  fun observeRecipeSearchResultsFlow(data:PagingData<RecipeSummary>) {
-
-
+    private fun observeRecipeSearchResultsFlow(data: PagingData<RecipeSummary>) {
         binding.rcView.layoutManager = LinearLayoutManager(requireContext())
         binding.rcView.adapter = RecipeAdapter(this@SearchFragment, requireContext()).also { adapter ->
             adapter.submitData(lifecycle, data)
+
+            // Запускаем корутин для наблюдения за состоянием загрузки
+            lifecycleScope.launch {
+                adapter.loadStateFlow.collectLatest { loadStates ->
+                    // Определяем условия для отображения элементов
+                    when {
+                        // Пока идут запросы на обновление данных
+                        loadStates.refresh is LoadState.Loading -> {
+                            pbs.makeVisible()
+                            binding.im404.makeGone()
+                            binding.tvNothingToShow.makeGone()
+                            binding.rcView.makeGone()
+                        }
+
+                        // Все данные получены, проверяем их наличие
+                        loadStates.refresh is LoadState.NotLoading -> {
+                            pbs.makeGone()
+                            if (adapter.itemCount > 0) {
+                                // Есть данные, отображаем список
+                                binding.im404.makeGone()
+                                binding.tvNothingToShow.makeGone()
+                                binding.rcView.makeVisible()
+                            } else {
+                                // Нет данных, показываем уведомление
+                                binding.im404.makeVisible()
+                                binding.tvNothingToShow.makeVisible()
+                                binding.rcView.makeGone()
+                            }
+                        }
+
+                        // Возникла ошибка
+                        loadStates.refresh is LoadState.Error -> {
+                            pbs.makeGone()
+                            binding.im404.makeVisible()
+                            binding.tvNothingToShow.makeVisible()
+                            binding.rcView.makeGone()
+                        }
+                    }
+                }
+            }
         }
     }
 

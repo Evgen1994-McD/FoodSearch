@@ -76,15 +76,16 @@ class SearchRepositoryImpl @Inject constructor(
     override fun getRandomRecipes(): Flow<PagingData<RecipeSummary>> {
 
         return Pager(
+
             config = PagingConfig(pageSize = 5),
             pagingSourceFactory = { RandomPagingSource(networkClient) }
         ).flow.map { pagingData ->
             pagingData.map { dto ->
                 mapToDomain(dto)
             }
+
         }
             .catch { e ->
-                Log.e("SearchRandomError", "Error searching recipes", e)
                 emit(PagingData.empty())
 
             }

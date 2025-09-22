@@ -39,6 +39,9 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+
+
+
     fun getRandomRecipes() {
         mutableScreenState.postValue(SearchScreenState.Loading)
 
@@ -49,7 +52,6 @@ class SearchViewModel @Inject constructor(
                     .cachedIn(viewModelScope)
 
                 flow.collectLatest { data ->
-
                     mutableScreenState.value = SearchScreenState.SearchResults(data)
                 }
             } catch (e: Exception) {
