@@ -21,6 +21,10 @@ class SearchInteractorImpl @Inject constructor(
        return searchRepository.getRecipeSummaryFromMemory(query)
     }
 
+    override suspend fun insertRecipeDetails(recipeDetails: RecipeDetails){
+        searchRepository.insertRecipeDetails(recipeDetails)
+    }
+
 
 
     override fun searchRecipe(expression: String): Flow<PagingData<RecipeSummary>>{
@@ -34,6 +38,8 @@ class SearchInteractorImpl @Inject constructor(
 
         return searchRepository.getRandomRecipes()
     }
+
+
 
 
 

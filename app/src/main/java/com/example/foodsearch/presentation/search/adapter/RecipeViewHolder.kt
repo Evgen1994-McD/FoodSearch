@@ -6,6 +6,7 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -21,6 +22,7 @@ class RecipeViewHolder(itemView: View, listener: OnRecipeClickListener, private 
     private val servings: TextView = itemView.findViewById(R.id.tvServings)
     private val cookingTime: TextView = itemView.findViewById(R.id.tvCookingTime)
     private val image: ImageView = itemView.findViewById(R.id.imMine)
+
 
     private val options = RequestOptions().centerCrop()
     private val radiusInDP = 2f
@@ -50,6 +52,7 @@ class RecipeViewHolder(itemView: View, listener: OnRecipeClickListener, private 
         summary.text = result
         servings.text= recipeSummary.servings.toString() +" "+  context.getString(R.string.servings)
         cookingTime.text=recipeSummary.readyInMinutes.toString() + " "+ context.getString(R.string.minutes)
+
 
 
 

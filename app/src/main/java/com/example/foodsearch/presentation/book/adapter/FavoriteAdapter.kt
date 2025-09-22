@@ -6,14 +6,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.foodsearch.R
 import com.example.foodsearch.domain.models.OtherModels
+import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.domain.models.RecipeSummary
 import com.example.foodsearch.presentation.search.adapter.OnRecipeClickListener
 import com.example.foodsearch.presentation.search.adapter.RecipeViewHolder
 
 class FavoriteAdapter(
-    private var recipes:List<RecipeSummary>,
+    private var recipes:List<RecipeDetails>,
     private val context : Context,
-    private val listener: OnRecipeClickListener,
+    private val listener: OnFavoriteRecipeClickListener,
 
 ) : RecyclerView.Adapter<FavoriteRecipeViewHolder>() {
 

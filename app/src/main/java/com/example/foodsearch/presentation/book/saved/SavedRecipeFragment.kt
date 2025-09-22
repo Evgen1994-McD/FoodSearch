@@ -1,4 +1,4 @@
-package com.example.foodsearch.presentation.book.favorite
+package com.example.foodsearch.presentation.book.saved
 
 import android.content.Context
 import androidx.fragment.app.viewModels
@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodsearch.R
 import com.example.foodsearch.databinding.FragmentFavoriteBinding
+import com.example.foodsearch.databinding.FragmentSavedBinding
 import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.domain.models.RecipeSummary
 import com.example.foodsearch.presentation.book.adapter.FavoriteAdapter
@@ -21,9 +22,9 @@ import com.example.foodsearch.presentation.search.adapter.RecipeAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FavoriteFragment : Fragment(), OnFavoriteRecipeClickListener {
-    private lateinit var binding: FragmentFavoriteBinding
-    private val viewModel: FavoriteViewModel by viewModels()
+class SavedRecipeFragment : Fragment(), OnFavoriteRecipeClickListener {
+    private lateinit var binding: FragmentSavedBinding
+    private val viewModel: SavedRecipeFragmentViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +37,7 @@ class FavoriteFragment : Fragment(), OnFavoriteRecipeClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentFavoriteBinding.inflate(inflater, container, false)
+        binding = FragmentSavedBinding.inflate(inflater, container, false)
         return binding.root
 
     }
@@ -52,7 +53,7 @@ viewModel.getRecipes()
 
     companion object {
 
-        fun newInstance() = FavoriteFragment()
+        fun newInstance() = SavedRecipeFragment()
 
     }
 
@@ -75,7 +76,7 @@ viewModel.getRecipes()
     private fun displayTRecipes(recipes: List<RecipeDetails>) = with(binding) {
 
         rcView1.layoutManager = LinearLayoutManager(requireContext())
-        rcView1.adapter = FavoriteAdapter(recipes, requireContext(), this@FavoriteFragment )
+        rcView1.adapter = FavoriteAdapter(recipes, requireContext(), this@SavedRecipeFragment )
         rcView1.makeVisible()
         phNtsh.makeInvisible()
         msgTxtBottom.makeInvisible()

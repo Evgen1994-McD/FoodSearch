@@ -46,9 +46,9 @@
         android:layout_marginTop="10dp"
         android:src="@drawable/ph_not_found"
         android:visibility="gone"
+
         app:layout_constraintEnd_toEndOf="@+id/tv_nothing_to_show"
         app:layout_constraintStart_toStartOf="@+id/tv_nothing_to_show"
-
         app:layout_constraintTop_toBottomOf="@+id/tv_nothing_to_show"
         tools:visibility="gone" />
 
@@ -56,16 +56,17 @@
         android:id="@+id/tv_nothing_to_show"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="206dp"
         android:gravity="center_horizontal"
         android:text="@string/nothing_to_show"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputEditText"
+        app:layout_constraintVertical_bias="0.179"
         tools:visibility="gone" />
 
 

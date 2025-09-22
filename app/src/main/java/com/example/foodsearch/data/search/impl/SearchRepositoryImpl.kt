@@ -143,13 +143,25 @@ class SearchRepositoryImpl @Inject constructor(
 
     override suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails? {
 
+
+        suspend fun controlIsLike(id: Int) : Boolean {
+            val foundRecipe = id?.let { getRecipeDetailsFromMemoryById(it) }
+            if (foundRecipe?.isLike ==true ) {
+                return true
+            } else {
+                return false
+            }
+        }
+
+
+
         try {
 
 
             val response = networkClient.doRecipeDetailsInfoRequest(RecipeDetailsRequest(id))
 
             val recipeDetailsDto = response as RecipeDetailsDto
-
+val isLike = recipeDetailsDto.id?.let { controlIsLike(it) }
 
             val data =
                 RecipeDetails(
@@ -188,7 +200,8 @@ class SearchRepositoryImpl @Inject constructor(
                     instructions = recipeDetailsDto.instructions,
                     analyzedInstructions = recipeDetailsDto.analyzedInstructions,
                     spoonacularScore = recipeDetailsDto.spoonacularScore,
-                    spoonacularSourceUrl = recipeDetailsDto.spoonacularSourceUrl
+                    spoonacularSourceUrl = recipeDetailsDto.spoonacularSourceUrl,
+                    isLike ?: false
                 )
             val recipeSummaryToSave = RecipeSummary(
                 data.id,
@@ -197,7 +210,7 @@ class SearchRepositoryImpl @Inject constructor(
                 data.readyInMinutes,
                 data.servings,
                 data.summary,
-                false
+
             )
             insertRecipeSummary(recipeSummaryToSave)
             insertRecipeDetails(data)
@@ -212,9 +225,16 @@ class SearchRepositoryImpl @Inject constructor(
 
     }
 
-  override suspend fun getFavoriteRecipes():List<RecipeSummary>{
-       return mainDb.recipeSummaryDao().getFavoriteRecipes(true).map {
-            recipeSummaryDbConvertor.map(it)
+  override suspend fun getFavoriteRecipes():List<RecipeDetails>{
+       return mainDb.recipeDetailsDao().getFavoriteRecipes(true).map {
+           recipeDetailsDbConvertor.map(it)!!
+        }
+    }
+
+
+    override suspend fun getSavedRecipes():List<RecipeDetails>{
+       return mainDb.recipeDetailsDao().getSavedRecipes().map {
+           recipeDetailsDbConvertor.map(it)!!
         }
     }
 
@@ -227,8 +247,7 @@ class SearchRepositoryImpl @Inject constructor(
             dto.title,
             dto.readyInMinutes,
             dto.servings,
-            dto.summary,
-            false
+            dto.summary
         )
     }
 

@@ -132,6 +132,19 @@
                 android:layout_height="51dp"
                 android:layout_marginStart="188dp"
                 android:layout_marginEnd="32dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/addInBook"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/addInBook"
+                app:layout_constraintTop_toTopOf="@+id/addInBook"
+                app:srcCompat="@drawable/ic_like_red_51dp" />
+
+            <ImageView
+                android:id="@+id/ic_disLike"
+                android:layout_width="51dp"
+                android:layout_height="51dp"
+                android:layout_marginStart="188dp"
+                android:layout_marginEnd="32dp"
                 app:layout_constraintBottom_toBottomOf="@+id/addInBook"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/addInBook"

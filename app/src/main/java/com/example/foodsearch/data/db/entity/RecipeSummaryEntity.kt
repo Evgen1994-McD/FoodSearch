@@ -11,5 +11,4 @@ data class RecipeSummaryEntity(
     val title: String?, // Название рецепта
     val readyInMinutes: Int?, // Время приготовления в минутах
     val servings: Int?, // Количество порций
-    val summary: String?,
-    val isLike:Boolean=false) // Краткое описание рецепта)
+    val summary: String?) // Краткое описание рецепта)

@@ -15,4 +15,5 @@ interface SearchInteractor {
 
 
     suspend fun getRecipeFromMemory(query:String?): Flow<PagingData<RecipeSummary>>
+    suspend fun insertRecipeDetails(recipeDetails: RecipeDetails)
 }

@@ -1,4 +1,4 @@
-package com.example.foodsearch.presentation.book.favorite
+package com.example.foodsearch.presentation.book.saved
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,7 +12,7 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class FavoriteViewModel @Inject constructor(
+class SavedRecipeFragmentViewModel @Inject constructor(
     private val repository: SearchRepository
 ):ViewModel() {
 
@@ -22,7 +22,7 @@ class FavoriteViewModel @Inject constructor(
 
 
     fun getRecipes()=viewModelScope.launch {
-        mutableScreenState.postValue(repository.getFavoriteRecipes())
+        mutableScreenState.postValue(repository.getSavedRecipes())
     }
 
 

@@ -72,6 +72,12 @@ class MainActivity : AppCompatActivity() {
                     binding.materialToolbar.navigationIcon = getDrawable(R.drawable.ic_backblack_16)
                 }
 
+                R.id.bookFragment -> {
+                    supportActionBar?.title = getString(R.string.favorite_menu)
+                    binding.materialToolbar.navigationIcon = null
+
+                }
+
 
             }
         }

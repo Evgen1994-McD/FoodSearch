@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.foodsearch.data.db.entity.RecipeDetailsEntity
+import com.example.foodsearch.data.db.entity.RecipeSummaryEntity
 
 @Dao
 interface RecipeDetailsDao {
@@ -22,5 +23,13 @@ interface RecipeDetailsDao {
 
     @Query("SELECT * FROM recipe_details_table WHERE id=:id")
     suspend fun getRecipeById(id: Int): List<RecipeDetailsEntity>
+
+    @Query("SELECT * FROM recipe_details_table WHERE isLike=:isLike")
+    suspend fun getFavoriteRecipes(isLike: Boolean): List<RecipeDetailsEntity>
+
+
+    @Query("SELECT * FROM recipe_details_table")
+    suspend fun getSavedRecipes(): List<RecipeDetailsEntity>
+
 
 }

@@ -11,10 +11,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.foodsearch.R
+import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.domain.models.RecipeSummary
 import com.example.foodsearch.presentation.search.adapter.OnRecipeClickListener
 
-class FavoriteRecipeViewHolder(itemView: View, listener: OnRecipeClickListener, private val context:Context) :
+class FavoriteRecipeViewHolder(itemView: View, listener: OnFavoriteRecipeClickListener, private val context:Context) :
     RecyclerView.ViewHolder(itemView) { // Добавили листенер в конструктор класса
 
     private val name: TextView = itemView.findViewById(R.id.name)
@@ -22,6 +23,8 @@ class FavoriteRecipeViewHolder(itemView: View, listener: OnRecipeClickListener, 
     private val servings: TextView = itemView.findViewById(R.id.tvServings)
     private val cookingTime: TextView = itemView.findViewById(R.id.tvCookingTime)
     private val image: ImageView = itemView.findViewById(R.id.imMine)
+
+
 
     private val options = RequestOptions().centerCrop()
     private val radiusInDP = 2f
@@ -37,7 +40,7 @@ class FavoriteRecipeViewHolder(itemView: View, listener: OnRecipeClickListener, 
 
 
     @SuppressLint("CheckResult")
-    fun bind(recipeSummary: RecipeSummary) {
+    fun bind(recipeSummary: RecipeDetails) {
         val tempSummary = recipeSummary.summary
 
         val index = tempSummary?.indexOf(".")

@@ -19,5 +19,6 @@ interface SearchRepository {
     suspend fun insertRecipeSummary(recipe: RecipeSummary)
     suspend fun getRecipeSummaryFromMemory(query:String?): Flow<PagingData<RecipeSummary>>
     suspend fun getRecipeDetailsFromMemoryById(id: Int): RecipeDetails?
-    suspend fun getFavoriteRecipes(): List<RecipeSummary>
+    suspend fun getFavoriteRecipes(): List<RecipeDetails>
+    suspend fun getSavedRecipes(): List<RecipeDetails>
 }

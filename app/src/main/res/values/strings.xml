@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">FoodSearch</string>
     <string name="greetings">Hello, Friend!</string>
+    <string name="favorite_menu">Favorite Menu</string>
     <string name="servings"> Servings</string>
     <string name="minutes"> Minutes</string>
     <string name="cost"> $</string>
@@ -11,6 +12,7 @@
     <string name="my_books">Мои Книги</string>
     <string name="favorite">Любимые</string>
     <string name="no_favorite">Вы еще не добавили рецепты в любимые.</string>
+    <string name="no_saved">Вы еще не искали рецепты.</string>
 
 
 

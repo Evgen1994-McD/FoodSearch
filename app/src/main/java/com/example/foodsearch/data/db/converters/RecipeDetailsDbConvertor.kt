@@ -42,7 +42,8 @@ class RecipeDetailsDbConvertor {
             instructions = recipe.instructions,
             analyzedInstructions = recipe.analyzedInstructions,
             spoonacularScore = recipe.spoonacularScore,
-            spoonacularSourceUrl = recipe.spoonacularSourceUrl
+            spoonacularSourceUrl = recipe.spoonacularSourceUrl,
+            recipe.isLike
         )
     }
 
@@ -83,7 +84,8 @@ class RecipeDetailsDbConvertor {
             instructions = recipe.instructions,
             analyzedInstructions = recipe.analyzedInstructions,
             spoonacularScore = recipe.spoonacularScore,
-            spoonacularSourceUrl = recipe.spoonacularSourceUrl
+            spoonacularSourceUrl = recipe.spoonacularSourceUrl,
+            recipe.isLike
         )
     }
 }

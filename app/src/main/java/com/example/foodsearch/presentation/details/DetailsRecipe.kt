@@ -13,6 +13,8 @@ import android.widget.ImageView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +30,7 @@ import com.example.foodsearch.presentation.search.SearchScreenState
 import com.example.foodsearch.presentation.search.adapter.RecipeAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailsRecipe : Fragment() {
@@ -61,6 +64,16 @@ class DetailsRecipe : Fragment() {
         ab =
             (activity as AppCompatActivity).supportActionBar
 
+        binding.icDisLike.setOnClickListener {
+            viewModel.like()
+        }
+
+
+        binding.icLike.setOnClickListener {
+            lifecycleScope.launch {
+                viewModel.disLike()
+            }
+        }
 
 
 
@@ -148,6 +161,10 @@ viewModel.getDetailsRecipeInfo(
 
                 is DetailsSearchScreenState.SearchResults -> {
                     val recipeToDisplay = newState.data
+
+                 val like = recipeToDisplay?.isLike ?:false
+                   binding.icLike.isVisible = like
+                    binding.icDisLike.isVisible = !like
 
 
                                 Glide.with(imMineDetail.context)

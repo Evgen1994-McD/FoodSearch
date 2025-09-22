@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.domain.search.SearchInteractor
 import com.example.foodsearch.presentation.search.SearchScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,11 +20,28 @@ class DetailsRecipeViewModel @Inject constructor(
 ): ViewModel() {
     //private val id = 631852
     val id: Int = savedStateHandle.get<Int>("id") ?: -1
+    private var currentRecipe: RecipeDetails? = null
 
     private val mutableScreenState = MutableLiveData<DetailsSearchScreenState?>()
     val getLiveData: LiveData<DetailsSearchScreenState?> get() = mutableScreenState
 
+    suspend fun replaceRecipe(recipeDetails: RecipeDetails){
+        searchInteractor.insertRecipeDetails(recipeDetails)
+        getDetailsRecipeInfo()
 
+
+    }
+
+     fun like()=viewModelScope.launch{
+       val recipe = currentRecipe?.copy(isLike = true)
+        recipe?.let { replaceRecipe(it) }
+    }
+
+   suspend fun disLike(){
+        val recipe = currentRecipe?.copy(isLike = false)
+        recipe?.let { replaceRecipe(it) }
+
+    }
 
 
     fun getDetailsRecipeInfo() {
@@ -38,6 +56,7 @@ class DetailsRecipeViewModel @Inject constructor(
                     mutableScreenState.postValue(DetailsSearchScreenState.ErrorNotFound(null))
                 }
                 pair.first != null -> {
+                    currentRecipe = pair.first
                     mutableScreenState.postValue(DetailsSearchScreenState.SearchResults(pair.first))
                 }
             }
