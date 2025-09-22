@@ -122,9 +122,11 @@
                 android:layout_height="51dp"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="30dp"
+                android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_name"
-                app:srcCompat="@drawable/ic_plus_51dp" />
+                app:srcCompat="@drawable/ic_plus_51dp"
+                tools:visibility="invisible" />
 
             <ImageView
                 android:id="@+id/ic_like"
@@ -251,11 +253,5 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-    <!-- Подключаем BottomSheet OUTSIDE ScrollView -->
-    <include
-        android:id="@+id/included_layout"
-        layout="@layout/bottom_sheet_menu"
-        android:visibility="visible"
-        tools:visibility="gone"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

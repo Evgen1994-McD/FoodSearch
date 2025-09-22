@@ -34,7 +34,6 @@ object MainModule {
     private const val BASE_URL = "https://api.spoonacular.com/"
 
 
-
     @Provides
     @Singleton
     fun provideMainDb(app: Application): MainDb {
@@ -46,20 +45,17 @@ object MainModule {
     }
 
 
-
-
     @Provides
     @Singleton
-    fun provideRecipeSummaryDbConvertor(): RecipeSummaryDbConvertor{
+    fun provideRecipeSummaryDbConvertor(): RecipeSummaryDbConvertor {
         return RecipeSummaryDbConvertor()
     }
 
     @Provides
     @Singleton
-    fun provideRecipeDetailsDbConvertor(): RecipeDetailsDbConvertor{
+    fun provideRecipeDetailsDbConvertor(): RecipeDetailsDbConvertor {
         return RecipeDetailsDbConvertor()
     }
-
 
 
     @Provides
@@ -91,8 +87,6 @@ object MainModule {
     }
 
 
-
-
     @Provides
     @Singleton
     fun provideSpoonacularApi(retrofit: Retrofit): SpoonacularApi {
@@ -108,15 +102,15 @@ object MainModule {
 }
 
 
-    @Module
-    @InstallIn(SingletonComponent::class)
-    abstract class SearchModule {
-        @Binds
-        abstract fun bindSearchRepository(searchRepositoryImpl: SearchRepositoryImpl): SearchRepository
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class SearchModule {
+    @Binds
+    abstract fun bindSearchRepository(searchRepositoryImpl: SearchRepositoryImpl): SearchRepository
 
-        @Binds
-        abstract fun bindSearchInteractor(searchInteractorImpl: SearchInteractorImpl): SearchInteractor
-    }
+    @Binds
+    abstract fun bindSearchInteractor(searchInteractorImpl: SearchInteractorImpl): SearchInteractor
+}
 
 
 

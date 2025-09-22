@@ -14,7 +14,7 @@ class RecipeAdapter(
     private val listener: OnRecipeClickListener,
     private val context: Context,
 
-) : PagingDataAdapter<RecipeSummary, RecipeViewHolder>(
+    ) : PagingDataAdapter<RecipeSummary, RecipeViewHolder>(
     DIFF_CALLBACK
 ) {
 
@@ -24,7 +24,10 @@ class RecipeAdapter(
                 return oldItem.id == newItem.id
             }
 
-            override fun areContentsTheSame(oldItem: RecipeSummary, newItem: RecipeSummary): Boolean {
+            override fun areContentsTheSame(
+                oldItem: RecipeSummary,
+                newItem: RecipeSummary,
+            ): Boolean {
                 return oldItem == newItem
             }
         }

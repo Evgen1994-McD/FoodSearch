@@ -18,14 +18,14 @@ interface RecipeSummaryDao {
     suspend fun deleteRecipeById(id: Int)
 
 
-@Query("SELECT * FROM recipe_summary_table ORDER BY id ASC LIMIT :limit OFFSET :offset")
-suspend fun getAllRecipes(offset: Int, limit: Int): List<RecipeSummaryEntity>
+    @Query("SELECT * FROM recipe_summary_table ORDER BY id ASC LIMIT :limit OFFSET :offset")
+    suspend fun getAllRecipes(offset: Int, limit: Int): List<RecipeSummaryEntity>
 
     @Query("SELECT * FROM recipe_summary_table WHERE title LIKE '%' || :title || '%' ORDER BY id ASC LIMIT :limit OFFSET :offset")
     suspend fun getRecipesByName(title: String, offset: Int, limit: Int): List<RecipeSummaryEntity>
 
 
-   @Query("SELECT * FROM recipe_summary_table WHERE id=:id")
+    @Query("SELECT * FROM recipe_summary_table WHERE id=:id")
     suspend fun getRecipeById(id: Int): List<RecipeSummaryEntity>
 
 

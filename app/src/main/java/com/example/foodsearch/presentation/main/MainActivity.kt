@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var navController: NavController
-    private lateinit var bottomNavigationView:BottomNavigationView
+    private lateinit var bottomNavigationView: BottomNavigationView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun navigateAndClearOldFragments(destinationId: Int): Boolean {
         // Чистим стек навигации и переходим на указанный пункт
         navController.popBackStack()

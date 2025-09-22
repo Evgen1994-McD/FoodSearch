@@ -44,7 +44,7 @@ class FavoriteFragment : Fragment(), OnFavoriteRecipeClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-viewModel.getRecipes()
+        viewModel.getRecipes()
         observeFavoriteRecipes()
 
 
@@ -55,8 +55,6 @@ viewModel.getRecipes()
         fun newInstance() = FavoriteFragment()
 
     }
-
-
 
 
     private fun View.makeGone() {
@@ -75,7 +73,7 @@ viewModel.getRecipes()
     private fun displayTRecipes(recipes: List<RecipeDetails>) = with(binding) {
 
         rcView1.layoutManager = LinearLayoutManager(requireContext())
-        rcView1.adapter = FavoriteAdapter(recipes, requireContext(), this@FavoriteFragment )
+        rcView1.adapter = FavoriteAdapter(recipes, requireContext(), this@FavoriteFragment)
         rcView1.makeVisible()
         phNtsh.makeInvisible()
         msgTxtBottom.makeInvisible()
@@ -112,7 +110,7 @@ viewModel.getRecipes()
     }
 
     override fun onRecipeClicker(recipeDetails: RecipeDetails) {
-getRecipeClickAndStart(recipeDetails)
+        getRecipeClickAndStart(recipeDetails)
     }
 
 }

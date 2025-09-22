@@ -3,20 +3,16 @@ package com.example.foodsearch.presentation.details
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
-import androidx.fragment.app.viewModels
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -25,17 +21,11 @@ import com.example.foodsearch.databinding.FragmentDetailsRecipeBinding
 import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.presentation.details.adapters.IngredientAdapter
 import com.example.foodsearch.presentation.details.adapters.StepAdapter
-import com.example.foodsearch.presentation.search.SearchFragment
-import com.example.foodsearch.presentation.search.SearchScreenState
-import com.example.foodsearch.presentation.search.adapter.RecipeAdapter
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailsRecipe : Fragment() {
     private lateinit var binding: FragmentDetailsRecipeBinding
-    private var lastState = null
     private lateinit var arrow: ImageView
     private lateinit var arrowInstructions: ImageView
     private var isExpanded = false
@@ -52,7 +42,7 @@ class DetailsRecipe : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentDetailsRecipeBinding.inflate(inflater, container, false)
         return binding.root
@@ -69,14 +59,15 @@ class DetailsRecipe : Fragment() {
 
 
         observeState()
-viewModel.getDetailsRecipeInfo()
+        observeByLike()
+        viewModel.getDetailsRecipeInfo()
 
 
 
         arrow = binding.btArrowIngredients
-        arrowInstructions=binding.btArrowInstructions
+        arrowInstructions = binding.btArrowInstructions
         expandRecyclerView(binding.rcViewIngredients, arrow)
-        expandRecyclerView(binding.rcViewInstructions,arrowInstructions)
+        expandRecyclerView(binding.rcViewInstructions, arrowInstructions)
 
         arrow.setOnClickListener {
             if (isExpanded) {
@@ -95,7 +86,7 @@ viewModel.getDetailsRecipeInfo()
                 isExpandedInstructions = false
 
             } else {
-                expandRecyclerView(binding.rcViewInstructions,arrowInstructions)
+                expandRecyclerView(binding.rcViewInstructions, arrowInstructions)
                 isExpandedInstructions = true
 
             }
@@ -103,15 +94,13 @@ viewModel.getDetailsRecipeInfo()
         }
 
 
-
-
-
-        val btStandartContainer = binding.includedLayout.bottomSheet
-        val btStBeh = BottomSheetBehavior.from(btStandartContainer)
-        btStBeh.state = BottomSheetBehavior.STATE_HIDDEN
-
         binding.addInBook.setOnClickListener {
-            expandBottomSheet()
+//            expandBottomSheet()
+            /*
+            Хочу добавить в боттом шит возможность добавлять рецепт в книгу РЕЦЕПТОВ и создавать книги рецептов.
+            Не хватило времени
+             */
+
         }
 
 
@@ -122,12 +111,24 @@ viewModel.getDetailsRecipeInfo()
 
     }
 
-    private fun expandBottomSheet() {
-        val btStandartContainer = binding.includedLayout.bottomSheet
-        val btStBeh = BottomSheetBehavior.from(btStandartContainer)
 
-        btStBeh.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+    private fun observeByLike() = with(binding) {
+        viewModel.getLiveDataIsLike.observe(viewLifecycleOwner) { isLike ->
+            when (isLike) {
+                true -> {
+                    binding.icLike.isVisible = true
+                    binding.icDisLike.isVisible = false
 
+                }
+
+                false -> {
+                    binding.icLike.isVisible = false
+                    binding.icDisLike.isVisible = true
+
+                }
+            }
+
+        }
     }
 
 
@@ -151,40 +152,45 @@ viewModel.getDetailsRecipeInfo()
 
 
                 is DetailsSearchScreenState.SearchResults -> {
-                    var like = false
                     val recipeToDisplay = newState.data
-                    if (recipeToDisplay?.isLike!=null){
-                         like = recipeToDisplay?.isLike!!
-                        binding.icLike.isVisible = like
-                        binding.icDisLike.isVisible = !like
 
+                    binding.icDisLike.setOnClickListener {
+                        viewModel.like()
+                    }
+
+                    binding.icLike.setOnClickListener {
+                        viewModel.disLike()
                     }
 
 
 
 
 
-                                Glide.with(imMineDetail.context)
-                .load(recipeToDisplay?.image)
-                .placeholder(R.drawable.ic_ph_kitchen)
-                .error(R.drawable.ic_ph_kitchen)
-                .into(imMineDetail)
+                    Glide.with(imMineDetail.context)
+                        .load(recipeToDisplay?.image)
+                        .placeholder(R.drawable.ic_ph_kitchen)
+                        .error(R.drawable.ic_ph_kitchen)
+                        .into(imMineDetail)
 
-                  val tags = getTags(recipeToDisplay)
+                    val tags = getTags(recipeToDisplay)
                     binding.tags.text = tags.toString()
                     binding.tvName.text = recipeToDisplay?.title.toString()
-                    binding.tvServ.text = recipeToDisplay?.servings.toString()+" "+ getString(R.string.servings)
-                    binding.tvTime.text = recipeToDisplay?.readyInMinutes.toString()+" "+ getString(R.string.minutes)
-                    binding.tvCost.text = recipeToDisplay?.pricePerServing.toString()+" "+ getString(R.string.cost)
+                    binding.tvServ.text =
+                        recipeToDisplay?.servings.toString() + " " + getString(R.string.servings)
+                    binding.tvTime.text =
+                        recipeToDisplay?.readyInMinutes.toString() + " " + getString(R.string.minutes)
+                    binding.tvCost.text =
+                        recipeToDisplay?.pricePerServing.toString() + " " + getString(R.string.cost)
                     binding.dishType.text = recipeToDisplay?.dishTypes.toString()
 
 
 
                     rcViewIngredients.layoutManager = LinearLayoutManager(requireContext())
-                    rcViewIngredients.adapter = IngredientAdapter(recipeToDisplay?.extendedIngredients, requireContext())
+                    rcViewIngredients.adapter =
+                        IngredientAdapter(recipeToDisplay?.extendedIngredients, requireContext())
 
 
-val steps = recipeToDisplay?.analyzedInstructions?.flatMap { it.steps }
+                    val steps = recipeToDisplay?.analyzedInstructions?.flatMap { it.steps }
                     rcViewInstructions.layoutManager = LinearLayoutManager(requireContext())
                     rcViewInstructions.adapter =
                         StepAdapter(steps, requireContext())
@@ -193,14 +199,11 @@ val steps = recipeToDisplay?.analyzedInstructions?.flatMap { it.steps }
                 }
 
 
-
-
                 null -> TODO()
             }
         }
 
     }
-
 
 
     private fun getTags(recipe: RecipeDetails?): List<String> {
@@ -220,30 +223,30 @@ val steps = recipeToDisplay?.analyzedInstructions?.flatMap { it.steps }
     }
 
 
-    private fun expandRecyclerView(recyclerView: RecyclerView, imageView: ImageView) = with(binding) {
-        recyclerView.visibility = View.VISIBLE
-        ObjectAnimator.ofFloat(recyclerView, "translationY", 0f).apply {
-            duration = 300
-            start()
+    private fun expandRecyclerView(recyclerView: RecyclerView, imageView: ImageView) =
+        with(binding) {
+            recyclerView.visibility = View.VISIBLE
+            ObjectAnimator.ofFloat(recyclerView, "translationY", 0f).apply {
+                duration = 300
+                start()
+            }
+            imageView.animate().rotation(180f).setDuration(300).start()
         }
-        imageView.animate().rotation(180f).setDuration(300).start()
-    }
 
-    private fun collapseRecyclerView(recyclerView: RecyclerView, imageView: ImageView) = with(binding){
-        ObjectAnimator.ofFloat(recyclerView, "translationY", recyclerView.height.toFloat()).apply {
-            duration = 300
-            addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    recyclerView.visibility = View.GONE
+    private fun collapseRecyclerView(recyclerView: RecyclerView, imageView: ImageView) =
+        with(binding) {
+            ObjectAnimator.ofFloat(recyclerView, "translationY", recyclerView.height.toFloat())
+                .apply {
+                    duration = 300
+                    addListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            recyclerView.visibility = View.GONE
+                        }
+                    })
+                    start()
                 }
-            })
-            start()
+            imageView.animate().rotation(0f).setDuration(300).start()
         }
-        imageView.animate().rotation(0f).setDuration(300).start()
-    }
-
-
-
 
 
 }

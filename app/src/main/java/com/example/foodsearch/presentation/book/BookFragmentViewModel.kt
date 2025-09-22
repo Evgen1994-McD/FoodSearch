@@ -5,10 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 
-
 class BookFragmentViewModel
 
-: ViewModel() {
+    : ViewModel() {
     // Переменная LiveData хранит позицию активной вкладки
     private val _currentTabPosition = MutableLiveData<Int>()
     val currentTabPosition: LiveData<Int> = _currentTabPosition

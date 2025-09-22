@@ -20,20 +20,12 @@ class StepViewHolder(itemView: View) :
     private val string: TextView = itemView.findViewById(R.id.step_string)
 
 
-
-
-
-
-
     @SuppressLint("CheckResult")
     fun bind(step: OtherModels.Step) {
 
 
-
         number.text = step.number.toString()
         string.text = step.step
-
-
 
 
     }

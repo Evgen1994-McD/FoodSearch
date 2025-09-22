@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val searchInteractor: SearchInteractor
+    private val searchInteractor: SearchInteractor,
 ) : ViewModel() {
 
     private val mutableScreenState = MutableLiveData<SearchScreenState>()
@@ -41,12 +41,12 @@ class SearchViewModel @Inject constructor(
     }
 
 
-    fun getRandomRecipes() {
+    fun getRandomRecipes(query: String?) {
         mutableScreenState.postValue(SearchScreenState.Loading)
 
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                val flow = searchInteractor.getRandomRecipes()
+                val flow = searchInteractor.getRandomRecipes(query)
 
                     .cachedIn(viewModelScope)
 
@@ -58,7 +58,8 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
-     fun getRecipeFromDb(query: String?)=viewModelScope.launch{
+
+    fun getRecipeFromDb(query: String?) = viewModelScope.launch {
         searchInteractor.getRecipeFromMemory(query)
             .cachedIn(viewModelScope)
             .collectLatest { data ->

@@ -5,14 +5,11 @@ import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import androidx.paging.map
 import com.example.foodsearch.data.db.DbRecipePagingSource
 import com.example.foodsearch.data.db.MainDb
 import com.example.foodsearch.data.db.converters.RecipeDetailsDbConvertor
 import com.example.foodsearch.data.db.converters.RecipeSummaryDbConvertor
-import com.example.foodsearch.data.search.dto.card.RecipeCardRequest
-import com.example.foodsearch.data.search.dto.card.RecipeCardResponse
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsDto
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsRequest
 import com.example.foodsearch.data.search.dto.random.RandomPagingSource
@@ -31,10 +28,8 @@ class SearchRepositoryImpl @Inject constructor(
     private val networkClient: NetworkClient,
     private val mainDb: MainDb,
     private val recipeSummaryDbConvertor: RecipeSummaryDbConvertor,
-    private val recipeDetailsDbConvertor: RecipeDetailsDbConvertor
+    private val recipeDetailsDbConvertor: RecipeDetailsDbConvertor,
 ) : SearchRepository {
-
-
 
 
     override suspend fun insertRecipeDetails(recipe: RecipeDetails) {
@@ -43,29 +38,29 @@ class SearchRepositoryImpl @Inject constructor(
         mainDb.recipeDetailsDao().insertRecipe(recipeToSave)
     }
 
-
     override suspend fun insertRecipeSummary(recipe: RecipeSummary) {
 
         val recipeToSave = recipeSummaryDbConvertor.map(recipe)
         mainDb.recipeSummaryDao().insertRecipe(recipeToSave)
     }
 
-
-
-    override suspend fun getRecipeSummaryFromMemory(query:String?): Flow<PagingData<RecipeSummary>> {
+    override suspend fun getRecipeSummaryFromMemory(query: String?): Flow<PagingData<RecipeSummary>> {
         return Pager(
 
             config = PagingConfig(pageSize = 5),
-            pagingSourceFactory = { DbRecipePagingSource(mainDb,recipeSummaryDbConvertor, query = query) }
+            pagingSourceFactory = {
+                DbRecipePagingSource(
+                    mainDb,
+                    recipeSummaryDbConvertor,
+                    query = query
+                )
+            }
         ).flow
-
 
             .catch { e ->
                 emit(PagingData.empty())
 
             }
-
-
 
 
     }
@@ -74,18 +69,14 @@ class SearchRepositoryImpl @Inject constructor(
         val recipe = mainDb.recipeDetailsDao().getRecipeById(id)
         return recipeDetailsDbConvertor.map(recipe[0])
 
-
     }
 
-
-
-
-    override fun getRandomRecipes(): Flow<PagingData<RecipeSummary>> {
+    override fun getRandomRecipes(query: String?): Flow<PagingData<RecipeSummary>> {
 
         return Pager(
 
-            config = PagingConfig(pageSize = 5),
-            pagingSourceFactory = { RandomPagingSource(networkClient) }
+            config = PagingConfig(pageSize = 1),
+            pagingSourceFactory = { RandomPagingSource(networkClient,query) }
         ).flow.map { pagingData ->
             pagingData.map { dto ->
                 mapToDomain(dto)
@@ -98,12 +89,7 @@ class SearchRepositoryImpl @Inject constructor(
             }
 
 
-
-
-
-
     }
-
 
     override fun searchRecipe(expression: String): Flow<PagingData<RecipeSummary>> {
 
@@ -125,33 +111,13 @@ class SearchRepositoryImpl @Inject constructor(
 
     }
 
-
-    override suspend fun searchRecipeCard(id: Int): String? {
-        val response = networkClient.doRecipeCardRequest(RecipeCardRequest(id))
-        when (response.resultCode) {
-            200 -> {
-                with(response as RecipeCardResponse) {
-                    val uri = url
-                    return uri
-                }
-            }
-
-            else -> return null
-        }
-
-    }
-
     override suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails? {
-        suspend fun controlIsLike(id: Int?): Boolean {
-            if (id == null) return false
-            val foundRecipe = getRecipeDetailsFromMemoryById(id)
-            return foundRecipe?.isLike ?: false
-        }
+
 
         try {
             val response = networkClient.doRecipeDetailsInfoRequest(RecipeDetailsRequest(id))
             val recipeDetailsDto = response as RecipeDetailsDto
-            val isLike = controlIsLike(recipeDetailsDto.id)
+
 
             val data = RecipeDetails(
                 id = recipeDetailsDto.id,
@@ -190,7 +156,7 @@ class SearchRepositoryImpl @Inject constructor(
                 analyzedInstructions = recipeDetailsDto.analyzedInstructions,
                 spoonacularScore = recipeDetailsDto.spoonacularScore,
                 spoonacularSourceUrl = recipeDetailsDto.spoonacularSourceUrl,
-                isLike = isLike
+                isLike = false
             )
 
             val recipeSummaryToSave = RecipeSummary(
@@ -207,34 +173,33 @@ class SearchRepositoryImpl @Inject constructor(
 
             return data
         } catch (e: Exception) {
-try {
-    return getRecipeDetailsFromMemoryById(id)
+            try {
+                return getRecipeDetailsFromMemoryById(id)
 
- }catch (e:Exception){
-     return null
- }
+            } catch (e: Exception) {
+                return null
+            }
 
         }
 
 
     }
 
-  override suspend fun getFavoriteRecipes():List<RecipeDetails>{
-       return mainDb.recipeDetailsDao().getFavoriteRecipes(true).map {
-           recipeDetailsDbConvertor.map(it)!!
+    override suspend fun getFavoriteRecipes(): List<RecipeDetails> {
+        return mainDb.recipeDetailsDao().getFavoriteRecipes(true).map {
+            recipeDetailsDbConvertor.map(it)!!
         }
     }
 
 
-    override suspend fun getSavedRecipes():List<RecipeDetails>{
-       return mainDb.recipeDetailsDao().getSavedRecipes().map {
-           recipeDetailsDbConvertor.map(it)!!
+    override suspend fun getSavedRecipes(): List<RecipeDetails> {
+        return mainDb.recipeDetailsDao().getSavedRecipes().map {
+            recipeDetailsDbConvertor.map(it)!!
         }
     }
 
 
-
-   private fun mapToDomain(dto: RecipeSummaryDto): RecipeSummary {
+    private fun mapToDomain(dto: RecipeSummaryDto): RecipeSummary {
         return RecipeSummary(
             dto.id,
             dto.image,
@@ -244,10 +209,6 @@ try {
             dto.summary
         )
     }
-
-
-
-
 
 
 }

@@ -11,7 +11,7 @@ import java.io.IOException
 class DbRecipePagingSource(
     private val db: MainDb,
     private val converter: RecipeSummaryDbConvertor,
-    private val query: String?
+    private val query: String?,
 ) : PagingSource<Int, RecipeSummary>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, RecipeSummary> {
@@ -23,14 +23,11 @@ class DbRecipePagingSource(
             val offset = pageIndex * limit
 
             // Выполняем запрос к базе данных
-            val result = if (query.isNullOrEmpty()){
+            val result = if (query.isNullOrEmpty()) {
                 db.recipeSummaryDao().getAllRecipes(offset, limit)
             } else {
-                db.recipeSummaryDao().getRecipesByName(query,offset, limit)
+                db.recipeSummaryDao().getRecipesByName(query, offset, limit)
             }
-
-
-
             // Преобразовываем данные с помощью конвертера
             val mappedEntities = result.map { entity -> converter.map(entity) }
 

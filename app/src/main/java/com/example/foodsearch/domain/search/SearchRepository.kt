@@ -11,10 +11,8 @@ import kotlinx.coroutines.flow.flow
 interface SearchRepository {
 
      fun searchRecipe(expression: String): Flow<PagingData<RecipeSummary>>
-    suspend fun searchRecipeCard(id: Int): String?
     suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails?
-    fun getRandomRecipes(): Flow<PagingData<RecipeSummary>>
-
+    fun getRandomRecipes(query: String?): Flow<PagingData<RecipeSummary>>
     suspend fun insertRecipeDetails(recipe: RecipeDetails)
     suspend fun insertRecipeSummary(recipe: RecipeSummary)
     suspend fun getRecipeSummaryFromMemory(query:String?): Flow<PagingData<RecipeSummary>>

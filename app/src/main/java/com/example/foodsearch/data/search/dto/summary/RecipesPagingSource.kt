@@ -6,7 +6,7 @@ import com.example.foodsearch.data.search.network.NetworkClient
 import java.io.IOException
 
 
-class   RecipesPagingSource(
+class RecipesPagingSource(
     private val client: NetworkClient,
     private val query: String
 ) : PagingSource<Int, RecipeSummaryDto>() {
@@ -16,7 +16,7 @@ class   RecipesPagingSource(
         val pageSize = params.loadSize
 
         return try {
-            val response = client.doRequest(query,  pageNumber, pageSize)
+            val response = client.doRequest(query, pageNumber, pageSize)
 
             if (response.resultCode == 200) {
                 val body = response as RecipeSummryResponse

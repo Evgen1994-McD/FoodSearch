@@ -43,10 +43,11 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class SearchFragment : Fragment(), OnRecipeClickListener {
 
-companion object{
-    fun newInstance() = SearchFragment()
+    companion object {
+        fun newInstance() = SearchFragment()
 
-}
+    }
+
     private val viewModel: SearchViewModel by viewModels()
     private lateinit var binding: FragmentSearchBinding
     private lateinit var pbs: ProgressBar
@@ -55,51 +56,57 @@ companion object{
     private var oldText: CharSequence = ""
     private var ab: ActionBar? =
         null // добавили переменную для ActionBar, будем показывать счетчик упражнений
-    private var isRandomSeachComplete=false
+    private var isRandomSeachComplete = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-       binding = FragmentSearchBinding.inflate(layoutInflater, container,false)
+        binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeRecipeSearchResults()
-if (!isRandomSeachComplete){
-    viewModel.getRandomRecipes()
-    isRandomSeachComplete=true
-}
+        if (!isRandomSeachComplete) {
+            viewModel.getRandomRecipes(query = null)
+            isRandomSeachComplete = true
+        }
         ab =
             (activity as AppCompatActivity).supportActionBar
-pbs = binding.pbs
+        pbs = binding.pbs
         textChangeListener()
         searchDebounce =
             debounce(2000L, viewLifecycleOwner.lifecycleScope, true) { txtForSearch ->
-           viewModel.searchRecipes(txtForSearch)
+                viewModel.searchRecipes(txtForSearch)
             }
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
             observeRecipeSearchResults()
         }
+
+        randomSearchByCategories()
     }
-private fun textChangeListener()=with(binding){
+
+    private fun textChangeListener() = with(binding) {
         inputEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
             }
+
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
+
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (!p0.isNullOrEmpty()) {
                     // инициализ переменную таск в текст ватчере, иначе происходит вылет
                     txtForSearch = p0.toString()
                     if (oldText == txtForSearch) {
                         inputEditText.requestFocus()
-                    }
-                    else if (oldText != txtForSearch && txtForSearch.isNotEmpty()) {
+                    } else if (oldText != txtForSearch && txtForSearch.isNotEmpty()) {
                         oldText = txtForSearch
 
                         searchDebounce(txtForSearch)
@@ -109,97 +116,126 @@ private fun textChangeListener()=with(binding){
 
         })
     }
-            private fun observeRecipeSearchResults() {
-                viewModel.getLiveData.observe(viewLifecycleOwner) { newState ->
-                    when (newState){
-                        is SearchScreenState.Loading -> {
-                            binding.rcView.makeGone()
-                            pbs.makeVisible()
 
-                        }
+    private fun observeRecipeSearchResults() {
+        viewModel.getLiveData.observe(viewLifecycleOwner) { newState ->
+            when (newState) {
+                is SearchScreenState.Loading -> {
+                    binding.rcView.makeGone()
+                    pbs.makeVisible()
 
-                        is SearchScreenState.ErrorNotFound -> {
-                            binding.im404.makeVisible()
-                            binding.tvNothingToShow.makeVisible()
-                            pbs.makeGone()
-                        }
-                        is SearchScreenState.SearchResults -> {
-                            pbs.makeGone()
-                            binding.im404.makeGone()
-                            binding.tvNothingToShow.makeGone()
-
-                            binding.rcView.makeVisible()
-observeRecipeSearchResultsFlow(newState.data)
-
-                        }
-                    }
                 }
-            }
 
-    private fun observeRecipeSearchResultsFlow(data: PagingData<RecipeSummary>) {
-        binding.rcView.layoutManager = LinearLayoutManager(requireContext())
-        binding.rcView.adapter = RecipeAdapter(this@SearchFragment, requireContext()).also { adapter ->
-            adapter.submitData(lifecycle, data)
+                is SearchScreenState.ErrorNotFound -> {
+                    binding.im404.makeVisible()
+                    binding.tvNothingToShow.makeVisible()
+                    pbs.makeGone()
+                }
 
-            // Запускаем корутин для наблюдения за состоянием загрузки
-            lifecycleScope.launch {
-                adapter.loadStateFlow.collectLatest { loadStates ->
-                    // Определяем условия для отображения элементов
-                    when {
-                        // Пока идут запросы на обновление данных
-                        loadStates.refresh is LoadState.Loading -> {
-                            pbs.makeVisible()
-                            binding.im404.makeGone()
-                            binding.tvNothingToShow.makeGone()
-                            binding.rcView.makeGone()
-                        }
+                is SearchScreenState.SearchResults -> {
+                    pbs.makeGone()
+                    binding.im404.makeGone()
+                    binding.tvNothingToShow.makeGone()
 
-                        // Все данные получены, проверяем их наличие
-                        loadStates.refresh is LoadState.NotLoading -> {
-                            pbs.makeGone()
-                            if (adapter.itemCount > 0) {
-                                // Есть данные, отображаем список
-                                binding.im404.makeGone()
-                                binding.tvNothingToShow.makeGone()
-                                binding.rcView.makeVisible()
-                            } else {
-                                // Нет данных, показываем уведомление
-                                binding.im404.makeVisible()
-                                binding.tvNothingToShow.makeVisible()
-                                binding.rcView.makeGone()
-                            }
-                        }
+                    binding.rcView.makeVisible()
+                    observeRecipeSearchResultsFlow(newState.data)
 
-                        // Возникла ошибка
-                        loadStates.refresh is LoadState.Error -> {
-                            viewModel.getRecipeFromDb(binding.inputEditText.text.toString())
-
-                            pbs.makeGone()
-                            binding.im404.makeVisible()
-                            binding.tvNothingToShow.makeVisible()
-                            binding.rcView.makeGone()
-                        }
-                    }
                 }
             }
         }
     }
 
-            private fun View.makeGone() {
-                this.visibility = View.GONE // функция для вью гон
-            }
+    private fun observeRecipeSearchResultsFlow(data: PagingData<RecipeSummary>) {
+        binding.rcView.layoutManager = LinearLayoutManager(requireContext())
+        binding.rcView.adapter =
+            RecipeAdapter(this@SearchFragment, requireContext()).also { adapter ->
+                adapter.submitData(lifecycle, data)
 
-            private fun View.makeVisible() {
-                this.visibility = View.VISIBLE // функция для вью визибл
-            }
+                // Запускаем корутин для наблюдения за состоянием загрузки
+                lifecycleScope.launch {
+                    adapter.loadStateFlow.collectLatest { loadStates ->
+                        // Определяем условия для отображения элементов
+                        when {
+                            // Пока идут запросы на обновление данных
+                            loadStates.refresh is LoadState.Loading -> {
+                                pbs.makeVisible()
+                                binding.im404.makeGone()
+                                binding.tvNothingToShow.makeGone()
+                                binding.rcView.makeGone()
+                            }
 
-            private fun View.makeInvisible() {
-                this.visibility = View.INVISIBLE // функция для вью инвизибл
+                            // Все данные получены, проверяем их наличие
+                            loadStates.refresh is LoadState.NotLoading -> {
+                                pbs.makeGone()
+                                if (adapter.itemCount > 0) {
+                                    // Есть данные, отображаем список
+                                    binding.im404.makeGone()
+                                    binding.tvNothingToShow.makeGone()
+                                    binding.rcView.makeVisible()
+                                } else {
+                                    // Нет данных, показываем уведомление
+                                    binding.im404.makeVisible()
+                                    binding.tvNothingToShow.makeVisible()
+                                    binding.rcView.makeGone()
+                                }
+                            }
+
+                            // Возникла ошибка
+                            loadStates.refresh is LoadState.Error -> {
+                                viewModel.getRecipeFromDb(binding.inputEditText.text.toString())
+
+                                pbs.makeGone()
+                                binding.im404.makeVisible()
+                                binding.tvNothingToShow.makeVisible()
+                                binding.rcView.makeGone()
+                            }
+                        }
+                    }
+                }
             }
+    }
+
+    private fun View.makeGone() {
+        this.visibility = View.GONE // функция для вью гон
+    }
+
+    private fun View.makeVisible() {
+        this.visibility = View.VISIBLE // функция для вью визибл
+    }
+
+    private fun View.makeInvisible() {
+        this.visibility = View.INVISIBLE // функция для вью инвизибл
+    }
 
     override fun onRecipeClicker(recipeSummary: RecipeSummary) {
 
-      findNavController().navigate(R.id.action_searchFragment_to_detailsRecipe, bundleOf("id" to (recipeSummary.id)))
+        findNavController().navigate(
+            R.id.action_searchFragment_to_detailsRecipe,
+            bundleOf("id" to (recipeSummary.id))
+        )
+
+    }
+
+    private fun randomSearchByCategories()=with(binding){
+        bread.setOnClickListener {
+            viewModel.getRandomRecipes(getString(R.string.bread))
+        }
+
+        breakfast.setOnClickListener {
+            viewModel.getRandomRecipes(getString(R.string.breakfast))
+        }
+
+        dessert.setOnClickListener {
+            viewModel.getRandomRecipes(getString(R.string.dessert))
+        }
+
+        salad.setOnClickListener {
+            viewModel.getRandomRecipes(getString(R.string.salad))
+        }
+
+        snack.setOnClickListener {
+            viewModel.getRandomRecipes(getString(R.string.snack))
+        }
 
     }
 
