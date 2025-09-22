@@ -19,8 +19,10 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodsearch.R
 import com.example.foodsearch.databinding.FragmentSearchBinding
@@ -29,6 +31,7 @@ import com.example.foodsearch.presentation.search.adapter.OnRecipeClickListener
 import com.example.foodsearch.presentation.search.adapter.RecipeAdapter
 import com.example.foodsearch.utils.debounce
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
@@ -66,12 +69,14 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        observeRecipeSearchResults()
+        observeRecipeSearchResults()
 
 
 
 if (!isRandomSeachComplete){
-observeRandomRecipes()
+//observeRandomRecipes()
+    viewModel.getRandomRecipes()
+
     isRandomSeachComplete=true
 }
 
@@ -87,7 +92,7 @@ pbs = binding.pbs
         textChangeListener()
         searchDebounce =
             debounce(2000L, viewLifecycleOwner.lifecycleScope, true) { txtForSearch ->
-           observeRecipeSearchResultsFlow(txtForSearch)
+           viewModel.searchRecipes(txtForSearch)
             }
 
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
@@ -149,6 +154,8 @@ private fun textChangeListener()=with(binding){
     }
             private fun observeRecipeSearchResults() {
                 viewModel.getLiveData.observe(viewLifecycleOwner) { newState ->
+Log.d("Observe_State", "$newState")
+
                     when (newState){
                         is SearchScreenState.Loading -> {
                             binding.rcView.makeGone()
@@ -165,17 +172,17 @@ binding.tvNothingToShow.makeVisible()
                         }
 
                         is SearchScreenState.ErrorNotFound -> {
-                            if (newState.message == "retry") {
+//                            if (newState.message == "retry") {
                                 binding.im404.makeVisible()
                                 binding.tvNothingToShow.makeVisible()
 
                                 pbs.makeGone()
-                            } else if (newState.message == null) {
-                                pbs.makeGone()
-                                binding.im404.makeVisible()
-                                binding.tvNothingToShow.makeVisible()
-
-                            }
+//                            } else if (newState.message == null) {
+//                                pbs.makeGone()
+//                                binding.im404.makeVisible()
+//                                binding.tvNothingToShow.makeVisible()
+//
+//                            }
                         }
 
 
@@ -187,11 +194,10 @@ binding.tvNothingToShow.makeVisible()
                             binding.rcView.makeVisible()
 
 
-                            val recipeToDisplay = newState.data
-                            if (recipeToDisplay != null) {
-                                lastState = recipeToDisplay
-                            }
-                            recipeToDisplay?.let { displayRecipes(it) }
+observeRecipeSearchResultsFlow(newState.data)
+
+
+
 
                         }
                     }
@@ -203,25 +209,16 @@ binding.tvNothingToShow.makeVisible()
                 }
             }
 
-    private  fun observeRecipeSearchResultsFlow(string: String) = lifecycleScope.launch {
-        viewModel.searchRecipes(string).collectLatest { pagingData ->
-            binding.rcView.layoutManager = LinearLayoutManager(requireContext())
-            binding.rcView.adapter = RecipeAdapter(this@SearchFragment, requireContext()).also { adapter ->
-                adapter.submitData(lifecycle, pagingData)
-            }
+    private  fun observeRecipeSearchResultsFlow(data:PagingData<RecipeSummary>) {
+
+
+        binding.rcView.layoutManager = LinearLayoutManager(requireContext())
+        binding.rcView.adapter = RecipeAdapter(this@SearchFragment, requireContext()).also { adapter ->
+            adapter.submitData(lifecycle, data)
         }
     }
 
 
-    private  fun observeRandomRecipes() = lifecycleScope.launch {
-        viewModel.getRandomRecipes().collectLatest { pagingData ->
-            binding.rcView.layoutManager = LinearLayoutManager(requireContext())
-            binding.rcView.adapter = RecipeAdapter(this@SearchFragment, requireContext()).also { adapter ->
-                adapter.submitData(lifecycle, pagingData)
-            }
-        }
-
-    }
 
             private fun displayRecipes(recipeSummaries: List<RecipeSummary>) = with(binding) {
 

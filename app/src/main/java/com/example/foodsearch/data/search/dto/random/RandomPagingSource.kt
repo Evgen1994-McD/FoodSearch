@@ -3,7 +3,6 @@ package com.example.foodsearch.data.search.dto.random
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.foodsearch.data.search.dto.summary.RecipeSummaryDto
-import com.example.foodsearch.data.search.dto.summary.RecipeSummryResponse
 import com.example.foodsearch.data.search.network.NetworkClient
 import java.io.IOException
 

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
 import com.example.foodsearch.data.db.MainDb
 import com.example.foodsearch.data.db.converters.RecipeDetailsDbConvertor
@@ -82,11 +83,11 @@ class SearchRepositoryImpl @Inject constructor(
                 mapToDomain(dto)
             }
         }
-//            .catch { e ->
-//                Log.e("SearchRandomError", "Error searching recipes", e)
-//                emit(PagingData.empty())
-//
-//            }
+            .catch { e ->
+                Log.e("SearchRandomError", "Error searching recipes", e)
+                emit(PagingData.empty())
+
+            }
 
 
 
@@ -108,11 +109,11 @@ class SearchRepositoryImpl @Inject constructor(
 
         }
 
-//            .catch { e ->
-//                Log.e("SearchError", "Error searching recipes", e)
-//                emit(PagingData.empty())
-//
-//            }
+            .catch { e ->
+                Log.e("Observe_State", "Error searching recipes", e)
+                emit(PagingData.empty())
+
+            }
 
     }
 

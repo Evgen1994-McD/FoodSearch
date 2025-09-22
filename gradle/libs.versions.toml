@@ -11,6 +11,7 @@ composeBom = "2024.09.00"
 navigationFragmentKtx = "2.9.4"
 navigationUiKtx = "2.9.4"
 gson-version ="2.10.1"
+pagingRuntimeKtx = "3.3.6"
 retrofit-version = "2.9.0"
 gson-converter-version = "2.9.0"
 annotationProcessor-version = "4.14.2"
@@ -30,6 +31,7 @@ fragmentKtx = "1.8.9"
 
 
 [libraries]
+androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
 recycler-view ={group="androidx.recyclerview", name="recyclerview", version.ref="recycler-view-version"}
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
