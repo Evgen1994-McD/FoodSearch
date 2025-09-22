@@ -201,7 +201,8 @@ val isLike = recipeDetailsDto.id?.let { controlIsLike(it) }
                     analyzedInstructions = recipeDetailsDto.analyzedInstructions,
                     spoonacularScore = recipeDetailsDto.spoonacularScore,
                     spoonacularSourceUrl = recipeDetailsDto.spoonacularSourceUrl,
-                    isLike ?: false
+                    isLike =  isLike ?: false
+
                 )
             val recipeSummaryToSave = RecipeSummary(
                 data.id,
@@ -218,8 +219,13 @@ val isLike = recipeDetailsDto.id?.let { controlIsLike(it) }
 
             return data
         } catch (e: Exception) {
+try {
+    return getRecipeDetailsFromMemoryById(id)
 
-            return getRecipeDetailsFromMemoryById(id)
+ }catch (e:Exception){
+     return null
+ }
+
         }
 
 

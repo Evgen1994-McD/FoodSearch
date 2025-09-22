@@ -42,5 +42,5 @@ data class RecipeDetailsDto(
     val analyzedInstructions: List<AnalyzedInstruction>?, // Проанализированные инструкции
     val spoonacularScore: Double?, // Оценка Spoonacular
     val spoonacularSourceUrl: String?,
-    val isLike:Boolean// URL источника на Spoonacular
+    val isLike:Boolean?// URL источника на Spoonacular
 )

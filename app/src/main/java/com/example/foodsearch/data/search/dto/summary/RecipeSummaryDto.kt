@@ -8,5 +8,3 @@ data class RecipeSummaryDto(
     val readyInMinutes: Int?, // Время приготовления в минутах
     val servings: Int?, // Количество порций
     val summary: String?) // Краткое описание рецепта)
- {
-}
