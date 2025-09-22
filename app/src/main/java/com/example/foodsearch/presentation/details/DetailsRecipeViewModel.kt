@@ -25,9 +25,11 @@ class DetailsRecipeViewModel @Inject constructor(
     private val mutableScreenState = MutableLiveData<DetailsSearchScreenState?>()
     val getLiveData: LiveData<DetailsSearchScreenState?> get() = mutableScreenState
 
-//    suspend fun replaceRecipe(recipeDetails: RecipeDetails){
-//        searchInteractor.insertRecipeDetails(recipeDetails)
-//        getDetailsRecipeInfo()
+    suspend fun replaceRecipe(recipeDetails: RecipeDetails) {
+        searchInteractor.insertRecipeDetails(recipeDetails)
+        getDetailsRecipeInfo()
+
+    }
 //
 //
 //    }
