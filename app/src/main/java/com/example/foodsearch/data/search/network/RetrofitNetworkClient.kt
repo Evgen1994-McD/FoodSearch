@@ -10,8 +10,8 @@ import kotlinx.coroutines.withContext
 class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : NetworkClient {
     private val apiKey = "91225f5085c54860b6c9d5d0298b460b"
     private val apiKey4 = "9c69449bd45d4cb0abc8dedbcff5867c"
-    private val apiKey3 = "132e04b6aa4d4bddb00fc04b0fe73967"
-    private val apiKey2 = "fc9779e7ffdb4a0394b69e0af48c6392"
+    private val apiKey2 = "132e04b6aa4d4bddb00fc04b0fe73967"
+    private val apiKey3 = "fc9779e7ffdb4a0394b69e0af48c6392"
 
     override suspend fun doRequest(dto: String, pageNumber: Int, pageSize: Int): Response {
         return withContext(Dispatchers.IO) {

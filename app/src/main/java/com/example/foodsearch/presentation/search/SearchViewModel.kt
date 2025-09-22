@@ -11,6 +11,7 @@ import com.example.foodsearch.domain.search.SearchInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -60,9 +61,13 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-
-
-
+     fun getRecipeFromDb(query: String?)=viewModelScope.launch{
+        searchInteractor.getRecipeFromMemory(query)
+            .cachedIn(viewModelScope)
+            .collectLatest { data ->
+                mutableScreenState.value = SearchScreenState.SearchResults(data)
+            }
+    }
 
 
 

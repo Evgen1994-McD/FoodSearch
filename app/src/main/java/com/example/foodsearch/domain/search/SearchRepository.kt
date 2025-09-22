@@ -15,9 +15,8 @@ interface SearchRepository {
     suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails?
     fun getRandomRecipes(): Flow<PagingData<RecipeSummary>>
 
-    suspend fun searchRecipeFromDbByTitle(title: String): List<RecipeSummary>?
     suspend fun insertRecipeDetails(recipe: RecipeDetails)
     suspend fun insertRecipeSummary(recipe: RecipeSummary)
-    suspend fun getRecipeSummaryFromMemory(): List<RecipeSummary>?
+    suspend fun getRecipeSummaryFromMemory(query:String?): Flow<PagingData<RecipeSummary>>
     suspend fun getRecipeDetailsFromMemoryById(id: Int): RecipeDetails?
 }

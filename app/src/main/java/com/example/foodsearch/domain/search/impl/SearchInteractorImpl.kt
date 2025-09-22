@@ -17,6 +17,12 @@ class SearchInteractorImpl @Inject constructor(
         private const val exceptionStateString = "Exception"
     }
 
+    override suspend fun getRecipeFromMemory(query:String?) : Flow<PagingData<RecipeSummary>> {
+       return searchRepository.getRecipeSummaryFromMemory(query)
+    }
+
+
+
     override fun searchRecipe(expression: String): Flow<PagingData<RecipeSummary>>{
 
 

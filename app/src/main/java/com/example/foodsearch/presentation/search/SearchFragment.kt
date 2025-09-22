@@ -247,6 +247,8 @@ observeRecipeSearchResultsFlow(newState.data)
 
                         // Возникла ошибка
                         loadStates.refresh is LoadState.Error -> {
+                            viewModel.getRecipeFromDb(binding.inputEditText.text.toString())
+
                             pbs.makeGone()
                             binding.im404.makeVisible()
                             binding.tvNothingToShow.makeVisible()
@@ -260,12 +262,6 @@ observeRecipeSearchResultsFlow(newState.data)
 
 
 
-            private fun displayRecipes(recipeSummaries: List<RecipeSummary>) = with(binding) {
-
-        rcView.layoutManager = LinearLayoutManager(requireContext())
-        rcView.adapter = RecipeAdapter( this@SearchFragment, requireContext())
-        rcView.makeVisible()
-            }
 
 
             private fun View.makeGone() {

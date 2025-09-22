@@ -7,6 +7,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.example.foodsearch.data.db.DbRecipePagingSource
 import com.example.foodsearch.data.db.MainDb
 import com.example.foodsearch.data.db.converters.RecipeDetailsDbConvertor
 import com.example.foodsearch.data.db.converters.RecipeSummaryDbConvertor
@@ -33,12 +34,7 @@ class SearchRepositoryImpl @Inject constructor(
     private val recipeDetailsDbConvertor: RecipeDetailsDbConvertor
 ) : SearchRepository {
 
-    override suspend fun searchRecipeFromDbByTitle(title: String): List<RecipeSummary>? {
-        val tempList = mainDb.recipeSummaryDao().getRecipesByName(title).map {
-            recipeSummaryDbConvertor.map(it)
-        }
-        return tempList
-    }
+
 
 
     override suspend fun insertRecipeDetails(recipe: RecipeDetails) {
@@ -56,11 +52,22 @@ class SearchRepositoryImpl @Inject constructor(
 
 
 
-    override suspend fun getRecipeSummaryFromMemory(): List<RecipeSummary>? {
-        return mainDb.recipeSummaryDao().getAllRecipes().map { entity ->
-            recipeSummaryDbConvertor.map(entity)
+    override suspend fun getRecipeSummaryFromMemory(query:String?): Flow<PagingData<RecipeSummary>> {
+        return Pager(
 
-        }
+            config = PagingConfig(pageSize = 5),
+            pagingSourceFactory = { DbRecipePagingSource(mainDb,recipeSummaryDbConvertor, query = query) }
+        ).flow
+
+
+            .catch { e ->
+                emit(PagingData.empty())
+
+            }
+
+
+
+
     }
 
     override suspend fun getRecipeDetailsFromMemoryById(id: Int): RecipeDetails? {
