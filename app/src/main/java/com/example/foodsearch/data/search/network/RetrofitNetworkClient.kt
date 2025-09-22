@@ -15,7 +15,9 @@ class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : Networ
     private val apiKey3 = "7be5813cd34e4ee381ede45891148d22"
     private val apiKey33 = "c3a4ad3a8035467c80953f24b8f3cc83"
     private val apiKey21 = "3c4e3432dd7e432b826d041e71b923b8"
-    private val apiKey2 = "e75cda5befa3464ca0c178e307ae9620"
+    private val apiKey223 = "e75cda5befa3464ca0c178e307ae9620"
+    private val apiKey0 = "03f1f1d6fced433a92729d7f1a99fdd0"
+    private val apiKey2 = "54e75716e30a4ce784b258783f6f4eac"
 
     override suspend fun doRequest(dto: String, pageNumber: Int, pageSize: Int): Response {
         return withContext(Dispatchers.IO) {

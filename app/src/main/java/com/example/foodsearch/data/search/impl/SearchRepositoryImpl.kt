@@ -74,7 +74,7 @@ class SearchRepositoryImpl @Inject constructor(
 
         return Pager(
 
-            config = PagingConfig(pageSize = 5),
+            config = PagingConfig(pageSize = 1),
             pagingSourceFactory = { RandomPagingSource(networkClient) }
         ).flow.map { pagingData ->
             pagingData.map { dto ->

@@ -12,6 +12,7 @@ import com.example.foodsearch.presentation.search.SearchScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -31,8 +32,8 @@ class DetailsRecipeViewModel @Inject constructor(
     val getLiveDataIsLike: LiveData<Boolean> get() = mutableScreenStateIsLike
 
 
-    suspend fun tryGetRecipeFromDataBase(id: Int) {
-        searchInteractor.searchRecipeDetailsInfo(id)
+    suspend fun tryGetRecipeFromDataBase() {
+        searchInteractor.getRecipeDetailsById(id)
         if (searchInteractor.getRecipeDetailsById(id)?.isLike == true) {
             mutableScreenStateIsLike.postValue(true)
         } else {
@@ -43,7 +44,7 @@ class DetailsRecipeViewModel @Inject constructor(
 
     suspend fun replaceRecipe(recipeDetails: RecipeDetails) {
         searchInteractor.insertRecipeDetails(recipeDetails)
-        getDetailsRecipeInfo()
+
 
     }
 
@@ -51,11 +52,14 @@ class DetailsRecipeViewModel @Inject constructor(
     fun like() = viewModelScope.launch {
         val recipe = currentRecipe?.copy(isLike = true)
         recipe?.let { replaceRecipe(it) }
+        tryGetRecipeFromDataBase()
     }
 
     fun disLike() = viewModelScope.launch {
         val recipe = currentRecipe?.copy(isLike = false)
         recipe?.let { replaceRecipe(it) }
+        tryGetRecipeFromDataBase()
+
     }
 
 
@@ -68,7 +72,8 @@ class DetailsRecipeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
 
             try {
-                tryGetRecipeFromDataBase(id)
+
+                tryGetRecipeFromDataBase()
             } catch (e: Exception) {
                 Log.d("error", " $  ${e.message}")
             }
@@ -87,7 +92,7 @@ class DetailsRecipeViewModel @Inject constructor(
                 }
 
                 pair.first != null -> {
-                    tryGetRecipeFromDataBase(id)
+
                     currentRecipe = pair.first
                     mutableScreenState.postValue(DetailsSearchScreenState.SearchResults(pair.first))
                 }
