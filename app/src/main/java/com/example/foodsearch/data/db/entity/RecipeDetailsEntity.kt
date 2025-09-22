@@ -44,5 +44,5 @@ data class RecipeDetailsEntity(
     val analyzedInstructions: List<AnalyzedInstruction>?, // Проанализированные инструкции
     val spoonacularScore: Double?, // Оценка Spoonacular
     val spoonacularSourceUrl: String?, // URL источника на Spoonacular
-val isLike:Boolean?
+    val isLike: Boolean?,
 )

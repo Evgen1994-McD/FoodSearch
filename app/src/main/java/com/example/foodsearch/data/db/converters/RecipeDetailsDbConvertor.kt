@@ -43,7 +43,7 @@ class RecipeDetailsDbConvertor {
             analyzedInstructions = recipe.analyzedInstructions,
             spoonacularScore = recipe.spoonacularScore,
             spoonacularSourceUrl = recipe.spoonacularSourceUrl,
-            isLike = recipe.isLike?:false
+            isLike = recipe.isLike
         )
     }
 

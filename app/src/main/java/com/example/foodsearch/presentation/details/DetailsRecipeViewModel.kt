@@ -37,7 +37,7 @@ class DetailsRecipeViewModel @Inject constructor(
         recipe?.let { replaceRecipe(it) }
     }
 
-   suspend fun disLike(){
+    fun disLike()=viewModelScope.launch{
         val recipe = currentRecipe?.copy(isLike = false)
         recipe?.let { replaceRecipe(it) }
 

@@ -64,23 +64,23 @@ class DetailsRecipe : Fragment() {
         ab =
             (activity as AppCompatActivity).supportActionBar
 
+
+
+
+
+        observeState()
+viewModel.getDetailsRecipeInfo()
+
         binding.icDisLike.setOnClickListener {
             viewModel.like()
         }
 
 
         binding.icLike.setOnClickListener {
-            lifecycleScope.launch {
-                viewModel.disLike()
-            }
+
+            viewModel.disLike()
+
         }
-
-
-
-        observeState()
-viewModel.getDetailsRecipeInfo(
-
-)
 
         arrow = binding.btArrowIngredients
         arrowInstructions=binding.btArrowInstructions
@@ -160,11 +160,17 @@ viewModel.getDetailsRecipeInfo(
 
 
                 is DetailsSearchScreenState.SearchResults -> {
+                    var like = false
                     val recipeToDisplay = newState.data
+                    if (recipeToDisplay?.isLike!=null){
+                         like = recipeToDisplay?.isLike!!
+                        binding.icLike.isVisible = like
+                        binding.icDisLike.isVisible = !like
 
-                 val like = recipeToDisplay?.isLike ?:false
-                   binding.icLike.isVisible = like
-                    binding.icDisLike.isVisible = !like
+                    }
+
+
+
 
 
                                 Glide.with(imMineDetail.context)
