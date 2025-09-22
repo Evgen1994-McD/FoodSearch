@@ -1,5 +1,6 @@
 package com.example.foodsearch.presentation.details
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -26,14 +27,14 @@ class DetailsRecipeViewModel @Inject constructor(
     val getLiveData: LiveData<DetailsSearchScreenState?> get() = mutableScreenState
 
 
-
     private val mutableScreenStateIsLike = MutableLiveData<Boolean>()
     val getLiveDataIsLike: LiveData<Boolean> get() = mutableScreenStateIsLike
 
 
-    suspend fun tryGetRecipeFromDataBase(id:Int){
-        if (searchInteractor.getRecipeDetailsById(id)?.isLike == true){
-mutableScreenStateIsLike.postValue(true)
+    suspend fun tryGetRecipeFromDataBase(id: Int) {
+        searchInteractor.searchRecipeDetailsInfo(id)
+        if (searchInteractor.getRecipeDetailsById(id)?.isLike == true) {
+            mutableScreenStateIsLike.postValue(true)
         } else {
             mutableScreenStateIsLike.postValue(false)
         }
@@ -47,26 +48,32 @@ mutableScreenStateIsLike.postValue(true)
     }
 
 
-
-
-     fun like()=viewModelScope.launch{
-       val recipe = currentRecipe?.copy(isLike = true)
+    fun like() = viewModelScope.launch {
+        val recipe = currentRecipe?.copy(isLike = true)
         recipe?.let { replaceRecipe(it) }
     }
 
-    fun disLike()=viewModelScope.launch {
+    fun disLike() = viewModelScope.launch {
         val recipe = currentRecipe?.copy(isLike = false)
         recipe?.let { replaceRecipe(it) }
     }
-
 
 
 //
 
 
     fun getDetailsRecipeInfo() {
+
+
         viewModelScope.launch(Dispatchers.IO) {
-            tryGetRecipeFromDataBase(id)
+
+            try {
+                tryGetRecipeFromDataBase(id)
+            } catch (e: Exception) {
+                Log.d("error", " $  ${e.message}")
+            }
+
+
 
             mutableScreenState.postValue(DetailsSearchScreenState.Loading) // при начале запроса - выставляем лоадинг в тру
             val pair = searchInteractor.searchRecipeDetailsInfo(id)
@@ -74,10 +81,13 @@ mutableScreenStateIsLike.postValue(true)
                 pair.first == null && pair.second == "Exception" -> {
                     mutableScreenState.postValue(DetailsSearchScreenState.ErrorNoEnternet(pair.second))
                 }
+
                 pair.first == null && pair.second == null -> {
                     mutableScreenState.postValue(DetailsSearchScreenState.ErrorNotFound(null))
                 }
+
                 pair.first != null -> {
+                    tryGetRecipeFromDataBase(id)
                     currentRecipe = pair.first
                     mutableScreenState.postValue(DetailsSearchScreenState.SearchResults(pair.first))
                 }
@@ -85,7 +95,10 @@ mutableScreenStateIsLike.postValue(true)
         }
     }
 
-    }
+}
+
+
+
 
 
 
