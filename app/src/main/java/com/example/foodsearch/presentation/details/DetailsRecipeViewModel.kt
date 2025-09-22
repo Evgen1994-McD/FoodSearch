@@ -25,29 +25,49 @@ class DetailsRecipeViewModel @Inject constructor(
     private val mutableScreenState = MutableLiveData<DetailsSearchScreenState?>()
     val getLiveData: LiveData<DetailsSearchScreenState?> get() = mutableScreenState
 
+
+
+    private val mutableScreenStateIsLike = MutableLiveData<Boolean>()
+    val getLiveDataIsLike: LiveData<Boolean> get() = mutableScreenStateIsLike
+
+
+    suspend fun tryGetRecipeFromDataBase(id:Int){
+        if (searchInteractor.getRecipeDetailsById(id)?.isLike == true){
+mutableScreenStateIsLike.postValue(true)
+        } else {
+            mutableScreenStateIsLike.postValue(false)
+        }
+    }
+
+
     suspend fun replaceRecipe(recipeDetails: RecipeDetails) {
         searchInteractor.insertRecipeDetails(recipeDetails)
         getDetailsRecipeInfo()
 
     }
+
+
+
+
+     fun like()=viewModelScope.launch{
+       val recipe = currentRecipe?.copy(isLike = true)
+        recipe?.let { replaceRecipe(it) }
+    }
+
+    fun disLike()=viewModelScope.launch {
+        val recipe = currentRecipe?.copy(isLike = false)
+        recipe?.let { replaceRecipe(it) }
+    }
+
+
+
 //
-//
-//    }
-//
-//     fun like()=viewModelScope.launch{
-//       val recipe = currentRecipe?.copy(isLike = true)
-//        recipe?.let { replaceRecipe(it) }
-//    }
-//
-//    fun disLike()=viewModelScope.launch{
-//        val recipe = currentRecipe?.copy(isLike = false)
-//        recipe?.let { replaceRecipe(it) }
-//
-//    }
 
 
     fun getDetailsRecipeInfo() {
         viewModelScope.launch(Dispatchers.IO) {
+            tryGetRecipeFromDataBase(id)
+
             mutableScreenState.postValue(DetailsSearchScreenState.Loading) // при начале запроса - выставляем лоадинг в тру
             val pair = searchInteractor.searchRecipeDetailsInfo(id)
             when {

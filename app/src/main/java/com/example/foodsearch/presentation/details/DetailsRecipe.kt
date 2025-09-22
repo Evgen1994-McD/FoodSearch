@@ -69,6 +69,7 @@ class DetailsRecipe : Fragment() {
 
 
         observeState()
+        observeByLike()
 viewModel.getDetailsRecipeInfo()
 
 
@@ -131,6 +132,26 @@ viewModel.getDetailsRecipeInfo()
     }
 
 
+    private fun observeByLike() = with(binding){
+        viewModel.getLiveDataIsLike.observe(viewLifecycleOwner){isLike ->
+            when(isLike){
+                true -> {
+                    binding.icLike.isVisible =true
+                    binding.icDisLike.isVisible =false
+
+                }
+
+                false -> {
+                    binding.icLike.isVisible =false
+                    binding.icDisLike.isVisible =true
+
+                }
+            }
+
+        }
+    }
+
+
     private fun observeState() = with(binding) {
         viewModel.getLiveData.observe(viewLifecycleOwner) { newState ->
 
@@ -151,13 +172,14 @@ viewModel.getDetailsRecipeInfo()
 
 
                 is DetailsSearchScreenState.SearchResults -> {
-                    var like = false
                     val recipeToDisplay = newState.data
-                    if (recipeToDisplay?.isLike!=null){
-                         like = recipeToDisplay?.isLike!!
-                        binding.icLike.isVisible = like
-                        binding.icDisLike.isVisible = !like
 
+                    binding.icDisLike.setOnClickListener {
+                        viewModel.like()
+                    }
+
+                    binding.icLike.setOnClickListener {
+                        viewModel.disLike()
                     }
 
 
