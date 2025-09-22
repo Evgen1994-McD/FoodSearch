@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+
+    >
+
+
+    <item
+        android:id="@+id/searchFragment"
+        android:icon="@drawable/ic_search_19"
+        android:title="@string/search_menu"
+
+        />
+
+
+    <item
+        android:id="@+id/bookFragment"
+        android:icon="@drawable/ic_book_24"
+        android:title="@string/book_menu"
+
+
+        />
+
+
+
+
+
+</menu>

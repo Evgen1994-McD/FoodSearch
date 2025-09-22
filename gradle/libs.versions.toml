@@ -10,6 +10,18 @@ activityCompose = "1.11.0"
 composeBom = "2024.09.00"
 navigationFragmentKtx = "2.9.4"
 navigationUiKtx = "2.9.4"
+gson-version ="2.10.1"
+pagingRuntimeKtx = "3.3.6"
+retrofit-version = "2.9.0"
+gson-converter-version = "2.9.0"
+annotationProcessor-version = "4.14.2"
+glide-version = "4.14.2"
+lifecycle-version = "2.9.2"
+recycler-view-version = "[1.2.1](1.2.1)"
+logger-interceptor-version = "4.10.0"
+roomRuntime = "2.7.2"
+
+
 
 daggerVersion = "2.56.1"
 legacySupportV4 = "1.0.0"
@@ -19,6 +31,9 @@ fragmentKtx = "1.8.9"
 
 
 [libraries]
+androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
+recycler-view ={group="androidx.recyclerview", name="recyclerview", version.ref="recycler-view-version"}
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -35,6 +50,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
+logger-interceptor ={group="com.squareup.okhttp3", name = "logging-interceptor", version.ref="logger-interceptor-version"}
 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "daggerVersion" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "daggerVersion" }
@@ -42,6 +58,21 @@ androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
+
+gson ={ group ="com.google.code.gson", name = "gson", version.ref="gson-version"}
+retrofit ={group="com.squareup.retrofit2", name ="retrofit", version.ref = "retrofit-version"}
+gson-converter ={group="com.squareup.retrofit2", name="converter-gson",version.ref="gson-converter-version"}
+annotation-processor = { group="com.github.bumptech.glide", name = "compiler", version.ref ="annotationProcessor-version"}
+
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide-version"}
+
+view-model ={group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycle-version"}
+live-data = {group= "androidx.lifecycle", name = "lifecycle-livedata", version.ref = "lifecycle-version"}
+
+
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

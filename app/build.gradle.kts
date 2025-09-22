@@ -47,6 +47,16 @@ android {
 
 dependencies {
 
+    dependencies {
+        implementation (libs.androidx.paging.runtime.ktx)
+    }
+    
+
+
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+
+
     // Dagger Hilt
 
     implementation(libs.hilt.android)
@@ -74,4 +84,25 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.glide)
+
+
+
+
+    annotationProcessor(libs.annotation.processor)
+    implementation(libs.gson)
+    implementation(libs.retrofit)
+    implementation(libs.gson.converter)
+
+
+    implementation(libs.recycler.view)
+
+    // ViewModel
+    implementation(libs.view.model)
+    // liveData
+    implementation(libs.live.data)
+    implementation(libs.logger.interceptor)
+
+
 }

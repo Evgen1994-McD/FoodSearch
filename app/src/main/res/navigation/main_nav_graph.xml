@@ -9,5 +9,25 @@
         android:id="@+id/searchFragment"
         android:name="com.example.foodsearch.presentation.search.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_detailsRecipe"
+            app:destination="@id/detailsRecipe" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailsRecipe"
+        android:name="com.example.foodsearch.presentation.details.DetailsRecipe"
+        android:label="fragment_details_recipe"
+        tools:layout="@layout/fragment_details_recipe">
+    <argument
+        android:name="id"
+        app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/bookFragment"
+        android:name="com.example.foodsearch.presentation.book.BookFragment"
+        android:label="BookFragment"
+        tools:layout="@layout/fragment_book"
+        />
+
 </navigation>
