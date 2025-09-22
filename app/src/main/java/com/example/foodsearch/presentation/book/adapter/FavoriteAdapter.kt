@@ -12,12 +12,11 @@ import com.example.foodsearch.presentation.search.adapter.OnRecipeClickListener
 import com.example.foodsearch.presentation.search.adapter.RecipeViewHolder
 
 class FavoriteAdapter(
-    private var recipes:List<RecipeDetails>,
-    private val context : Context,
+    private var recipes: List<RecipeDetails>,
+    private val context: Context,
     private val listener: OnFavoriteRecipeClickListener,
 
-) : RecyclerView.Adapter<FavoriteRecipeViewHolder>() {
-
+    ) : RecyclerView.Adapter<FavoriteRecipeViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteRecipeViewHolder {

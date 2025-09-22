@@ -23,14 +23,11 @@ class DbRecipePagingSource(
             val offset = pageIndex * limit
 
             // Выполняем запрос к базе данных
-            val result = if (query.isNullOrEmpty()){
+            val result = if (query.isNullOrEmpty()) {
                 db.recipeSummaryDao().getAllRecipes(offset, limit)
             } else {
-                db.recipeSummaryDao().getRecipesByName(query,offset, limit)
+                db.recipeSummaryDao().getRecipesByName(query, offset, limit)
             }
-
-
-
             // Преобразовываем данные с помощью конвертера
             val mappedEntities = result.map { entity -> converter.map(entity) }
 
@@ -46,7 +43,6 @@ class DbRecipePagingSource(
             LoadResult.Error(ex)
         }
     }
-
     override fun getRefreshKey(state: PagingState<Int, RecipeSummary>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)

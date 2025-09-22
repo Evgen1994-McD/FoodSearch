@@ -10,7 +10,6 @@ interface SearchInteractor {
     fun searchRecipe(expression: String):  Flow<PagingData<RecipeSummary>>
 
     fun getRandomRecipes():Flow<PagingData<RecipeSummary>>
-    suspend fun searchRecipeCard(id: Int): String?
     suspend fun searchRecipeDetailsInfo(id: Int): Pair<RecipeDetails?, String?>
 
 

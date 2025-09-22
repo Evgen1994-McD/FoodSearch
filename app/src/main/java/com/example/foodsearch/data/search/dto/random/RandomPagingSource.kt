@@ -1,6 +1,5 @@
 package com.example.foodsearch.data.search.dto.random
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.foodsearch.data.search.dto.summary.RecipeSummaryDto

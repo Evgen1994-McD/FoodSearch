@@ -5,14 +5,11 @@ import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import androidx.paging.map
 import com.example.foodsearch.data.db.DbRecipePagingSource
 import com.example.foodsearch.data.db.MainDb
 import com.example.foodsearch.data.db.converters.RecipeDetailsDbConvertor
 import com.example.foodsearch.data.db.converters.RecipeSummaryDbConvertor
-import com.example.foodsearch.data.search.dto.card.RecipeCardRequest
-import com.example.foodsearch.data.search.dto.card.RecipeCardResponse
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsDto
 import com.example.foodsearch.data.search.dto.details.RecipeDetailsRequest
 import com.example.foodsearch.data.search.dto.random.RandomPagingSource
@@ -35,16 +32,11 @@ class SearchRepositoryImpl @Inject constructor(
 ) : SearchRepository {
 
 
-
-
-
-
     override suspend fun insertRecipeDetails(recipe: RecipeDetails) {
 
         val recipeToSave = recipeDetailsDbConvertor.map(recipe)
         mainDb.recipeDetailsDao().insertRecipe(recipeToSave)
     }
-
 
     override suspend fun insertRecipeSummary(recipe: RecipeSummary) {
 
@@ -52,15 +44,18 @@ class SearchRepositoryImpl @Inject constructor(
         mainDb.recipeSummaryDao().insertRecipe(recipeToSave)
     }
 
-
-
-    override suspend fun getRecipeSummaryFromMemory(query:String?): Flow<PagingData<RecipeSummary>> {
+    override suspend fun getRecipeSummaryFromMemory(query: String?): Flow<PagingData<RecipeSummary>> {
         return Pager(
 
             config = PagingConfig(pageSize = 5),
-            pagingSourceFactory = { DbRecipePagingSource(mainDb,recipeSummaryDbConvertor, query = query) }
+            pagingSourceFactory = {
+                DbRecipePagingSource(
+                    mainDb,
+                    recipeSummaryDbConvertor,
+                    query = query
+                )
+            }
         ).flow
-
 
             .catch { e ->
                 emit(PagingData.empty())
@@ -68,19 +63,12 @@ class SearchRepositoryImpl @Inject constructor(
             }
 
 
-
-
     }
-
     override suspend fun getRecipeDetailsFromMemoryById(id: Int): RecipeDetails? {
         val recipe = mainDb.recipeDetailsDao().getRecipeById(id)
         return recipeDetailsDbConvertor.map(recipe[0])
 
-
     }
-
-
-
 
     override fun getRandomRecipes(): Flow<PagingData<RecipeSummary>> {
 
@@ -100,12 +88,7 @@ class SearchRepositoryImpl @Inject constructor(
             }
 
 
-
-
-
-
     }
-
 
     override fun searchRecipe(expression: String): Flow<PagingData<RecipeSummary>> {
 
@@ -124,22 +107,6 @@ class SearchRepositoryImpl @Inject constructor(
                 emit(PagingData.empty())
 
             }
-
-    }
-
-
-    override suspend fun searchRecipeCard(id: Int): String? {
-        val response = networkClient.doRecipeCardRequest(RecipeCardRequest(id))
-        when (response.resultCode) {
-            200 -> {
-                with(response as RecipeCardResponse) {
-                    val uri = url
-                    return uri
-                }
-            }
-
-            else -> return null
-        }
 
     }
 
@@ -205,34 +172,33 @@ class SearchRepositoryImpl @Inject constructor(
 
             return data
         } catch (e: Exception) {
-try {
-    return getRecipeDetailsFromMemoryById(id)
+            try {
+                return getRecipeDetailsFromMemoryById(id)
 
- }catch (e:Exception){
-     return null
- }
+            } catch (e: Exception) {
+                return null
+            }
 
         }
 
 
     }
 
-  override suspend fun getFavoriteRecipes():List<RecipeDetails>{
-       return mainDb.recipeDetailsDao().getFavoriteRecipes(true).map {
-           recipeDetailsDbConvertor.map(it)!!
+    override suspend fun getFavoriteRecipes(): List<RecipeDetails> {
+        return mainDb.recipeDetailsDao().getFavoriteRecipes(true).map {
+            recipeDetailsDbConvertor.map(it)!!
         }
     }
 
 
-    override suspend fun getSavedRecipes():List<RecipeDetails>{
-       return mainDb.recipeDetailsDao().getSavedRecipes().map {
-           recipeDetailsDbConvertor.map(it)!!
+    override suspend fun getSavedRecipes(): List<RecipeDetails> {
+        return mainDb.recipeDetailsDao().getSavedRecipes().map {
+            recipeDetailsDbConvertor.map(it)!!
         }
     }
 
 
-
-   private fun mapToDomain(dto: RecipeSummaryDto): RecipeSummary {
+    private fun mapToDomain(dto: RecipeSummaryDto): RecipeSummary {
         return RecipeSummary(
             dto.id,
             dto.image,
@@ -242,10 +208,6 @@ try {
             dto.summary
         )
     }
-
-
-
-
 
 
 }
