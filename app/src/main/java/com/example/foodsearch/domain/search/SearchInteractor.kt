@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface SearchInteractor {
 
     fun searchRecipe(expression: String): Flow<PagingData<RecipeSummary>>
-    fun getRandomRecipes(): Flow<PagingData<RecipeSummary>>
+    fun getRandomRecipes(query: String?): Flow<PagingData<RecipeSummary>>
     suspend fun searchRecipeDetailsInfo(id: Int): Pair<RecipeDetails?, String?>
     suspend fun getRecipeFromMemory(query: String?): Flow<PagingData<RecipeSummary>>
     suspend fun insertRecipeDetails(recipeDetails: RecipeDetails)

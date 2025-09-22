@@ -20,13 +20,13 @@
         android:id="@+id/rcView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputEditText"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/cardView2" />
 
     <ProgressBar
         android:id="@+id/pbs"
@@ -68,6 +68,151 @@
         app:layout_constraintTop_toBottomOf="@+id/inputEditText"
         app:layout_constraintVertical_bias="0.179"
         tools:visibility="gone" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView2"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="25dp"
+        app:cardBackgroundColor="@color/bg"
+        app:cardCornerRadius="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+
+        app:layout_constraintTop_toBottomOf="@+id/inputEditText">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dessert"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView7"
+                app:layout_constraintEnd_toEndOf="@+id/dessert"
+                app:layout_constraintStart_toStartOf="@+id/dessert"
+                app:layout_constraintTop_toTopOf="@+id/textView7" />
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/breakfast"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView9"
+                app:layout_constraintEnd_toEndOf="@+id/breakfast"
+                app:layout_constraintStart_toStartOf="@+id/breakfast"
+                app:layout_constraintTop_toTopOf="@+id/textView9" />
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/salad"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintEnd_toEndOf="@+id/salad"
+                app:layout_constraintStart_toStartOf="@+id/salad"
+                app:layout_constraintTop_toTopOf="@+id/textView6" />
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bread"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/bread"
+                app:layout_constraintStart_toStartOf="@+id/bread"
+                app:layout_constraintTop_toBottomOf="@+id/bread" />
+
+            <ImageView
+                android:id="@+id/bread"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="25dp"
+                android:src="@drawable/ic_categories_foor"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+
+
+                />
+
+            <ImageView
+                android:id="@+id/breakfast"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="30dp"
+                android:src="@drawable/ic_categories_foor"
+                app:layout_constraintBottom_toBottomOf="@+id/bread"
+                app:layout_constraintStart_toEndOf="@+id/bread"
+                app:layout_constraintTop_toTopOf="@+id/bread" />
+
+            <ImageView
+                android:id="@+id/dessert"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_categories_foor"
+                app:layout_constraintBottom_toBottomOf="@+id/breakfast"
+                app:layout_constraintEnd_toStartOf="@+id/salad"
+                app:layout_constraintStart_toEndOf="@+id/breakfast"
+                app:layout_constraintTop_toTopOf="@+id/breakfast" />
+
+            <ImageView
+                android:id="@+id/salad"
+                android:layout_width="40dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="30dp"
+                android:src="@drawable/ic_categories_foor"
+                app:layout_constraintBottom_toBottomOf="@+id/dessert"
+                app:layout_constraintEnd_toStartOf="@+id/snack"
+                app:layout_constraintTop_toTopOf="@+id/dessert" />
+
+            <ImageView
+                android:id="@+id/snack"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="25dp"
+                android:src="@drawable/ic_categories_foor"
+                app:layout_constraintBottom_toBottomOf="@+id/salad"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/salad" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/categories"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/snack"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView8"
+                app:layout_constraintEnd_toEndOf="@+id/snack"
+                app:layout_constraintStart_toStartOf="@+id/snack"
+                app:layout_constraintTop_toTopOf="@+id/textView8" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

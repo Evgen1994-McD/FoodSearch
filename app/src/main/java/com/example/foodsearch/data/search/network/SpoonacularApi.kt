@@ -24,6 +24,7 @@ interface SpoonacularApi {
         @Query("apiKey") apiKey: String, // Передаем как отдельный параметр
         @Query("pageNumber") pageNumber: Int, // Номер страницы
         @Query("pageSize") pageSize: Int,     // Размер страницы
+        @Query("type") type: String?     // Размер страницы
     ): RecipeRandomResponse
 
 

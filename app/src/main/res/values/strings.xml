@@ -8,11 +8,22 @@
     <string name="nothing_to_show">Ничего не нашлось</string>
     <string name="info">Information</string>
     <string name="search_menu">Найти рецепт</string>
-    <string name="book_menu">Просмотренные</string>
+    <string name="book_menu">Книга рецептов</string>
     <string name="my_books">Мои Книги</string>
     <string name="favorite">Любимые</string>
     <string name="no_favorite">Вы еще не добавили рецепты в любимые.</string>
     <string name="no_saved">Вы еще не искали рецепты.</string>
+    <string name="categories">Категории</string>
+
+
+<!--    Типы Блюд -->
+    <string name="bread">bread</string>
+    <string name="breakfast">breakfast</string>
+    <string name="dessert">dessert</string>
+    <string name="salad">salad</string>
+    <string name="snack">snack</string>
+
+
 
 
 

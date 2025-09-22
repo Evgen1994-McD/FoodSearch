@@ -8,6 +8,7 @@ import java.io.IOException
 
 class RandomPagingSource(
     private val client: NetworkClient,
+private val type: String?
 ) : PagingSource<Int, RecipeSummaryDto>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, RecipeSummaryDto> {
@@ -15,7 +16,7 @@ class RandomPagingSource(
         val pageSize = params.loadSize
 
         return try {
-            val response = client.doRandomRecipe(pageNumber, pageSize)
+            val response = client.doRandomRecipe(pageNumber, pageSize,type)
 
             if (response.resultCode == 200) {
                 val body = response as RecipeRandomResponse

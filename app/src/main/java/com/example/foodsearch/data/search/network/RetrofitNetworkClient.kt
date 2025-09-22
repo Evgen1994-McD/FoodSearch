@@ -39,11 +39,11 @@ class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : Networ
         }
     }
 
-    override suspend fun doRandomRecipe(pageNumber: Int, pageSize: Int): Response {
+    override suspend fun doRandomRecipe(pageNumber: Int, pageSize: Int, type: String?): Response {
         return withContext(Dispatchers.IO) {
             try {
                 val response =
-                    spoonacularApi.getRandomRecipes(apiKey = apiKey, pageNumber, pageSize)
+                    spoonacularApi.getRandomRecipes(apiKey = apiKey, pageNumber, pageSize, type)
                 response.apply { resultCode = 200 }
             } catch (e: Throwable) {
                 Response().apply { resultCode = 500 }

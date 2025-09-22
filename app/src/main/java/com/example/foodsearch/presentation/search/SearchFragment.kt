@@ -74,7 +74,7 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
         super.onViewCreated(view, savedInstanceState)
         observeRecipeSearchResults()
         if (!isRandomSeachComplete) {
-            viewModel.getRandomRecipes()
+            viewModel.getRandomRecipes(query = null)
             isRandomSeachComplete = true
         }
         ab =
@@ -88,6 +88,8 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
             observeRecipeSearchResults()
         }
+
+        randomSearchByCategories()
     }
 
     private fun textChangeListener() = with(binding) {
@@ -211,6 +213,29 @@ class SearchFragment : Fragment(), OnRecipeClickListener {
             R.id.action_searchFragment_to_detailsRecipe,
             bundleOf("id" to (recipeSummary.id))
         )
+
+    }
+
+    private fun randomSearchByCategories()=with(binding){
+        bread.setOnClickListener {
+            viewModel.getRandomRecipes(getString(R.string.bread))
+        }
+
+        breakfast.setOnClickListener {
+            viewModel.getRandomRecipes(getString(R.string.breakfast))
+        }
+
+        dessert.setOnClickListener {
+            viewModel.getRandomRecipes(getString(R.string.dessert))
+        }
+
+        salad.setOnClickListener {
+            viewModel.getRandomRecipes(getString(R.string.salad))
+        }
+
+        snack.setOnClickListener {
+            viewModel.getRandomRecipes(getString(R.string.snack))
+        }
 
     }
 

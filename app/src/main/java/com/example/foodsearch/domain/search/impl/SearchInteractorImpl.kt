@@ -36,10 +36,10 @@ class SearchInteractorImpl @Inject constructor(
         return searchRepository.searchRecipe(expression)
     }
 
-    override fun getRandomRecipes(): Flow<PagingData<RecipeSummary>> {
+    override fun getRandomRecipes(query: String?): Flow<PagingData<RecipeSummary>> {
 
 
-        return searchRepository.getRandomRecipes()
+        return searchRepository.getRandomRecipes(query)
     }
 
 

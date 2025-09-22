@@ -8,5 +8,5 @@ interface NetworkClient {
         dto: String,
         pageNumber:Int, pageSize:Int): Response
     suspend fun doRecipeDetailsInfoRequest(dto: Any): RecipeDetailsDto?
-    suspend fun doRandomRecipe( pageNumber:Int, pageSize:Int): Response
+    suspend fun doRandomRecipe( pageNumber:Int, pageSize:Int, type: String?): Response
 }

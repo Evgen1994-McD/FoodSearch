@@ -41,12 +41,12 @@ class SearchViewModel @Inject constructor(
     }
 
 
-    fun getRandomRecipes() {
+    fun getRandomRecipes(query: String?) {
         mutableScreenState.postValue(SearchScreenState.Loading)
 
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                val flow = searchInteractor.getRandomRecipes()
+                val flow = searchInteractor.getRandomRecipes(query)
 
                     .cachedIn(viewModelScope)
 
