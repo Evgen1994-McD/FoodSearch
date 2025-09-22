@@ -50,7 +50,7 @@
         app:layout_constraintEnd_toEndOf="@+id/tv_nothing_to_show"
         app:layout_constraintStart_toStartOf="@+id/tv_nothing_to_show"
         app:layout_constraintTop_toTopOf="@+id/rcView"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_nothing_to_show"
