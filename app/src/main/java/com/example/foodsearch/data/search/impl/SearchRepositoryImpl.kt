@@ -142,18 +142,16 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
     override suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails? {
-
-
-        suspend fun controlIsLike(id: Int?): Boolean {
-            if (id == null) return false
-            val foundRecipe = getRecipeDetailsFromMemoryById(id)
-            return foundRecipe?.isLike ?: false
-        }
+//        suspend fun controlIsLike(id: Int?): Boolean {
+//            if (id == null) return false
+//            val foundRecipe = getRecipeDetailsFromMemoryById(id)
+//            return foundRecipe?.isLike ?: false
+//        }
 
         try {
             val response = networkClient.doRecipeDetailsInfoRequest(RecipeDetailsRequest(id))
             val recipeDetailsDto = response as RecipeDetailsDto
-            val isLike = controlIsLike(recipeDetailsDto.id)
+//            val isLike = controlIsLike(recipeDetailsDto.id)
 
             val data = RecipeDetails(
                 id = recipeDetailsDto.id,
@@ -192,7 +190,7 @@ class SearchRepositoryImpl @Inject constructor(
                 analyzedInstructions = recipeDetailsDto.analyzedInstructions,
                 spoonacularScore = recipeDetailsDto.spoonacularScore,
                 spoonacularSourceUrl = recipeDetailsDto.spoonacularSourceUrl,
-                isLike = isLike
+                isLike = false
             )
 
             val recipeSummaryToSave = RecipeSummary(
@@ -201,8 +199,7 @@ class SearchRepositoryImpl @Inject constructor(
                 data.title,
                 data.readyInMinutes,
                 data.servings,
-                data.summary,
-
+                data.summary
             )
             insertRecipeSummary(recipeSummaryToSave)
             insertRecipeDetails(data)

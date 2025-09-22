@@ -25,23 +25,23 @@ class DetailsRecipeViewModel @Inject constructor(
     private val mutableScreenState = MutableLiveData<DetailsSearchScreenState?>()
     val getLiveData: LiveData<DetailsSearchScreenState?> get() = mutableScreenState
 
-    suspend fun replaceRecipe(recipeDetails: RecipeDetails){
-        searchInteractor.insertRecipeDetails(recipeDetails)
-        getDetailsRecipeInfo()
-
-
-    }
-
-     fun like()=viewModelScope.launch{
-       val recipe = currentRecipe?.copy(isLike = true)
-        recipe?.let { replaceRecipe(it) }
-    }
-
-    fun disLike()=viewModelScope.launch{
-        val recipe = currentRecipe?.copy(isLike = false)
-        recipe?.let { replaceRecipe(it) }
-
-    }
+//    suspend fun replaceRecipe(recipeDetails: RecipeDetails){
+//        searchInteractor.insertRecipeDetails(recipeDetails)
+//        getDetailsRecipeInfo()
+//
+//
+//    }
+//
+//     fun like()=viewModelScope.launch{
+//       val recipe = currentRecipe?.copy(isLike = true)
+//        recipe?.let { replaceRecipe(it) }
+//    }
+//
+//    fun disLike()=viewModelScope.launch{
+//        val recipe = currentRecipe?.copy(isLike = false)
+//        recipe?.let { replaceRecipe(it) }
+//
+//    }
 
 
     fun getDetailsRecipeInfo() {

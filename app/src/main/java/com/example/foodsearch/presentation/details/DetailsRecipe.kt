@@ -71,16 +71,16 @@ class DetailsRecipe : Fragment() {
         observeState()
 viewModel.getDetailsRecipeInfo()
 
-        binding.icDisLike.setOnClickListener {
-            viewModel.like()
-        }
-
-
-        binding.icLike.setOnClickListener {
-
-            viewModel.disLike()
-
-        }
+//        binding.icDisLike.setOnClickListener {
+//            viewModel.like()
+//        }
+//
+//
+//        binding.icLike.setOnClickListener {
+//
+//            viewModel.disLike()
+//
+//        }
 
         arrow = binding.btArrowIngredients
         arrowInstructions=binding.btArrowInstructions
