@@ -12,14 +12,14 @@ import com.example.foodsearch.presentation.search.adapter.RecipeViewHolder
 
 class IngredientAdapter(
     private var ingredients: List<OtherModels.Ingredient>?,
-    private val context : Context,
+    private val context: Context,
 
-) : RecyclerView.Adapter<IngredientsViewHolder>() {
-
+    ) : RecyclerView.Adapter<IngredientsViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IngredientsViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.ingredient_item, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.ingredient_item, parent, false)
         return IngredientsViewHolder(view, context)
     }
 

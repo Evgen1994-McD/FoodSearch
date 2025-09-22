@@ -28,7 +28,7 @@ class SearchRepositoryImpl @Inject constructor(
     private val networkClient: NetworkClient,
     private val mainDb: MainDb,
     private val recipeSummaryDbConvertor: RecipeSummaryDbConvertor,
-    private val recipeDetailsDbConvertor: RecipeDetailsDbConvertor
+    private val recipeDetailsDbConvertor: RecipeDetailsDbConvertor,
 ) : SearchRepository {
 
 
@@ -64,6 +64,7 @@ class SearchRepositoryImpl @Inject constructor(
 
 
     }
+
     override suspend fun getRecipeDetailsFromMemoryById(id: Int): RecipeDetails? {
         val recipe = mainDb.recipeDetailsDao().getRecipeById(id)
         return recipeDetailsDbConvertor.map(recipe[0])

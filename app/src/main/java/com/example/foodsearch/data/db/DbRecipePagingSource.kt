@@ -11,7 +11,7 @@ import java.io.IOException
 class DbRecipePagingSource(
     private val db: MainDb,
     private val converter: RecipeSummaryDbConvertor,
-    private val query: String?
+    private val query: String?,
 ) : PagingSource<Int, RecipeSummary>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, RecipeSummary> {
@@ -43,6 +43,7 @@ class DbRecipePagingSource(
             LoadResult.Error(ex)
         }
     }
+
     override fun getRefreshKey(state: PagingState<Int, RecipeSummary>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)

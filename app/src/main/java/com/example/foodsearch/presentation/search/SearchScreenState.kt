@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 sealed class SearchScreenState {
 
-        object Loading : SearchScreenState()
-        data class SearchResults(val data: PagingData<RecipeSummary>) : SearchScreenState()
-        data class ErrorNotFound(val error:PagingData<Any>) : SearchScreenState()
+    object Loading : SearchScreenState()
+    data class SearchResults(val data: PagingData<RecipeSummary>) : SearchScreenState()
+    data class ErrorNotFound(val error: PagingData<Any>) : SearchScreenState()
 
 
 }

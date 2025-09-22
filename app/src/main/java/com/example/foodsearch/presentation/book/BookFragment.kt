@@ -17,16 +17,14 @@ import dagger.hilt.android.AndroidEntryPoint
 class BookFragment : Fragment() {
     private lateinit var binding: FragmentBookBinding
     private val viewModel: BookFragmentViewModel by viewModels()
-    private var currentPagePosition:Int = 0
+    private var currentPagePosition: Int = 0
     private lateinit var vpAdapter: VpAdapter
+
     companion object {
         const val savedPageKey = "savedPage"
 
 
-
-            fun newInstance() = BookFragment()
-
-
+        fun newInstance() = BookFragment()
 
 
     }
@@ -41,7 +39,7 @@ class BookFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentBookBinding.inflate(inflater, container, false)
         return binding.root
@@ -61,8 +59,6 @@ class BookFragment : Fragment() {
 
         pager.currentItem = currentPagePosition
         tabs.selectTab(tabs.getTabAt(currentPagePosition))
-
-
 
 
         // Ждем окончания раскладки UI

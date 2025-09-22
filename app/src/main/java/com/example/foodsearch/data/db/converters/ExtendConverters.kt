@@ -70,8 +70,6 @@ class ExtendConverters {
     }
 
 
-
-
     @TypeConverter
     fun fromStringToAnalyzedInstructionList(value: String?): List<AnalyzedInstruction>? {
         val listType = object : TypeToken<List<AnalyzedInstruction>>() {}.type

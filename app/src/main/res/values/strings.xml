@@ -8,7 +8,7 @@
     <string name="nothing_to_show">Ничего не нашлось</string>
     <string name="info">Information</string>
     <string name="search_menu">Найти рецепт</string>
-    <string name="book_menu">Книга рецептов</string>
+    <string name="book_menu">Просмотренные</string>
     <string name="my_books">Мои Книги</string>
     <string name="favorite">Любимые</string>
     <string name="no_favorite">Вы еще не добавили рецепты в любимые.</string>

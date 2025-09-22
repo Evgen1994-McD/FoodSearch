@@ -3,20 +3,16 @@ package com.example.foodsearch.presentation.details
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
-import androidx.fragment.app.viewModels
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -25,12 +21,7 @@ import com.example.foodsearch.databinding.FragmentDetailsRecipeBinding
 import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.presentation.details.adapters.IngredientAdapter
 import com.example.foodsearch.presentation.details.adapters.StepAdapter
-import com.example.foodsearch.presentation.search.SearchFragment
-import com.example.foodsearch.presentation.search.SearchScreenState
-import com.example.foodsearch.presentation.search.adapter.RecipeAdapter
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailsRecipe : Fragment() {
@@ -51,7 +42,7 @@ class DetailsRecipe : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentDetailsRecipeBinding.inflate(inflater, container, false)
         return binding.root
@@ -119,8 +110,6 @@ class DetailsRecipe : Fragment() {
 
 
     }
-
-
 
 
     private fun observeByLike() = with(binding) {

@@ -9,13 +9,13 @@ import com.example.foodsearch.domain.models.OtherModels
 
 class StepAdapter(
     private var steps: List<OtherModels.Step>?,
-    private val context : Context
+    private val context: Context,
 ) : RecyclerView.Adapter<StepViewHolder>() {
 
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StepViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.instruction_step_item, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.instruction_step_item, parent, false)
         return StepViewHolder(view)
     }
 

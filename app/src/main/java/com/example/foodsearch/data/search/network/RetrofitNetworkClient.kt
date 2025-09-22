@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : NetworkClient {
     private val apiKey45 = "91225f5085c54860b6c9d5d0298b460b"
-    private val apiKey = "9c69449bd45d4cb0abc8dedbcff5867c"
+    private val apiKey11 = "9c69449bd45d4cb0abc8dedbcff5867c"
     private val apiKey4 = "132e04b6aa4d4bddb00fc04b0fe73967"
     private val apiKey43 = "fc9779e7ffdb4a0394b69e0af48c6392"
     private val apiKey22 = "1f90d4229d854fb2a5f83b7c55c7d068"
@@ -17,13 +17,14 @@ class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : Networ
     private val apiKey21 = "3c4e3432dd7e432b826d041e71b923b8"
     private val apiKey223 = "e75cda5befa3464ca0c178e307ae9620"
     private val apiKey0 = "03f1f1d6fced433a92729d7f1a99fdd0"
-    private val apiKey2 = "54e75716e30a4ce784b258783f6f4eac"
+    private val apiKey25 = "54e75716e30a4ce784b258783f6f4eac"
+    private val apiKey = "c0bf59ebabb8427381f055e5e7594e5f"
 
     override suspend fun doRequest(dto: String, pageNumber: Int, pageSize: Int): Response {
         return withContext(Dispatchers.IO) {
             try {
                 val response =
-                    spoonacularApi.getRecipes(dto, true, pageNumber, pageSize, apiKey = apiKey2)
+                    spoonacularApi.getRecipes(dto, true, pageNumber, pageSize, apiKey = apiKey)
                 response.apply { resultCode = 200 }
             } catch (e: Throwable) {
                 Response().apply { resultCode = 500 }
@@ -34,7 +35,7 @@ class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : Networ
         if (dto !is RecipeDetailsRequest) {
             return null
         } else {
-            return spoonacularApi.getRecipeInfo(dto.id, apiKey2)
+            return spoonacularApi.getRecipeInfo(dto.id, apiKey)
         }
     }
 
@@ -42,7 +43,7 @@ class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : Networ
         return withContext(Dispatchers.IO) {
             try {
                 val response =
-                    spoonacularApi.getRandomRecipes(apiKey = apiKey2, pageNumber, pageSize)
+                    spoonacularApi.getRandomRecipes(apiKey = apiKey, pageNumber, pageSize)
                 response.apply { resultCode = 200 }
             } catch (e: Throwable) {
                 Response().apply { resultCode = 500 }

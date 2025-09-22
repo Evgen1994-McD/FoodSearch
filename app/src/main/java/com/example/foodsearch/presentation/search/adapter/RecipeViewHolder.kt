@@ -14,7 +14,11 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.foodsearch.R
 import com.example.foodsearch.domain.models.RecipeSummary
 
-class RecipeViewHolder(itemView: View, listener: OnRecipeClickListener, private val context:Context) :
+class RecipeViewHolder(
+    itemView: View,
+    listener: OnRecipeClickListener,
+    private val context: Context,
+) :
     RecyclerView.ViewHolder(itemView) { // Добавили листенер в конструктор класса
 
     private val name: TextView = itemView.findViewById(R.id.name)
@@ -34,9 +38,6 @@ class RecipeViewHolder(itemView: View, listener: OnRecipeClickListener, private 
     private val radiusInPX = radiusInDP * densityMultiplier
 
 
-
-
-
     @SuppressLint("CheckResult")
     fun bind(recipeSummary: RecipeSummary) {
         val tempSummary = recipeSummary.summary
@@ -44,14 +45,16 @@ class RecipeViewHolder(itemView: View, listener: OnRecipeClickListener, private 
         val index = tempSummary?.indexOf(".")
         val tempResult = tempSummary?.substring(0, (index?.plus(".".length) ?: "") as Int)
         val result = tempResult?.let { Regex("<[^>]*>").replace(it, "") }
-/*
-Выше выборка с кратким описанием из строки
+        /*
+        Выше выборка с кратким описанием из строки
 
- */
+         */
         name.text = recipeSummary.title
         summary.text = result
-        servings.text= recipeSummary.servings.toString() +" "+  context.getString(R.string.servings)
-        cookingTime.text=recipeSummary.readyInMinutes.toString() + " "+ context.getString(R.string.minutes)
+        servings.text =
+            recipeSummary.servings.toString() + " " + context.getString(R.string.servings)
+        cookingTime.text =
+            recipeSummary.readyInMinutes.toString() + " " + context.getString(R.string.minutes)
 
 
 

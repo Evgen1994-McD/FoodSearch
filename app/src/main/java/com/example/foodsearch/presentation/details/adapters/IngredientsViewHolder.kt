@@ -15,8 +15,10 @@ import com.example.foodsearch.domain.models.OtherModels
 import com.example.foodsearch.domain.models.RecipeSummary
 import com.example.foodsearch.presentation.search.adapter.OnRecipeClickListener
 
-class IngredientsViewHolder(itemView: View,
-                            private val context:Context) :
+class IngredientsViewHolder(
+    itemView: View,
+    private val context: Context,
+) :
     RecyclerView.ViewHolder(itemView) {
 
     private val name: TextView = itemView.findViewById(R.id.ingredient_name)
@@ -35,12 +37,10 @@ class IngredientsViewHolder(itemView: View,
     private val radiusInPX = radiusInDP * densityMultiplier
 
 
-
-
-
     @SuppressLint("CheckResult")
     fun bind(ingredient: OtherModels.Ingredient) {
-val extendIngredientLinks = "https://spoonacular.com/cdn/ingredients_100x100/"+ ingredient.image
+        val extendIngredientLinks =
+            "https://spoonacular.com/cdn/ingredients_100x100/" + ingredient.image
 
 
         name.text = ingredient.name
@@ -53,8 +53,8 @@ val extendIngredientLinks = "https://spoonacular.com/cdn/ingredients_100x100/"+ 
             .load(extendIngredientLinks)
             .transform(RoundedCorners(radiusInPX.toInt()))
             .apply(options)
-           .placeholder(R.drawable.ic_ph_kitchen)
-           .error(R.drawable.ic_ph_kitchen)
+            .placeholder(R.drawable.ic_ph_kitchen)
+            .error(R.drawable.ic_ph_kitchen)
             .into(image)
 
 
