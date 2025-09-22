@@ -1,14 +1,14 @@
-package com.example.foodsearch.data.search.dto.summary
+package com.example.foodsearch.data.search.dto.random
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.foodsearch.data.search.dto.summary.RecipeSummaryDto
+import com.example.foodsearch.data.search.dto.summary.RecipeSummryResponse
 import com.example.foodsearch.data.search.network.NetworkClient
 import java.io.IOException
 
-
-class   RecipesPagingSource(
+class RandomPagingSource(
     private val client: NetworkClient,
-    private val query: String
 ) : PagingSource<Int, RecipeSummaryDto>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, RecipeSummaryDto> {
@@ -16,11 +16,11 @@ class   RecipesPagingSource(
         val pageSize = params.loadSize
 
         return try {
-            val response = client.doRequest(query,  pageNumber, pageSize)
+            val response = client.doRandomRecipe(pageNumber, pageSize)
 
             if (response.resultCode == 200) {
-                val body = response as RecipeSummryResponse
-                val recipes = body.results
+                val body = response as RecipeRandomResponse
+                val recipes = body.recipes
 
                 LoadResult.Page(
                     data = recipes,
@@ -28,7 +28,7 @@ class   RecipesPagingSource(
                     nextKey = if (recipes.isNotEmpty()) pageNumber + 1 else null
                 )
             } else {
-                LoadResult.Error(Exception("Network error: ${response.resultCode}"))
+                LoadResult.Error(Exception("Network error: ${response.resultCode}\""))
             }
         } catch (e: IOException) {
             LoadResult.Error(e)

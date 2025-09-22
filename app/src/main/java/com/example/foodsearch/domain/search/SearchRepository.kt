@@ -13,7 +13,7 @@ interface SearchRepository {
      fun searchRecipe(expression: String):  Flow<PagingData<RecipeSummary>>
     suspend fun searchRecipeCard(id: Int): String?
     suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails?
-    fun getRandomRecipes(): Flow<List<RecipeSummary>?>
+    fun getRandomRecipes(): Flow<PagingData<RecipeSummary>>
 
     suspend fun searchRecipeFromDbByTitle(title: String): List<RecipeSummary>?
     suspend fun insertRecipeDetails(recipe: RecipeDetails)

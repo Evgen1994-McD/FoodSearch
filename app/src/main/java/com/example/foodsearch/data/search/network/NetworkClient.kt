@@ -9,5 +9,5 @@ interface NetworkClient {
         pageNumber:Int, pageSize:Int): Response
     suspend fun doRecipeCardRequest(dto: Any): Response
     suspend fun doRecipeDetailsInfoRequest(dto: Any): RecipeDetailsDto?
-    suspend fun doRandomRecipe(): Response
+    suspend fun doRandomRecipe( pageNumber:Int, pageSize:Int): Response
 }

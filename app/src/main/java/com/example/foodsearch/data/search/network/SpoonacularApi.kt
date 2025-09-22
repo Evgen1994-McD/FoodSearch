@@ -24,7 +24,8 @@ interface SpoonacularApi {
     @GET("recipes/random")
     suspend fun getRandomRecipes(
         @Query("apiKey") apiKey: String, // Передаем как отдельный параметр
-        @Query("number") number: Int // Передаем как отдельный параметр
+        @Query("pageNumber") pageNumber: Int, // Номер страницы
+        @Query("pageSize") pageSize: Int,     // Размер страницы
     ): RecipeRandomResponse
 
     @GET("recipes/{recipeId}/card")

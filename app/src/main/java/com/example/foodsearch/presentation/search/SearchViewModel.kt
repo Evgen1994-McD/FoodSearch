@@ -31,26 +31,8 @@ class SearchViewModel @Inject constructor(
     }
 
 
-    fun getRandomRecipes(){
-        viewModelScope.launch(Dispatchers.IO){
-            mutableScreenState.postValue(SearchScreenState.Loading) // при начале запроса - выставляем лоадинг в тру
-            searchInteractor.getRandomRecipes()
-                .collect{ pair->
-
-                    if(pair.first==null && pair.second == "Exception" ){
-                        mutableScreenState.postValue(SearchScreenState.ErrorNoEnternet(pair.second.toString()))
-                    }
-                    if(pair.first.isNullOrEmpty() && pair.second==null){
-                        mutableScreenState.postValue(SearchScreenState.ErrorNotFound(null))
-                    }
-
-                    else if (!pair.first.isNullOrEmpty()) {
-                        mutableScreenState.postValue(SearchScreenState.SearchResults(pair.first))
-                    }
-                }
-
-
-        }
+    fun getRandomRecipes() : Flow<PagingData<RecipeSummary>>{
+return searchInteractor.getRandomRecipes()
     }
 
 
@@ -58,3 +40,25 @@ class SearchViewModel @Inject constructor(
 
 
 }
+
+
+
+//viewModelScope.launch(Dispatchers.IO){
+//    mutableScreenState.postValue(SearchScreenState.Loading) // при начале запроса - выставляем лоадинг в тру
+//    searchInteractor.getRandomRecipes()
+//        .collect{ pair->
+//
+//            if(pair.first==null && pair.second == "Exception" ){
+//                mutableScreenState.postValue(SearchScreenState.ErrorNoEnternet(pair.second.toString()))
+//            }
+//            if(pair.first.isNullOrEmpty() && pair.second==null){
+//                mutableScreenState.postValue(SearchScreenState.ErrorNotFound(null))
+//            }
+//
+//            else if (!pair.first.isNullOrEmpty()) {
+//                mutableScreenState.postValue(SearchScreenState.SearchResults(pair.first))
+//            }
+//        }
+//
+//
+//}

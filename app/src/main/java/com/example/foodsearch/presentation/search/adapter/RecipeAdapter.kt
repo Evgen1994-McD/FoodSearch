@@ -12,7 +12,8 @@ import com.example.foodsearch.domain.models.RecipeSummary
 
 class RecipeAdapter(
     private val listener: OnRecipeClickListener,
-    private val context: Context
+    private val context: Context,
+
 ) : PagingDataAdapter<RecipeSummary, RecipeViewHolder>(
     DIFF_CALLBACK
 ) {
@@ -35,9 +36,13 @@ class RecipeAdapter(
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
+
         val item = getItem(position)
         if (item != null) {
             holder.bind(item)
+            holder.itemView.setOnClickListener {
+                listener.onRecipeClicker(item)
+            }
         }
     }
 }
