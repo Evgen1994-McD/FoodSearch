@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.domain.models.RecipeSummary
+import com.example.foodsearch.domain.search.SearchInteractor
 import com.example.foodsearch.domain.search.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SavedRecipeFragmentViewModel @Inject constructor(
-    private val repository: SearchRepository
+    private val interactor: SearchInteractor
 ):ViewModel() {
 
 
@@ -22,7 +23,7 @@ class SavedRecipeFragmentViewModel @Inject constructor(
 
 
     fun getRecipes()=viewModelScope.launch {
-        mutableScreenState.postValue(repository.getSavedRecipes())
+        mutableScreenState.postValue(interactor.getSavedRecipes())
     }
 
 
