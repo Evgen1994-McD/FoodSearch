@@ -39,8 +39,8 @@ object MainModule {
     fun provideMainDb(app: Application): MainDb {
         return Room.databaseBuilder(
             app,//Контекст
-            MainDb::class.java, //Класс
-            "recipe.db" //Имя
+            MainDb::class.java,
+            "recipe.db"
         ).build()
     }
 
@@ -70,7 +70,7 @@ object MainModule {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
-            .addConverterFactory(GsonConverterFactory.create()) // Используем Gson конвертер
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 

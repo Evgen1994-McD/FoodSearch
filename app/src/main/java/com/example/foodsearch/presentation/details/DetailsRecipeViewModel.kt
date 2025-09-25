@@ -20,7 +20,6 @@ class DetailsRecipeViewModel @Inject constructor(
     private val searchInteractor: SearchInteractor,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    //private val id = 631852
     val id: Int = savedStateHandle.get<Int>("id") ?: -1
     private var currentRecipe: RecipeDetails? = null
 
