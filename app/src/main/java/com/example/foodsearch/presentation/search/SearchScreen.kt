@@ -299,7 +299,8 @@ fun RecipeItem(
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA))
     ) {
         Row(
             modifier = Modifier.padding(16.dp),

@@ -89,10 +89,16 @@ fun BottomNavigationBar(navController: NavHostController) {
             icon = { 
                 Icon(
                     painter = painterResource(R.drawable.ic_search_19),
-                    contentDescription = "Search"
+                    contentDescription = "Search",
+                    tint = Color.Black
                 )
             },
-            label = { Text("Search") },
+            label = { 
+                Text(
+                    text = "Search",
+                    color = Color.Black
+                ) 
+            },
             selected = currentRoute == "search",
             onClick = { 
                 navController.navigate("search") {
@@ -107,10 +113,16 @@ fun BottomNavigationBar(navController: NavHostController) {
             icon = { 
                 Icon(
                     painter = painterResource(R.drawable.ic_book_24),
-                    contentDescription = "Book"
+                    contentDescription = "Book",
+                    tint = Color.Black
                 )
             },
-            label = { Text("Book") },
+            label = { 
+                Text(
+                    text = "Book",
+                    color = Color.Black
+                ) 
+            },
             selected = currentRoute == "book",
             onClick = { 
                 navController.navigate("book") {
