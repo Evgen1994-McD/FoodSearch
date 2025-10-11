@@ -376,7 +376,11 @@ class SearchRepositoryImpl @Inject constructor(
                 pagingSourceFactory = {
                     RecipesPagingSource(networkClient, query)
                 }
-            ).flow
+            ).flow.map { pagingData ->
+                pagingData.map { dto ->
+                    mapToDomain(dto)
+                }
+            }
         } else {
             Log.d("SearchRepositoryImpl", "No network, loading from cache")
             // Сети нет - загружаем из кеша
@@ -394,7 +398,11 @@ class SearchRepositoryImpl @Inject constructor(
                 pagingSourceFactory = {
                     RandomPagingSource(networkClient, type)
                 }
-            ).flow
+            ).flow.map { pagingData ->
+                pagingData.map { dto ->
+                    mapToDomain(dto)
+                }
+            }
         } else {
             Log.d("SearchRepositoryImpl", "No network, loading random recipes from cache")
             // Сети нет - загружаем из кеша
