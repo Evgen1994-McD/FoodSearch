@@ -188,11 +188,11 @@ fun CategorySection(
 fun CategoryItem(
     icon: Int,
     label: String,
-    onClick: () -> Unit
+    onClick: @Composable () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable { onClick() }
+        modifier = Modifier.clickable { onClick }
     ) {
         Image(
             painter = painterResource(icon),
