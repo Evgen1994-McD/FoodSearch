@@ -97,12 +97,14 @@ fun BookScreen(
             when (page) {
                 0 -> FavoriteScreen(
                     onRecipeClick = { recipe ->
-                        navController.navigate("details/${recipe.id}")
+                        val recipeId = recipe.id ?: 0
+                        navController.navigate("details/$recipeId")
                     }
                 )
                 1 -> SavedScreen(
                     onRecipeClick = { recipe ->
-                        navController.navigate("details/${recipe.id}")
+                        val recipeId = recipe.id ?: 0
+                        navController.navigate("details/$recipeId")
                     }
                 )
             }

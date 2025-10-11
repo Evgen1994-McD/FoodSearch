@@ -62,7 +62,8 @@ fun MainScreen(
                 composable("search") {
                     SearchScreen(
                         onRecipeClick = { recipe ->
-                            navController.navigate("details/${recipe.id}")
+                            val recipeId = recipe.id ?: 0
+                            navController.navigate("details/$recipeId")
                         }
                     )
                 }
