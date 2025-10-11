@@ -199,6 +199,27 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
 
+    override suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails? {
+        return try {
+            val response = networkClient.getRecipeDetails(id)
+            if (response.isSuccessful) {
+                val dto = response.body()
+                if (dto != null) {
+                    val recipeDetails = mapToDomain(dto)
+                    insertRecipeDetails(recipeDetails)
+                    recipeDetails
+                } else {
+                    null
+                }
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("SearchRepositoryImpl", "Error in searchRecipeDetailsInfo", e)
+            null
+        }
+    }
+
     private fun mapToDomain(dto: RecipeSummaryDto): RecipeSummary {
         return RecipeSummary(
             dto.id,
@@ -207,6 +228,48 @@ class SearchRepositoryImpl @Inject constructor(
             dto.readyInMinutes,
             dto.servings,
             dto.summary
+        )
+    }
+
+    private fun mapToDomain(dto: RecipeDetailsDto): RecipeDetails {
+        return RecipeDetails(
+            id = dto.id,
+            image = dto.image,
+            imageType = dto.imageType,
+            title = dto.title,
+            readyInMinutes = dto.readyInMinutes,
+            servings = dto.servings,
+            sourceUrl = dto.sourceUrl,
+            vegetarian = dto.vegetarian,
+            vegan = dto.vegan,
+            glutenFree = dto.glutenFree,
+            dairyFree = dto.dairyFree,
+            veryHealthy = dto.veryHealthy,
+            cheap = dto.cheap,
+            veryPopular = dto.veryPopular,
+            sustainable = dto.sustainable,
+            lowFodmap = dto.lowFodmap,
+            weightWatcherSmartPoints = dto.weightWatcherSmartPoints,
+            gaps = dto.gaps,
+            preparationMinutes = dto.preparationMinutes,
+            cookingMinutes = dto.cookingMinutes,
+            aggregateLikes = dto.aggregateLikes,
+            healthScore = dto.healthScore,
+            creditsText = dto.creditsText,
+            license = dto.license,
+            sourceName = dto.sourceName,
+            pricePerServing = dto.pricePerServing,
+            extendedIngredients = dto.extendedIngredients,
+            summary = dto.summary,
+            cuisines = dto.cuisines,
+            dishTypes = dto.dishTypes,
+            diets = dto.diets,
+            occasions = dto.occasions,
+            instructions = dto.instructions,
+            analyzedInstructions = dto.analyzedInstructions,
+            spoonacularScore = dto.spoonacularScore,
+            spoonacularSourceUrl = dto.spoonacularSourceUrl,
+            isLike = false
         )
     }
 

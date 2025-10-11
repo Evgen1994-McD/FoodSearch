@@ -99,6 +99,10 @@ fun DetailsScreen(
                 ErrorState()
             }
             
+            is DetailsSearchScreenState.ErrorNoEnternet -> {
+                ErrorState()
+            }
+            
             is DetailsSearchScreenState.SearchResults -> {
                 val searchResults = (uiState as DetailsSearchScreenState.SearchResults).data
                 RecipeDetailsContent(
@@ -129,6 +133,20 @@ fun RecipeDetailsContent(
     onIngredientsExpandedChange: (Boolean) -> Unit,
     onInstructionsExpandedChange: (Boolean) -> Unit
 ) {
+    if (recipe == null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Recipe not found",
+                fontSize = 18.sp,
+                color = Color.Gray
+            )
+        }
+        return
+    }
+    
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -137,8 +155,8 @@ fun RecipeDetailsContent(
         item {
             // Recipe Image
             AsyncImage(
-                model = recipe?.image,
-                contentDescription = recipe?.title,
+                model = recipe.image,
+                contentDescription = recipe.title,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
@@ -157,7 +175,7 @@ fun RecipeDetailsContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = recipe?.title ?: "",
+                    text = recipe.title ?: "",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,

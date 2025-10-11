@@ -9,4 +9,5 @@ interface NetworkClient {
         pageNumber:Int, pageSize:Int): Response
     suspend fun doRecipeDetailsInfoRequest(dto: Any): RecipeDetailsDto?
     suspend fun doRandomRecipe( pageNumber:Int, pageSize:Int, type: String?): Response
+    suspend fun getRecipeDetails(id: Int): retrofit2.Response<RecipeDetailsDto>
 }

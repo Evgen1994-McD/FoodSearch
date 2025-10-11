@@ -51,4 +51,14 @@ class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : Networ
         }
     }
 
+    override suspend fun getRecipeDetails(id: Int): retrofit2.Response<RecipeDetailsDto> {
+        return withContext(Dispatchers.IO) {
+            try {
+                spoonacularApi.getRecipeDetails(id, apiKey)
+            } catch (e: Throwable) {
+                retrofit2.Response.error(500, okhttp3.ResponseBody.create(null, e.message ?: "Unknown error"))
+            }
+        }
+    }
+
 }
