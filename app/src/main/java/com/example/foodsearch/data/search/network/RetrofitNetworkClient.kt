@@ -54,8 +54,19 @@ class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : Networ
     override suspend fun getRecipeDetails(id: Int): retrofit2.Response<RecipeDetailsDto> {
         return withContext(Dispatchers.IO) {
             try {
-                spoonacularApi.getRecipeDetails(id, apiKey)
+                android.util.Log.d("RetrofitNetworkClient", "Requesting recipe details for id: $id")
+                val response = spoonacularApi.getRecipeDetails(id, apiKey)
+                android.util.Log.d("RetrofitNetworkClient", "Response successful: ${response.isSuccessful}")
+                android.util.Log.d("RetrofitNetworkClient", "Response code: ${response.code()}")
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    android.util.Log.d("RetrofitNetworkClient", "Response body: ${body?.title}")
+                    android.util.Log.d("RetrofitNetworkClient", "Ingredients count: ${body?.extendedIngredients?.size ?: 0}")
+                    android.util.Log.d("RetrofitNetworkClient", "Instructions count: ${body?.analyzedInstructions?.size ?: 0}")
+                }
+                response
             } catch (e: Throwable) {
+                android.util.Log.e("RetrofitNetworkClient", "Error getting recipe details", e)
                 retrofit2.Response.error(500, okhttp3.ResponseBody.create(null, e.message ?: "Unknown error"))
             }
         }

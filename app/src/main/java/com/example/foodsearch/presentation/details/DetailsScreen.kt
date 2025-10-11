@@ -50,8 +50,8 @@ fun DetailsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLiked by viewModel.isLiked.collectAsStateWithLifecycle()
     
-    var ingredientsExpanded by remember { mutableStateOf(false) }
-    var instructionsExpanded by remember { mutableStateOf(false) }
+    var ingredientsExpanded by remember { mutableStateOf(true) }
+    var instructionsExpanded by remember { mutableStateOf(true) }
     
     LaunchedEffect(recipeId) {
         viewModel.getDetailsRecipeInfo(recipeId)
@@ -135,6 +135,15 @@ fun RecipeDetailsContent(
     onIngredientsExpandedChange: (Boolean) -> Unit,
     onInstructionsExpandedChange: (Boolean) -> Unit
 ) {
+    // Логирование для отладки
+    LaunchedEffect(recipe) {
+        recipe?.let {
+            android.util.Log.d("DetailsScreen", "Recipe loaded: ${it.title}")
+            android.util.Log.d("DetailsScreen", "Ingredients count: ${it.extendedIngredients?.size ?: 0}")
+            android.util.Log.d("DetailsScreen", "Instructions count: ${it.analyzedInstructions?.size ?: 0}")
+        }
+    }
+    
     if (recipe == null) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -331,7 +340,7 @@ fun IngredientsSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Ingredients",
+                    text = "Ingredients (${ingredients.size})",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
@@ -351,9 +360,18 @@ fun IngredientsSection(
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
-                    ingredients.forEach { ingredient ->
-                        IngredientItem(ingredient = ingredient)
-                        Spacer(modifier = Modifier.height(8.dp))
+                    if (ingredients.isEmpty()) {
+                        Text(
+                            text = "No ingredients available",
+                            fontSize = 14.sp,
+                            color = Color.Gray,
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                        )
+                    } else {
+                        ingredients.forEach { ingredient ->
+                            IngredientItem(ingredient = ingredient)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
                     }
                 }
             }
@@ -432,7 +450,7 @@ fun InstructionsSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Instructions",
+                    text = "Instructions (${instructions.size})",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
@@ -451,12 +469,21 @@ fun InstructionsSection(
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
-                    instructions.forEachIndexed { index, step ->
-                        InstructionItem(
-                            stepNumber = index + 1,
-                            instruction = step.step
+                    if (instructions.isEmpty()) {
+                        Text(
+                            text = "No instructions available",
+                            fontSize = 14.sp,
+                            color = Color.Gray,
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
+                    } else {
+                        instructions.forEachIndexed { index, step ->
+                            InstructionItem(
+                                stepNumber = index + 1,
+                                instruction = step.step
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
                     }
                 }
             }

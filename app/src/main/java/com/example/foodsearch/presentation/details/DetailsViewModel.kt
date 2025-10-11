@@ -101,6 +101,8 @@ class DetailsViewModel @Inject constructor(
                 currentRecipe = recipe
                 _uiState.value = DetailsSearchScreenState.SearchResults(recipe)
                 Log.d("DetailsViewModel", "Recipe $recipeId loaded successfully")
+                Log.d("DetailsViewModel", "Ingredients count: ${recipe.extendedIngredients?.size ?: 0}")
+                Log.d("DetailsViewModel", "Instructions count: ${recipe.analyzedInstructions?.size ?: 0}")
             } else {
                 // Проверяем, есть ли рецепт в кеше как последняя попытка
                 val cachedRecipe = searchInteractor.getRecipeDetailsById(recipeId)

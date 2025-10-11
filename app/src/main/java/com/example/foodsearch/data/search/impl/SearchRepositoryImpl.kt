@@ -173,6 +173,10 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
     private fun mapToDomain(dto: RecipeDetailsDto): RecipeDetails {
+        Log.d("SearchRepositoryImpl", "Mapping RecipeDetailsDto to domain model")
+        Log.d("SearchRepositoryImpl", "Ingredients count: ${dto.extendedIngredients?.size ?: 0}")
+        Log.d("SearchRepositoryImpl", "Instructions count: ${dto.analyzedInstructions?.size ?: 0}")
+        
         return RecipeDetails(
             id = dto.id,
             image = dto.image,
