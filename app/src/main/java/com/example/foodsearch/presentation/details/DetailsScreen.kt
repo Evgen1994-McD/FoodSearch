@@ -72,9 +72,9 @@ fun DetailsScreen(
             }
             
             is DetailsSearchScreenState.SearchResults -> {
-                val searchResults = uiState
+                val searchResults = (uiState as DetailsSearchScreenState.SearchResults).data
                 RecipeDetailsContent(
-                    recipe = searchResults.data,
+                    recipe = searchResults,
                     isLiked = isLiked,
                     onLikeClick = { viewModel.like() },
                     onDislikeClick = { viewModel.disLike() },
