@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
@@ -32,7 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.example.foodsearch.R
 import com.example.foodsearch.domain.models.RecipeDetails
 
@@ -40,6 +44,7 @@ import com.example.foodsearch.domain.models.RecipeDetails
 @Composable
 fun DetailsScreen(
     recipeId: Int,
+    navController: NavController,
     viewModel: DetailsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -57,6 +62,29 @@ fun DetailsScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
+        // Top App Bar with Back Button
+        TopAppBar(
+            title = {
+                Text(
+                    text = "Recipe Details",
+                    color = Color.White
+                )
+            },
+            navigationIcon = {
+                IconButton(
+                    onClick = { navController.popBackStack() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            )
+        )
         when (uiState) {
             is DetailsSearchScreenState.Loading -> {
                 Box(
@@ -317,18 +345,33 @@ fun IngredientsSection(
 fun IngredientItem(
     ingredient: com.example.foodsearch.domain.models.OtherModels.Ingredient
 ) {
+    val imageUrl = if (ingredient.image.isNotEmpty()) {
+        // Проверяем, является ли URL полным или относительным
+        if (ingredient.image.startsWith("http")) {
+            ingredient.image
+        } else {
+            // Если это относительный путь, добавляем базовый URL Spoonacular
+            "https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}"
+        }
+    } else null
+    
+    val painter = rememberAsyncImagePainter(
+        model = imageUrl,
+        error = painterResource(R.drawable.ic_ph_kitchen),
+        placeholder = painterResource(R.drawable.ic_ph_kitchen)
+    )
+    
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AsyncImage(
-            model = ingredient.image,
+        Image(
+            painter = painter,
             contentDescription = ingredient.name,
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape),
-            contentScale = ContentScale.Crop,
-            error = painterResource(R.drawable.ic_ph_kitchen)
+            contentScale = ContentScale.Crop
         )
         
         Spacer(modifier = Modifier.width(12.dp))

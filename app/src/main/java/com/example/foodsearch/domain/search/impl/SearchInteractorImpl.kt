@@ -57,4 +57,12 @@ class SearchInteractorImpl @Inject constructor(
 
     }
 
+    override suspend fun getFavoriteRecipes(): List<RecipeDetails> {
+        return searchRepository.getFavoriteRecipes()
+    }
+
+    override suspend fun getAllRecipes(): List<RecipeDetails> {
+        return searchRepository.getAllRecipes()
+    }
+
 }

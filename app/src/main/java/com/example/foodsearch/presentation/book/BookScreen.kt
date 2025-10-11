@@ -38,6 +38,19 @@ fun BookScreen(
         }
     }
     
+    LaunchedEffect(Unit) {
+        viewModel.loadFavoriteRecipes()
+        viewModel.loadAllRecipes()
+    }
+    
+    LaunchedEffect(pagerState.currentPage) {
+        // Обновляем списки при переключении вкладок
+        when (pagerState.currentPage) {
+            0 -> viewModel.refreshFavoriteRecipes()
+            1 -> viewModel.refreshAllRecipes()
+        }
+    }
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,31 +102,227 @@ fun BookScreen(
 }
 
 @Composable
-fun FavoriteScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Favorite Recipes",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
+fun FavoriteScreen(
+    viewModel: BookViewModel = hiltViewModel()
+) {
+    val favoriteRecipes by viewModel.favoriteRecipes.collectAsStateWithLifecycle()
+    
+    if (favoriteRecipes.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "No favorite recipes yet",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Like recipes to add them here",
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
+            }
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(favoriteRecipes) { recipe ->
+                FavoriteRecipeItem(recipe = recipe)
+            }
+        }
     }
 }
 
 @Composable
-fun SavedScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+fun SavedScreen(
+    viewModel: BookViewModel = hiltViewModel()
+) {
+    val allRecipes by viewModel.allRecipes.collectAsStateWithLifecycle()
+    
+    if (allRecipes.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "No recipes viewed yet",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "View recipe details to add them here",
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
+            }
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(allRecipes) { recipe ->
+                SavedRecipeItem(recipe = recipe)
+            }
+        }
+    }
+}
+
+@Composable
+fun FavoriteRecipeItem(
+    recipe: com.example.foodsearch.domain.models.RecipeDetails
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA))
     ) {
-        Text(
-            text = "Saved Recipes",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Recipe Image
+            AsyncImage(
+                model = recipe.image ?: "",
+                contentDescription = recipe.title ?: "Recipe image",
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            // Recipe Info
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = recipe.title ?: "No title",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    maxLines = 2,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                )
+                
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${recipe.readyInMinutes ?: 0} min",
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                    
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
+                    Text(
+                        text = "${recipe.servings ?: 0} servings",
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                }
+            }
+            
+            // Like Icon
+            Icon(
+                painter = painterResource(R.drawable.ic_like_red_51dp),
+                contentDescription = "Liked",
+                tint = Color.Red,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun SavedRecipeItem(
+    recipe: com.example.foodsearch.domain.models.RecipeDetails
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA))
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Recipe Image
+            AsyncImage(
+                model = recipe.image ?: "",
+                contentDescription = recipe.title ?: "Recipe image",
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            // Recipe Info
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = recipe.title ?: "No title",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    maxLines = 2,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                )
+                
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${recipe.readyInMinutes ?: 0} min",
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                    
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
+                    Text(
+                        text = "${recipe.servings ?: 0} servings",
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                }
+            }
+            
+            // Status Icon
+            Icon(
+                painter = painterResource(
+                    if (recipe.isLike == true) R.drawable.ic_like_red_51dp else R.drawable.ic_like_51dp
+                ),
+                contentDescription = if (recipe.isLike == true) "Liked" else "Not liked",
+                tint = if (recipe.isLike == true) Color.Red else Color.Gray,
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }

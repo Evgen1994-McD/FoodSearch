@@ -57,6 +57,7 @@ class DetailsViewModel @Inject constructor(
                 replaceRecipe(updatedRecipe)
                 currentRecipe = updatedRecipe
                 _isLiked.value = true
+                Log.d("DetailsViewModel", "Recipe liked: ${recipe.title}")
             }
         } catch (e: Exception) {
             Log.e("DetailsViewModel", "Error in like()", e)
@@ -70,6 +71,7 @@ class DetailsViewModel @Inject constructor(
                 replaceRecipe(updatedRecipe)
                 currentRecipe = updatedRecipe
                 _isLiked.value = false
+                Log.d("DetailsViewModel", "Recipe disliked: ${recipe.title}")
             }
         } catch (e: Exception) {
             Log.e("DetailsViewModel", "Error in disLike()", e)

@@ -16,6 +16,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.example.foodsearch.R
 import com.example.foodsearch.domain.models.RecipeSummary
 import com.example.foodsearch.presentation.book.BookScreen
@@ -70,7 +73,7 @@ fun MainScreen(
                 
                 composable("details/{recipeId}") { backStackEntry ->
                     val recipeId = backStackEntry.arguments?.getString("recipeId")?.toIntOrNull() ?: 0
-                    DetailsScreen(recipeId = recipeId)
+                    DetailsScreen(recipeId = recipeId, navController = navController)
                 }
             }
         }

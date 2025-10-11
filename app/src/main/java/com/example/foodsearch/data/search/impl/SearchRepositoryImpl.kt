@@ -192,8 +192,8 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun getSavedRecipes(): List<RecipeDetails> {
-        return mainDb.recipeDetailsDao().getSavedRecipes().map {
+    override suspend fun getAllRecipes(): List<RecipeDetails> {
+        return mainDb.recipeDetailsDao().getAllRecipes().map {
             recipeDetailsDbConvertor.map(it)!!
         }
     }
