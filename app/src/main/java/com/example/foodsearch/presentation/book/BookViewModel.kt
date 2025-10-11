@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
-class BookFragmentViewModel @Inject constructor() : ViewModel() {
+class BookViewModel @Inject constructor() : ViewModel() {
     
     private val _currentTabPosition = MutableStateFlow(0)
     val currentTabPosition: StateFlow<Int> = _currentTabPosition.asStateFlow()

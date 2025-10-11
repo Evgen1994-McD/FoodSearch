@@ -19,7 +19,7 @@ import com.example.foodsearch.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookScreen(
-    viewModel: BookFragmentViewModel = hiltViewModel()
+    viewModel: BookViewModel = hiltViewModel()
 ) {
     val currentTabPosition by viewModel.currentTabPosition.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState(
