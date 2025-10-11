@@ -137,6 +137,7 @@ class SearchRepositoryImpl @Inject constructor(
         // Если в кеше нет, загружаем из сети
         return try {
             Log.d("SearchRepositoryImpl", "Loading recipe $id from network")
+            Log.d("SearchRepositoryImpl", "Testing API with recipe ID: $id")
             val response = networkClient.getRecipeDetails(id)
             if (response.isSuccessful) {
                 val dto = response.body()
@@ -174,8 +175,19 @@ class SearchRepositoryImpl @Inject constructor(
 
     private fun mapToDomain(dto: RecipeDetailsDto): RecipeDetails {
         Log.d("SearchRepositoryImpl", "Mapping RecipeDetailsDto to domain model")
+        Log.d("SearchRepositoryImpl", "Recipe title: ${dto.title}")
         Log.d("SearchRepositoryImpl", "Ingredients count: ${dto.extendedIngredients?.size ?: 0}")
         Log.d("SearchRepositoryImpl", "Instructions count: ${dto.analyzedInstructions?.size ?: 0}")
+        
+        // Проверяем первые несколько ингредиентов
+        dto.extendedIngredients?.take(3)?.forEach { ingredient ->
+            Log.d("SearchRepositoryImpl", "Raw ingredient: ${ingredient.name} - ${ingredient.amount} ${ingredient.unit}")
+        }
+        
+        // Проверяем инструкции
+        dto.analyzedInstructions?.forEach { instruction ->
+            Log.d("SearchRepositoryImpl", "Raw instruction: ${instruction.name} - ${instruction.steps?.size ?: 0} steps")
+        }
         
         return RecipeDetails(
             id = dto.id,
@@ -204,14 +216,18 @@ class SearchRepositoryImpl @Inject constructor(
             license = dto.license,
             sourceName = dto.sourceName,
             pricePerServing = dto.pricePerServing,
-            extendedIngredients = dto.extendedIngredients?.map { mapIngredientToDomain(it) },
+            extendedIngredients = dto.extendedIngredients?.map { mapIngredientToDomain(it) }.also { mapped ->
+                Log.d("SearchRepositoryImpl", "Mapped ingredients count: ${mapped?.size ?: 0}")
+            },
             summary = dto.summary,
             cuisines = dto.cuisines,
             dishTypes = dto.dishTypes,
             diets = dto.diets,
             occasions = dto.occasions,
             instructions = dto.instructions,
-            analyzedInstructions = dto.analyzedInstructions?.map { mapAnalyzedInstructionToDomain(it) },
+            analyzedInstructions = dto.analyzedInstructions?.map { mapAnalyzedInstructionToDomain(it) }.also { mapped ->
+                Log.d("SearchRepositoryImpl", "Mapped instructions count: ${mapped?.size ?: 0}")
+            },
             spoonacularScore = dto.spoonacularScore,
             spoonacularSourceUrl = dto.spoonacularSourceUrl,
             isLike = false

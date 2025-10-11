@@ -55,7 +55,7 @@ class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : Networ
         return withContext(Dispatchers.IO) {
             try {
                 android.util.Log.d("RetrofitNetworkClient", "Requesting recipe details for id: $id")
-                val response = spoonacularApi.getRecipeDetails(id, apiKey)
+                val response = spoonacularApi.getRecipeDetails(id, apiKey, false)
                 android.util.Log.d("RetrofitNetworkClient", "Response successful: ${response.isSuccessful}")
                 android.util.Log.d("RetrofitNetworkClient", "Response code: ${response.code()}")
                 if (response.isSuccessful) {
@@ -63,6 +63,25 @@ class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : Networ
                     android.util.Log.d("RetrofitNetworkClient", "Response body: ${body?.title}")
                     android.util.Log.d("RetrofitNetworkClient", "Ingredients count: ${body?.extendedIngredients?.size ?: 0}")
                     android.util.Log.d("RetrofitNetworkClient", "Instructions count: ${body?.analyzedInstructions?.size ?: 0}")
+                    
+                    // Детальное логирование ингредиентов
+                    body?.extendedIngredients?.let { ingredients ->
+                        android.util.Log.d("RetrofitNetworkClient", "Ingredients list:")
+                        ingredients.take(3).forEach { ingredient ->
+                            android.util.Log.d("RetrofitNetworkClient", "  - ${ingredient.name}: ${ingredient.amount} ${ingredient.unit}")
+                        }
+                    }
+                    
+                    // Детальное логирование инструкций
+                    body?.analyzedInstructions?.let { instructions ->
+                        android.util.Log.d("RetrofitNetworkClient", "Instructions list:")
+                        instructions.forEach { instruction ->
+                            android.util.Log.d("RetrofitNetworkClient", "  Instruction: ${instruction.name}, steps: ${instruction.steps?.size ?: 0}")
+                        }
+                    }
+                } else {
+                    android.util.Log.e("RetrofitNetworkClient", "API request failed with code: ${response.code()}")
+                    android.util.Log.e("RetrofitNetworkClient", "Error body: ${response.errorBody()?.string()}")
                 }
                 response
             } catch (e: Throwable) {

@@ -37,7 +37,8 @@ interface SpoonacularApi {
     @GET("recipes/{recipeId}/information")
     suspend fun getRecipeDetails(
         @Path("recipeId") recipeId: Int,
-        @Query("apiKey") apiKey: String // Передаем как отдельный параметр
+        @Query("apiKey") apiKey: String, // Передаем как отдельный параметр
+        @Query("includeNutrition") includeNutrition: Boolean = false
     ): retrofit2.Response<RecipeDetailsDto>
 
 //
