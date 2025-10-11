@@ -28,12 +28,8 @@ class DetailsViewModel @Inject constructor(
     val isLiked: StateFlow<Boolean> = _isLiked.asStateFlow()
 
     suspend fun tryGetRecipeFromDataBase() {
-        searchInteractor.getRecipeDetailsById(id)
-        if (searchInteractor.getRecipeDetailsById(id)?.isLike == true) {
-            _isLiked.value = true
-        } else {
-            _isLiked.value = false
-        }
+        val recipe = searchInteractor.getRecipeDetailsById(id)
+        _isLiked.value = recipe?.isLike == true
     }
 
     suspend fun replaceRecipe(recipeDetails: RecipeDetails) {

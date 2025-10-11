@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.foodsearch.R
 import com.example.foodsearch.domain.models.RecipeSummary
@@ -34,6 +36,7 @@ fun SearchScreen(
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val currentPagingFlow by viewModel.currentPagingFlow.collectAsStateWithLifecycle()
     
     var searchText by remember { mutableStateOf("") }
     
@@ -96,24 +99,20 @@ fun SearchScreen(
             }
             
             is SearchScreenState.SearchResults -> {
-                // Показываем простой список рецептов
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+                currentPagingFlow?.let { pagingFlow ->
+                    val lazyPagingItems = pagingFlow.collectAsLazyPagingItems()
+                    RecipeList(
+                        lazyPagingItems = lazyPagingItems,
+                        onRecipeClick = onRecipeClick
+                    )
+                } ?: run {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Recipes loaded successfully!",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "PagingData integration coming soon...",
-                            fontSize = 14.sp,
+                            text = "No recipes found",
+                            fontSize = 16.sp,
                             color = Color.Gray
                         )
                     }
@@ -127,6 +126,12 @@ fun SearchScreen(
 fun CategorySection(
     onCategoryClick: (String) -> Unit
 ) {
+    val breadText = stringResource(R.string.bread)
+    val breakfastText = stringResource(R.string.breakfast)
+    val dessertText = stringResource(R.string.dessert)
+    val saladText = stringResource(R.string.salad)
+    val snackText = stringResource(R.string.snack)
+    
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -151,28 +156,28 @@ fun CategorySection(
             ) {
                 CategoryItem(
                     icon = R.drawable.ic_categories_foor,
-                    label = stringResource(R.string.bread),
-                    onClick = { onCategoryClick(stringResource(R.string.bread)) }
+                    label = breadText,
+                    onClick = { onCategoryClick(breadText) }
                 )
                 CategoryItem(
                     icon = R.drawable.ic_categories_foor,
-                    label = stringResource(R.string.breakfast),
-                    onClick = { onCategoryClick(stringResource(R.string.breakfast)) }
+                    label = breakfastText,
+                    onClick = { onCategoryClick(breakfastText) }
                 )
                 CategoryItem(
                     icon = R.drawable.ic_categories_foor,
-                    label = stringResource(R.string.dessert),
-                    onClick = { onCategoryClick(stringResource(R.string.dessert)) }
+                    label = dessertText,
+                    onClick = { onCategoryClick(dessertText) }
                 )
                 CategoryItem(
                     icon = R.drawable.ic_categories_foor,
-                    label = stringResource(R.string.salad),
-                    onClick = { onCategoryClick(stringResource(R.string.salad)) }
+                    label = saladText,
+                    onClick = { onCategoryClick(saladText) }
                 )
                 CategoryItem(
                     icon = R.drawable.ic_categories_foor,
-                    label = stringResource(R.string.snack),
-                    onClick = { onCategoryClick(stringResource(R.string.snack)) }
+                    label = snackText,
+                    onClick = { onCategoryClick(snackText) }
                 )
             }
         }
@@ -228,6 +233,123 @@ fun ErrorState() {
                 color = Color.Black,
                 textAlign = TextAlign.Center
             )
+        }
+    }
+}
+
+@Composable
+fun RecipeList(
+    lazyPagingItems: LazyPagingItems<RecipeSummary>,
+    onRecipeClick: (RecipeSummary) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(
+            count = lazyPagingItems.itemCount,
+            key = { index -> lazyPagingItems[index]?.id ?: index }
+        ) { index ->
+            val recipe = lazyPagingItems[index]
+            recipe?.let {
+                RecipeItem(
+                    recipe = it,
+                    onClick = { onRecipeClick(it) }
+                )
+            }
+        }
+        
+        // Loading state
+        if (lazyPagingItems.loadState.append is androidx.paging.LoadState.Loading) {
+            item {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
+        
+        // Error state
+        if (lazyPagingItems.loadState.append is androidx.paging.LoadState.Error) {
+            item {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Error loading recipes",
+                        color = Color.Red
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RecipeItem(
+    recipe: RecipeSummary,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Recipe Image
+            AsyncImage(
+                model = recipe.image,
+                contentDescription = recipe.title,
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            // Recipe Info
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = recipe.title,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    maxLines = 2,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                )
+                
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${recipe.readyInMinutes} ${stringResource(R.string.minutes)}",
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                    
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
+                    Text(
+                        text = "${recipe.servings} ${stringResource(R.string.servings)}",
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                }
+            }
         }
     }
 }

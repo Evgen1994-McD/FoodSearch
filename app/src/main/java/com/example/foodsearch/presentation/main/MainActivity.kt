@@ -47,19 +47,6 @@ fun MainScreen(
     val navController = rememberNavController()
     
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = getCurrentScreenTitle(navController),
-                        color = Color.White
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            )
-        },
         bottomBar = {
             BottomNavigationBar(navController = navController)
         }
@@ -133,18 +120,5 @@ fun BottomNavigationBar(navController: NavHostController) {
                 }
             }
         )
-    }
-}
-
-@Composable
-fun getCurrentScreenTitle(navController: NavHostController): String {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-    
-    return when {
-        currentRoute == "search" -> "Food Search"
-        currentRoute == "book" -> "My Recipes"
-        currentRoute?.startsWith("details/") == true -> "Recipe Details"
-        else -> "Food Search"
     }
 }

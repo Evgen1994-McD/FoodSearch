@@ -25,6 +25,9 @@ class SearchViewModel @Inject constructor(
     private val _isRandomSearchComplete = MutableStateFlow(false)
     val isRandomSearchComplete: StateFlow<Boolean> = _isRandomSearchComplete.asStateFlow()
     
+    private val _currentPagingFlow = MutableStateFlow<Flow<PagingData<RecipeSummary>>?>(null)
+    val currentPagingFlow: StateFlow<Flow<PagingData<RecipeSummary>>?> = _currentPagingFlow.asStateFlow()
+    
     init {
         // Observe search query changes and trigger search
         searchQuery
@@ -43,7 +46,8 @@ class SearchViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                // Упрощенная версия - просто показываем успех
+                val pagingFlow = searchInteractor.searchRecipe(query)
+                _currentPagingFlow.value = pagingFlow
                 _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
             } catch (e: Exception) {
                 _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
@@ -56,7 +60,8 @@ class SearchViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                // Упрощенная версия - просто показываем успех
+                val pagingFlow = searchInteractor.getRandomRecipes(query)
+                _currentPagingFlow.value = pagingFlow
                 _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
             } catch (e: Exception) {
                 _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
@@ -65,8 +70,13 @@ class SearchViewModel @Inject constructor(
     }
 
     fun getRecipeFromDb(query: String?) = viewModelScope.launch {
-        // Упрощенная версия
-        _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
+        try {
+            val pagingFlow = searchInteractor.getRecipeFromMemory(query)
+            _currentPagingFlow.value = pagingFlow
+            _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
+        } catch (e: Exception) {
+            _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
+        }
     }
     
     fun updateSearchQuery(query: String) {
