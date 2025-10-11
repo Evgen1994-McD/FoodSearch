@@ -61,7 +61,7 @@ fun SearchScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 48.dp, start = 20.dp, end = 20.dp, bottom = 20.dp), // Добавляем отступ сверху для системной панели
+                .padding(top = 24.dp, start = 20.dp, end = 20.dp, bottom = 20.dp), // Уменьшаем отступ сверху
             placeholder = { Text("Search recipes...") },
             leadingIcon = {
                 Icon(
@@ -96,6 +96,36 @@ fun SearchScreen(
             
             is SearchScreenState.ErrorNotFound -> {
                 ErrorState()
+            }
+            
+            is SearchScreenState.OfflineMode -> {
+                // Показываем кешированные рецепты в офлайн режиме
+                currentPagingFlow?.let { pagingFlow ->
+                    val lazyPagingItems = pagingFlow.collectAsLazyPagingItems()
+                    Column {
+                        // Заголовок офлайн режима
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3CD))
+                        ) {
+                            Text(
+                                text = "Offline Mode - Showing cached recipes",
+                                modifier = Modifier.padding(12.dp),
+                                fontSize = 14.sp,
+                                color = Color(0xFF856404)
+                            )
+                        }
+                        
+                        RecipeList(
+                            lazyPagingItems = lazyPagingItems,
+                            onRecipeClick = onRecipeClick
+                        )
+                    }
+                } ?: run {
+                    OfflineState()
+                }
             }
             
             is SearchScreenState.SearchResults -> {
@@ -351,6 +381,31 @@ fun RecipeItem(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun OfflineState() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "No Internet Connection",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Gray
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Showing cached recipes only",
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.example.foodsearch.domain.models.RecipeSummary
 import com.example.foodsearch.domain.search.SearchInteractor
+import com.example.foodsearch.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -14,6 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchInteractor: SearchInteractor,
+    private val networkUtils: NetworkUtils,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SearchScreenState>(SearchScreenState.Loading)
@@ -46,9 +48,14 @@ class SearchViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                val pagingFlow = searchInteractor.searchRecipe(query)
+                val pagingFlow = searchInteractor.getRecipesWithNetworkCheck(query, 1, 20)
                 _currentPagingFlow.value = pagingFlow
-                _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
+                
+                if (!networkUtils.isNetworkAvailable()) {
+                    _uiState.value = SearchScreenState.OfflineMode
+                } else {
+                    _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
+                }
                 
                 // Рецепты из поиска будут сохранены в кеш при клике на них
                 // через метод saveRecipeToCache в MainActivity
@@ -63,9 +70,14 @@ class SearchViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                val pagingFlow = searchInteractor.getRandomRecipes(query)
+                val pagingFlow = searchInteractor.getRandomRecipesWithNetworkCheck(1, 20, query)
                 _currentPagingFlow.value = pagingFlow
-                _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
+                
+                if (!networkUtils.isNetworkAvailable()) {
+                    _uiState.value = SearchScreenState.OfflineMode
+                } else {
+                    _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
+                }
                 
                 // Сохраняем рецепты из категорий в кеш для офлайн доступа
                 // Это будет происходить автоматически при загрузке деталей рецепта

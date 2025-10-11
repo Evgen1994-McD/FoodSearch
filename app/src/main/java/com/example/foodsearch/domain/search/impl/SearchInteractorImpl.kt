@@ -62,5 +62,13 @@ class SearchInteractorImpl @Inject constructor(
     override suspend fun clearCache() {
         searchRepository.clearCache()
     }
+    
+    override suspend fun getRecipesWithNetworkCheck(query: String, pageNumber: Int, pageSize: Int): Flow<PagingData<RecipeSummary>> {
+        return searchRepository.getRecipesWithNetworkCheck(query, pageNumber, pageSize)
+    }
+    
+    override suspend fun getRandomRecipesWithNetworkCheck(pageNumber: Int, pageSize: Int, type: String?): Flow<PagingData<RecipeSummary>> {
+        return searchRepository.getRandomRecipesWithNetworkCheck(pageNumber, pageSize, type)
+    }
 
 }

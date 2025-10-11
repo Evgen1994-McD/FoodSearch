@@ -18,4 +18,8 @@ interface SearchInteractor {
     suspend fun saveRecipesToCache(recipes: List<RecipeSummary>)
     
     suspend fun clearCache()
+    
+    suspend fun getRecipesWithNetworkCheck(query: String, pageNumber: Int, pageSize: Int): Flow<PagingData<RecipeSummary>>
+    
+    suspend fun getRandomRecipesWithNetworkCheck(pageNumber: Int, pageSize: Int, type: String?): Flow<PagingData<RecipeSummary>>
 }

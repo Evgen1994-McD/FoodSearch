@@ -19,6 +19,7 @@ import com.example.foodsearch.data.search.network.NetworkClient
 import com.example.foodsearch.domain.models.RecipeDetails
 import com.example.foodsearch.domain.models.RecipeSummary
 import com.example.foodsearch.domain.search.SearchRepository
+import com.example.foodsearch.utils.NetworkUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -29,6 +30,7 @@ class SearchRepositoryImpl @Inject constructor(
     private val mainDb: MainDb,
     private val recipeSummaryDbConvertor: RecipeSummaryDbConvertor,
     private val recipeDetailsDbConvertor: RecipeDetailsDbConvertor,
+    private val networkUtils: NetworkUtils,
 ) : SearchRepository {
 
 
@@ -361,6 +363,42 @@ class SearchRepositoryImpl @Inject constructor(
             Log.d("SearchRepositoryImpl", "Cache cleared successfully")
         } catch (e: Exception) {
             Log.e("SearchRepositoryImpl", "Error clearing cache", e)
+        }
+    }
+    
+    // Метод для получения рецептов с проверкой сети
+    suspend fun getRecipesWithNetworkCheck(query: String, pageNumber: Int, pageSize: Int): Flow<PagingData<RecipeSummary>> {
+        return if (networkUtils.isNetworkAvailable()) {
+            Log.d("SearchRepositoryImpl", "Network available, loading from API")
+            // Сеть доступна - загружаем из API
+            Pager(
+                config = PagingConfig(pageSize = pageSize),
+                pagingSourceFactory = {
+                    RecipesPagingSource(networkClient, query)
+                }
+            ).flow
+        } else {
+            Log.d("SearchRepositoryImpl", "No network, loading from cache")
+            // Сети нет - загружаем из кеша
+            getRecipeSummaryFromMemory(query)
+        }
+    }
+    
+    // Метод для получения случайных рецептов с проверкой сети
+    suspend fun getRandomRecipesWithNetworkCheck(pageNumber: Int, pageSize: Int, type: String?): Flow<PagingData<RecipeSummary>> {
+        return if (networkUtils.isNetworkAvailable()) {
+            Log.d("SearchRepositoryImpl", "Network available, loading random recipes from API")
+            // Сеть доступна - загружаем из API
+            Pager(
+                config = PagingConfig(pageSize = pageSize),
+                pagingSourceFactory = {
+                    RandomPagingSource(networkClient, type)
+                }
+            ).flow
+        } else {
+            Log.d("SearchRepositoryImpl", "No network, loading random recipes from cache")
+            // Сети нет - загружаем из кеша
+            getRecipeSummaryFromMemory(null)
         }
     }
 
