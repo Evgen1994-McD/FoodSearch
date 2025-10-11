@@ -1,9 +1,5 @@
 package com.example.foodsearch.data.search.dto.details
 
-import com.example.foodsearch.domain.models.OtherModels
-import com.example.foodsearch.domain.models.OtherModels.AnalyzedInstruction
-import com.example.foodsearch.domain.models.OtherModels.Ingredient
-
 data class RecipeDetailsDto(
 
     val id: Int?, // Уникальный идентификатор рецепта
@@ -32,14 +28,14 @@ data class RecipeDetailsDto(
     val license: String?, // Лицензия
     val sourceName: String?, // Имя источника
     val pricePerServing: Double?, // Цена за порцию
-    val extendedIngredients: List<Ingredient>?, // Список ингредиентов
+    val extendedIngredients: List<IngredientDto>?, // Список ингредиентов
     val summary: String?, // Краткое описание рецепта
     val cuisines: List<String>?, // Список кухонь
     val dishTypes: List<String>?, // Типы блюд
     val diets: List<String>?, // Диеты
     val occasions: List<String>?, // Поводы
     val instructions: String?, // Инструкции по приготовлению
-    val analyzedInstructions: List<AnalyzedInstruction>?, // Проанализированные инструкции
+    val analyzedInstructions: List<AnalyzedInstructionDto>?, // Проанализированные инструкции
     val spoonacularScore: Double?, // Оценка Spoonacular
     val spoonacularSourceUrl: String?,
 
