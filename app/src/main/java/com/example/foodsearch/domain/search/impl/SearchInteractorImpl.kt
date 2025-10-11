@@ -43,18 +43,8 @@ class SearchInteractorImpl @Inject constructor(
     }
 
 
-    override suspend fun searchRecipeDetailsInfo(id: Int): Pair<RecipeDetails?, String?> {
-
-
-        val result = searchRepository.searchRecipeDetailsInfo(id)
-
-        if (result != null) {
-            return Pair(result, null)
-        } else {
-            return Pair(null, exceptionStateString)
-        }
-
-
+    override suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails? {
+        return searchRepository.searchRecipeDetailsInfo(id)
     }
 
     override suspend fun getFavoriteRecipes(): List<RecipeDetails> {
@@ -63,6 +53,10 @@ class SearchInteractorImpl @Inject constructor(
 
     override suspend fun getAllRecipes(): List<RecipeDetails> {
         return searchRepository.getAllRecipes()
+    }
+
+    override suspend fun saveRecipesToCache(recipes: List<RecipeSummary>) {
+        searchRepository.saveRecipesToCache(recipes)
     }
 
 }

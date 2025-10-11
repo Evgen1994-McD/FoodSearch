@@ -91,23 +91,26 @@ class DetailsViewModel @Inject constructor(
             try {
                 tryGetRecipeFromDataBase()
             } catch (e: Exception) {
-                Log.d("error", " $  ${e.message}")
+                Log.d("DetailsViewModel", "Error getting recipe from database: ${e.message}")
             }
 
             _uiState.value = DetailsSearchScreenState.Loading
-            val pair = searchInteractor.searchRecipeDetailsInfo(recipeId)
-            when {
-                pair.first == null && pair.second == "Exception" -> {
-                    _uiState.value = DetailsSearchScreenState.ErrorNoEnternet(pair.second)
-                }
-
-                pair.first == null && pair.second == null -> {
+            val recipe = searchInteractor.searchRecipeDetailsInfo(recipeId)
+            
+            if (recipe != null) {
+                currentRecipe = recipe
+                _uiState.value = DetailsSearchScreenState.SearchResults(recipe)
+                Log.d("DetailsViewModel", "Recipe $recipeId loaded successfully")
+            } else {
+                // Проверяем, есть ли рецепт в кеше как последняя попытка
+                val cachedRecipe = searchInteractor.getRecipeDetailsById(recipeId)
+                if (cachedRecipe != null) {
+                    currentRecipe = cachedRecipe
+                    _uiState.value = DetailsSearchScreenState.SearchResults(cachedRecipe)
+                    Log.d("DetailsViewModel", "Recipe $recipeId loaded from cache as fallback")
+                } else {
                     _uiState.value = DetailsSearchScreenState.ErrorNotFound(null)
-                }
-
-                pair.first != null -> {
-                    currentRecipe = pair.first
-                    _uiState.value = DetailsSearchScreenState.SearchResults(pair.first)
+                    Log.w("DetailsViewModel", "Recipe $recipeId not found in cache or network")
                 }
             }
         }

@@ -56,4 +56,15 @@ class BookViewModel @Inject constructor(
     fun refreshAllRecipes() {
         loadAllRecipes()
     }
+    
+    // Метод для сохранения рецепта в кеш при добавлении в избранное
+    fun saveRecipeToCache(recipe: com.example.foodsearch.domain.models.RecipeDetails) {
+        viewModelScope.launch {
+            try {
+                searchInteractor.insertRecipeDetails(recipe)
+            } catch (e: Exception) {
+                // Игнорируем ошибки сохранения
+            }
+        }
+    }
 }

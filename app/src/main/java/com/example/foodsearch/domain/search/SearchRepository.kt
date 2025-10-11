@@ -19,4 +19,5 @@ interface SearchRepository {
     suspend fun getRecipeDetailsFromMemoryById(id: Int): RecipeDetails?
     suspend fun getFavoriteRecipes(): List<RecipeDetails>
     suspend fun getAllRecipes(): List<RecipeDetails>
+    suspend fun saveRecipesToCache(recipes: List<RecipeSummary>)
 }

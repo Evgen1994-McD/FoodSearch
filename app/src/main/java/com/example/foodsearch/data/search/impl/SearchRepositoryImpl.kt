@@ -127,22 +127,36 @@ class SearchRepositoryImpl @Inject constructor(
 
 
     override suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails? {
+        // Сначала пытаемся получить из кеша
+        val cachedRecipe = getRecipeDetailsFromMemoryById(id)
+        if (cachedRecipe != null) {
+            Log.d("SearchRepositoryImpl", "Recipe $id found in cache")
+            return cachedRecipe
+        }
+        
+        // Если в кеше нет, загружаем из сети
         return try {
+            Log.d("SearchRepositoryImpl", "Loading recipe $id from network")
             val response = networkClient.getRecipeDetails(id)
             if (response.isSuccessful) {
                 val dto = response.body()
                 if (dto != null) {
                     val recipeDetails = mapToDomain(dto)
+                    // Сохраняем в кеш для будущего использования
                     insertRecipeDetails(recipeDetails)
+                    Log.d("SearchRepositoryImpl", "Recipe $id saved to cache")
                     recipeDetails
                 } else {
+                    Log.w("SearchRepositoryImpl", "Recipe $id not found in API response")
                     null
                 }
             } else {
+                Log.w("SearchRepositoryImpl", "Failed to load recipe $id: ${response.code()}")
                 null
             }
         } catch (e: Exception) {
-            Log.e("SearchRepositoryImpl", "Error in searchRecipeDetailsInfo", e)
+            Log.e("SearchRepositoryImpl", "Error loading recipe $id from network", e)
+            // Возвращаем null, так как нет данных ни в кеше, ни в сети
             null
         }
     }
@@ -198,6 +212,56 @@ class SearchRepositoryImpl @Inject constructor(
             spoonacularSourceUrl = dto.spoonacularSourceUrl,
             isLike = false
         )
+    }
+    
+    // Метод для массового сохранения рецептов в кеш
+    suspend fun saveRecipesToCache(recipes: List<RecipeSummary>) {
+        try {
+            recipes.forEach { recipe ->
+                val recipeDetails = RecipeDetails(
+                    id = recipe.id,
+                    image = recipe.image,
+                    imageType = null,
+                    title = recipe.title,
+                    readyInMinutes = recipe.readyInMinutes,
+                    servings = recipe.servings,
+                    sourceUrl = null,
+                    vegetarian = null,
+                    vegan = null,
+                    glutenFree = null,
+                    dairyFree = null,
+                    veryHealthy = null,
+                    cheap = null,
+                    veryPopular = null,
+                    sustainable = null,
+                    lowFodmap = null,
+                    weightWatcherSmartPoints = null,
+                    gaps = null,
+                    preparationMinutes = null,
+                    cookingMinutes = null,
+                    aggregateLikes = null,
+                    healthScore = null,
+                    creditsText = null,
+                    license = null,
+                    sourceName = null,
+                    pricePerServing = null,
+                    extendedIngredients = null,
+                    summary = recipe.summary,
+                    cuisines = null,
+                    dishTypes = null,
+                    diets = null,
+                    occasions = null,
+                    instructions = null,
+                    analyzedInstructions = null,
+                    spoonacularScore = null,
+                    spoonacularSourceUrl = null,
+                    isLike = false
+                )
+                insertRecipeDetails(recipeDetails)
+            }
+        } catch (e: Exception) {
+            Log.e("SearchRepositoryImpl", "Error saving recipes to cache", e)
+        }
     }
 
 

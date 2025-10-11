@@ -60,9 +60,12 @@ fun MainScreen(
                 startDestination = "search"
             ) {
                 composable("search") {
+                    val searchViewModel: com.example.foodsearch.presentation.search.SearchViewModel = hiltViewModel()
                     SearchScreen(
                         onRecipeClick = { recipe ->
                             val recipeId = recipe.id ?: 0
+                            // Сохраняем рецепт в кеш перед переходом к деталям
+                            searchViewModel.saveRecipeToCache(recipe)
                             navController.navigate("details/$recipeId")
                         }
                     )

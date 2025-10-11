@@ -49,6 +49,9 @@ class SearchViewModel @Inject constructor(
                 val pagingFlow = searchInteractor.searchRecipe(query)
                 _currentPagingFlow.value = pagingFlow
                 _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
+                
+                // Рецепты из поиска будут сохранены в кеш при клике на них
+                // через метод saveRecipeToCache в MainActivity
             } catch (e: Exception) {
                 _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
             }
@@ -63,6 +66,9 @@ class SearchViewModel @Inject constructor(
                 val pagingFlow = searchInteractor.getRandomRecipes(query)
                 _currentPagingFlow.value = pagingFlow
                 _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
+                
+                // Сохраняем рецепты из категорий в кеш для офлайн доступа
+                // Это будет происходить автоматически при загрузке деталей рецепта
             } catch (e: Exception) {
                 _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
             }
@@ -85,6 +91,57 @@ class SearchViewModel @Inject constructor(
     
     fun setRandomSearchComplete() {
         _isRandomSearchComplete.value = true
+    }
+    
+    // Метод для сохранения рецепта в кеш при клике
+    fun saveRecipeToCache(recipe: RecipeSummary) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // Конвертируем RecipeSummary в RecipeDetails для сохранения
+                val recipeDetails = com.example.foodsearch.domain.models.RecipeDetails(
+                    id = recipe.id,
+                    image = recipe.image,
+                    imageType = null,
+                    title = recipe.title,
+                    readyInMinutes = recipe.readyInMinutes,
+                    servings = recipe.servings,
+                    sourceUrl = null,
+                    vegetarian = null,
+                    vegan = null,
+                    glutenFree = null,
+                    dairyFree = null,
+                    veryHealthy = null,
+                    cheap = null,
+                    veryPopular = null,
+                    sustainable = null,
+                    lowFodmap = null,
+                    weightWatcherSmartPoints = null,
+                    gaps = null,
+                    preparationMinutes = null,
+                    cookingMinutes = null,
+                    aggregateLikes = null,
+                    healthScore = null,
+                    creditsText = null,
+                    license = null,
+                    sourceName = null,
+                    pricePerServing = null,
+                    extendedIngredients = null,
+                    summary = recipe.summary,
+                    cuisines = null,
+                    dishTypes = null,
+                    diets = null,
+                    occasions = null,
+                    instructions = null,
+                    analyzedInstructions = null,
+                    spoonacularScore = null,
+                    spoonacularSourceUrl = null,
+                    isLike = false
+                )
+                searchInteractor.insertRecipeDetails(recipeDetails)
+            } catch (e: Exception) {
+                // Игнорируем ошибки сохранения, так как это не критично
+            }
+        }
     }
 }
 

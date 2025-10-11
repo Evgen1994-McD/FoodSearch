@@ -9,10 +9,11 @@ interface SearchInteractor {
 
     fun searchRecipe(expression: String): Flow<PagingData<RecipeSummary>>
     fun getRandomRecipes(query: String?): Flow<PagingData<RecipeSummary>>
-    suspend fun searchRecipeDetailsInfo(id: Int): Pair<RecipeDetails?, String?>
+    suspend fun searchRecipeDetailsInfo(id: Int): RecipeDetails?
     suspend fun getRecipeFromMemory(query: String?): Flow<PagingData<RecipeSummary>>
     suspend fun insertRecipeDetails(recipeDetails: RecipeDetails)
     suspend fun getRecipeDetailsById(id: Int): RecipeDetails?
     suspend fun getFavoriteRecipes(): List<RecipeDetails>
     suspend fun getAllRecipes(): List<RecipeDetails>
+    suspend fun saveRecipesToCache(recipes: List<RecipeSummary>)
 }
