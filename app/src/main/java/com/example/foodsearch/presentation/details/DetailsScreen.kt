@@ -40,7 +40,7 @@ import com.example.foodsearch.domain.models.RecipeDetails
 @Composable
 fun DetailsScreen(
     recipeId: Int,
-    viewModel: DetailsRecipeViewModel = hiltViewModel()
+    viewModel: DetailsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLiked by viewModel.isLiked.collectAsStateWithLifecycle()

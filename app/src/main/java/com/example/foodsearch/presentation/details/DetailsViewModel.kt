@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailsRecipeViewModel @Inject constructor(
+class DetailsViewModel @Inject constructor(
     private val searchInteractor: SearchInteractor,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -79,14 +79,3 @@ class DetailsRecipeViewModel @Inject constructor(
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
