@@ -18,8 +18,12 @@ class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     
-    val id: Int = savedStateHandle.get<Int>("id") ?: -1
+    val id: Int = savedStateHandle.get<Int>("recipeId") ?: -1
     private var currentRecipe: RecipeDetails? = null
+    
+    init {
+        Log.d("DetailsViewModel", "Initialized with id: $id")
+    }
 
     private val _uiState = MutableStateFlow<DetailsSearchScreenState>(DetailsSearchScreenState.Loading)
     val uiState: StateFlow<DetailsSearchScreenState> = _uiState.asStateFlow()
@@ -28,27 +32,59 @@ class DetailsViewModel @Inject constructor(
     val isLiked: StateFlow<Boolean> = _isLiked.asStateFlow()
 
     suspend fun tryGetRecipeFromDataBase() {
-        val recipe = searchInteractor.getRecipeDetailsById(id)
-        _isLiked.value = recipe?.isLike == true
+        try {
+            val recipe = searchInteractor.getRecipeDetailsById(id)
+            _isLiked.value = recipe?.isLike == true
+        } catch (e: Exception) {
+            Log.e("DetailsViewModel", "Error in tryGetRecipeFromDataBase()", e)
+            _isLiked.value = false
+        }
     }
 
     suspend fun replaceRecipe(recipeDetails: RecipeDetails) {
-        searchInteractor.insertRecipeDetails(recipeDetails)
+        try {
+            searchInteractor.insertRecipeDetails(recipeDetails)
+        } catch (e: Exception) {
+            Log.e("DetailsViewModel", "Error in replaceRecipe()", e)
+            throw e
+        }
     }
 
     fun like() = viewModelScope.launch {
-        val recipe = currentRecipe?.copy(isLike = true)
-        recipe?.let { replaceRecipe(it) }
-        tryGetRecipeFromDataBase()
+        try {
+            currentRecipe?.let { recipe ->
+                val updatedRecipe = recipe.copy(isLike = true)
+                replaceRecipe(updatedRecipe)
+                currentRecipe = updatedRecipe
+                _isLiked.value = true
+            }
+        } catch (e: Exception) {
+            Log.e("DetailsViewModel", "Error in like()", e)
+        }
     }
 
     fun disLike() = viewModelScope.launch {
-        val recipe = currentRecipe?.copy(isLike = false)
-        recipe?.let { replaceRecipe(it) }
-        tryGetRecipeFromDataBase()
+        try {
+            currentRecipe?.let { recipe ->
+                val updatedRecipe = recipe.copy(isLike = false)
+                replaceRecipe(updatedRecipe)
+                currentRecipe = updatedRecipe
+                _isLiked.value = false
+            }
+        } catch (e: Exception) {
+            Log.e("DetailsViewModel", "Error in disLike()", e)
+        }
     }
 
     fun getDetailsRecipeInfo(recipeId: Int = id) {
+        Log.d("DetailsViewModel", "getDetailsRecipeInfo called with recipeId: $recipeId")
+        
+        if (recipeId <= 0) {
+            Log.e("DetailsViewModel", "Invalid recipeId: $recipeId")
+            _uiState.value = DetailsSearchScreenState.ErrorNotFound(null)
+            return
+        }
+        
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 tryGetRecipeFromDataBase()

@@ -307,8 +307,8 @@ fun RecipeItem(
         ) {
             // Recipe Image
             AsyncImage(
-                model = recipe.image,
-                contentDescription = recipe.title,
+                model = recipe.image ?: "",
+                contentDescription = recipe.title ?: "Recipe image",
                 modifier = Modifier
                     .size(80.dp)
                     .clip(RoundedCornerShape(8.dp)),
@@ -322,7 +322,7 @@ fun RecipeItem(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = recipe.title,
+                    text = recipe.title ?: "No title",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
@@ -336,7 +336,7 @@ fun RecipeItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "${recipe.readyInMinutes} ${stringResource(R.string.minutes)}",
+                        text = "${recipe.readyInMinutes ?: 0} ${stringResource(R.string.minutes)}",
                         fontSize = 12.sp,
                         color = Color.Gray
                     )
@@ -344,7 +344,7 @@ fun RecipeItem(
                     Spacer(modifier = Modifier.width(8.dp))
                     
                     Text(
-                        text = "${recipe.servings} ${stringResource(R.string.servings)}",
+                        text = "${recipe.servings ?: 0} ${stringResource(R.string.servings)}",
                         fontSize = 12.sp,
                         color = Color.Gray
                     )
