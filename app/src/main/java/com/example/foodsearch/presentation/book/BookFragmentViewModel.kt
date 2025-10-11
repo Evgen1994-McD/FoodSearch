@@ -1,21 +1,18 @@
 package com.example.foodsearch.presentation.book
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
+import javax.inject.Inject
 
+@HiltViewModel
+class BookFragmentViewModel @Inject constructor() : ViewModel() {
+    
+    private val _currentTabPosition = MutableStateFlow(0)
+    val currentTabPosition: StateFlow<Int> = _currentTabPosition.asStateFlow()
 
-class BookFragmentViewModel
-
-    : ViewModel() {
-    // Переменная LiveData хранит позицию активной вкладки
-    private val _currentTabPosition = MutableLiveData<Int>()
-    val currentTabPosition: LiveData<Int> = _currentTabPosition
-
-    // Функция для установки новой позиции вкладки
     fun setCurrentTabPosition(newPosition: Int) {
         _currentTabPosition.value = newPosition
     }
-
-
 }

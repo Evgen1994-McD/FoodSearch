@@ -40,8 +40,11 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
-
+        compose = true
         viewBinding = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.8"
     }
 }
 
@@ -77,6 +80,13 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.navigation.compose)
+    
+    // Compose additional dependencies
+    implementation("androidx.compose.ui:ui-viewbinding")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.3")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation("io.coil-kt:coil-compose:2.5.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

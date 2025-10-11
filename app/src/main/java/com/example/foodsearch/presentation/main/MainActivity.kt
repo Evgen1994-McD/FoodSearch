@@ -1,99 +1,150 @@
 package com.example.foodsearch.presentation.main
 
 import android.os.Bundle
-import android.view.MenuItem
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.foodsearch.R
-import com.example.foodsearch.databinding.ActivityMainBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.foodsearch.domain.models.RecipeSummary
+import com.example.foodsearch.presentation.book.BookScreen
+import com.example.foodsearch.presentation.details.DetailsScreen
+import com.example.foodsearch.presentation.search.SearchScreen
+import com.example.foodsearch.ui.theme.FoodSearchTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
-    private val viewModel: MainViewModel by viewModels()
-    private lateinit var navHostFragment: NavHostFragment
-    private lateinit var navController: NavController
-    private lateinit var bottomNavigationView: BottomNavigationView
-
-
+class MainActivity : ComponentActivity() {
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        val toolbar = binding.materialToolbar
-        setSupportActionBar(toolbar)
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-        navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
-        navController = navHostFragment.navController
-        bottomNavigationView = binding.bottomNavigationView
-        bottomNavigationView.setupWithNavController(navController)
-        toolbar.setNavigationOnClickListener {
-            navController.popBackStack()
-        }
-
-        bottomNavigationView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.searchFragment -> navigateAndClearOldFragments(R.id.searchFragment)
-                R.id.bookFragment -> navigateAndClearOldFragments(R.id.bookFragment)
-                else -> false
-            }
-        }
-
-
-
-
-
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.searchFragment -> {
-                    supportActionBar?.title = getString(R.string.greetings)
-                    binding.materialToolbar.navigationIcon = null
-
-                }
-
-                R.id.detailsRecipe -> {
-                    supportActionBar?.title = getString(R.string.info)
-                    binding.materialToolbar.navigationIcon = getDrawable(R.drawable.ic_backblack_16)
-                }
-
-                R.id.bookFragment -> {
-                    supportActionBar?.title = getString(R.string.favorite_menu)
-                    binding.materialToolbar.navigationIcon = null
-
-                }
-
-
+        
+        setContent {
+            FoodSearchTheme {
+                MainScreen()
             }
         }
     }
+}
 
-    private fun navigateAndClearOldFragments(destinationId: Int): Boolean {
-        // Чистим стек навигации и переходим на указанный пункт
-        navController.popBackStack()
-        navController.navigate(destinationId)
-        return true
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainScreen(
+    viewModel: MainViewModel = hiltViewModel()
+) {
+    val navController = rememberNavController()
+    
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = getCurrentScreenTitle(navController),
+                        color = Color.White
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            )
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController)
+        }
+    ) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues)) {
+            NavHost(
+                navController = navController,
+                startDestination = "search"
+            ) {
+                composable("search") {
+                    SearchScreen(
+                        onRecipeClick = { recipe ->
+                            navController.navigate("details/${recipe.id}")
+                        }
+                    )
+                }
+                
+                composable("book") {
+                    BookScreen()
+                }
+                
+                composable("details/{recipeId}") { backStackEntry ->
+                    val recipeId = backStackEntry.arguments?.getString("recipeId")?.toIntOrNull() ?: 0
+                    DetailsScreen(recipeId = recipeId)
+                }
+            }
+        }
     }
+}
 
-
-    override fun onDestroy() {
-        super.onDestroy()
-
+@Composable
+fun BottomNavigationBar(navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    
+    NavigationBar(
+        containerColor = Color.White
+    ) {
+        NavigationBarItem(
+            icon = { 
+                Icon(
+                    painter = painterResource(R.drawable.ic_search_19),
+                    contentDescription = "Search"
+                )
+            },
+            label = { Text("Search") },
+            selected = currentRoute == "search",
+            onClick = { 
+                navController.navigate("search") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
+        
+        NavigationBarItem(
+            icon = { 
+                Icon(
+                    painter = painterResource(R.drawable.ic_book_24),
+                    contentDescription = "Book"
+                )
+            },
+            label = { Text("Book") },
+            selected = currentRoute == "book",
+            onClick = { 
+                navController.navigate("book") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
     }
+}
 
+@Composable
+fun getCurrentScreenTitle(navController: NavHostController): String {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    
+    return when {
+        currentRoute == "search" -> "Food Search"
+        currentRoute == "book" -> "My Recipes"
+        currentRoute?.startsWith("details/") == true -> "Recipe Details"
+        else -> "Food Search"
+    }
 }
