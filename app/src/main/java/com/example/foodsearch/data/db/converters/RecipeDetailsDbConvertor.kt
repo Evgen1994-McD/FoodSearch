@@ -7,7 +7,7 @@ class RecipeDetailsDbConvertor {
 
     fun map(recipe: RecipeDetails): RecipeDetailsEntity {
         return RecipeDetailsEntity(
-            id = recipe.id,
+            id = recipe.id ?: 0,
             image = recipe.image,
             imageType = recipe.imageType,
             title = recipe.title,
@@ -47,7 +47,7 @@ class RecipeDetailsDbConvertor {
         )
     }
 
-    fun map(recipe: RecipeDetailsEntity): RecipeDetails? {
+    fun map(recipe: RecipeDetailsEntity): RecipeDetails {
         return RecipeDetails(
             id = recipe.id,
             image = recipe.image,

@@ -187,14 +187,14 @@ class SearchRepositoryImpl @Inject constructor(
 
     override suspend fun getFavoriteRecipes(): List<RecipeDetails> {
         return mainDb.recipeDetailsDao().getFavoriteRecipes(true).map {
-            recipeDetailsDbConvertor.map(it)!!
+            recipeDetailsDbConvertor.map(it)
         }
     }
 
 
     override suspend fun getAllRecipes(): List<RecipeDetails> {
         return mainDb.recipeDetailsDao().getAllRecipes().map {
-            recipeDetailsDbConvertor.map(it)!!
+            recipeDetailsDbConvertor.map(it)
         }
     }
 

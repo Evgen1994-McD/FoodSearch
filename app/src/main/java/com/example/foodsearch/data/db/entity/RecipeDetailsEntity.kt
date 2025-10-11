@@ -8,7 +8,7 @@ import com.example.foodsearch.domain.models.OtherModels.Ingredient
 @Entity(tableName = "recipe_details_table")
 data class RecipeDetailsEntity(
     @PrimaryKey
-    val id: Int?, // Уникальный идентификатор рецепта
+    val id: Int, // Уникальный идентификатор рецепта
     val image: String?, // URL изображения рецепта
     val imageType: String?, // Тип изображения (например, "jpg")
     val title: String?, // Название рецепта

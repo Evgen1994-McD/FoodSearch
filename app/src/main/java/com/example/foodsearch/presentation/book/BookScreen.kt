@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.foodsearch.R
+import com.example.foodsearch.domain.models.RecipeDetails
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,7 +115,7 @@ fun BookScreen(
 
 @Composable
 fun FavoriteScreen(
-    onRecipeClick: (com.example.foodsearch.domain.models.RecipeDetails) -> Unit,
+    onRecipeClick: (RecipeDetails) -> Unit,
     viewModel: BookViewModel = hiltViewModel()
 ) {
     val favoriteRecipes by viewModel.favoriteRecipes.collectAsStateWithLifecycle()
@@ -159,7 +160,7 @@ fun FavoriteScreen(
 
 @Composable
 fun SavedScreen(
-    onRecipeClick: (com.example.foodsearch.domain.models.RecipeDetails) -> Unit,
+    onRecipeClick: (RecipeDetails) -> Unit,
     viewModel: BookViewModel = hiltViewModel()
 ) {
     val allRecipes by viewModel.allRecipes.collectAsStateWithLifecycle()
@@ -204,7 +205,7 @@ fun SavedScreen(
 
 @Composable
 fun FavoriteRecipeItem(
-    recipe: com.example.foodsearch.domain.models.RecipeDetails,
+    recipe: RecipeDetails,
     onClick: () -> Unit
 ) {
     Card(
@@ -278,7 +279,7 @@ fun FavoriteRecipeItem(
 
 @Composable
 fun SavedRecipeItem(
-    recipe: com.example.foodsearch.domain.models.RecipeDetails,
+    recipe: RecipeDetails,
     onClick: () -> Unit
 ) {
     Card(
