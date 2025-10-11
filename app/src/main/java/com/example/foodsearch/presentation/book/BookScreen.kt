@@ -20,6 +20,7 @@ import com.example.foodsearch.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookScreen(
+    navController: androidx.navigation.NavController,
     viewModel: BookViewModel = hiltViewModel()
 ) {
     val currentTabPosition by viewModel.currentTabPosition.collectAsStateWithLifecycle()
@@ -94,8 +95,16 @@ fun BookScreen(
             modifier = Modifier.fillMaxSize()
         ) { page ->
             when (page) {
-                0 -> FavoriteScreen()
-                1 -> SavedScreen()
+                0 -> FavoriteScreen(
+                    onRecipeClick = { recipe ->
+                        navController.navigate("details/${recipe.id}")
+                    }
+                )
+                1 -> SavedScreen(
+                    onRecipeClick = { recipe ->
+                        navController.navigate("details/${recipe.id}")
+                    }
+                )
             }
         }
     }
@@ -103,6 +112,7 @@ fun BookScreen(
 
 @Composable
 fun FavoriteScreen(
+    onRecipeClick: (com.example.foodsearch.domain.models.RecipeDetails) -> Unit,
     viewModel: BookViewModel = hiltViewModel()
 ) {
     val favoriteRecipes by viewModel.favoriteRecipes.collectAsStateWithLifecycle()
@@ -136,7 +146,10 @@ fun FavoriteScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(favoriteRecipes) { recipe ->
-                FavoriteRecipeItem(recipe = recipe)
+                FavoriteRecipeItem(
+                    recipe = recipe,
+                    onClick = { onRecipeClick(recipe) }
+                )
             }
         }
     }
@@ -144,6 +157,7 @@ fun FavoriteScreen(
 
 @Composable
 fun SavedScreen(
+    onRecipeClick: (com.example.foodsearch.domain.models.RecipeDetails) -> Unit,
     viewModel: BookViewModel = hiltViewModel()
 ) {
     val allRecipes by viewModel.allRecipes.collectAsStateWithLifecycle()
@@ -177,7 +191,10 @@ fun SavedScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(allRecipes) { recipe ->
-                SavedRecipeItem(recipe = recipe)
+                SavedRecipeItem(
+                    recipe = recipe,
+                    onClick = { onRecipeClick(recipe) }
+                )
             }
         }
     }
@@ -185,10 +202,13 @@ fun SavedScreen(
 
 @Composable
 fun FavoriteRecipeItem(
-    recipe: com.example.foodsearch.domain.models.RecipeDetails
+    recipe: com.example.foodsearch.domain.models.RecipeDetails,
+    onClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA))
@@ -256,10 +276,13 @@ fun FavoriteRecipeItem(
 
 @Composable
 fun SavedRecipeItem(
-    recipe: com.example.foodsearch.domain.models.RecipeDetails
+    recipe: com.example.foodsearch.domain.models.RecipeDetails,
+    onClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA))

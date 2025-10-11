@@ -68,7 +68,7 @@ fun MainScreen(
                 }
                 
                 composable("book") {
-                    BookScreen()
+                    BookScreen(navController = navController)
                 }
                 
                 composable("details/{recipeId}") { backStackEntry ->
