@@ -18,7 +18,7 @@ class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     
-    val id: Int = savedStateHandle.get<Int>("recipeId") ?: -1
+    val id: Int = savedStateHandle.get<String>("recipeId")?.toIntOrNull() ?: -1
     private var currentRecipe: RecipeDetails? = null
     
     init {
