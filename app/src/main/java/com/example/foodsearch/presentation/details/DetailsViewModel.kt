@@ -117,4 +117,13 @@ class DetailsViewModel @Inject constructor(
             }
         }
     }
+    
+    fun clearCache() = viewModelScope.launch {
+        try {
+            searchInteractor.clearCache()
+            Log.d("DetailsViewModel", "Cache cleared")
+        } catch (e: Exception) {
+            Log.e("DetailsViewModel", "Error clearing cache", e)
+        }
+    }
 }

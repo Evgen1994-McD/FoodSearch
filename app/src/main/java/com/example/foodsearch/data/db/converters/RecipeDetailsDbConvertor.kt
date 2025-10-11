@@ -6,6 +6,9 @@ import com.example.foodsearch.domain.models.RecipeDetails
 class RecipeDetailsDbConvertor {
 
     fun map(recipe: RecipeDetails): RecipeDetailsEntity {
+        android.util.Log.d("RecipeDetailsDbConvertor", "Saving recipe: ${recipe.title}")
+        android.util.Log.d("RecipeDetailsDbConvertor", "Ingredients count: ${recipe.extendedIngredients?.size ?: 0}")
+        android.util.Log.d("RecipeDetailsDbConvertor", "Instructions count: ${recipe.analyzedInstructions?.size ?: 0}")
         return RecipeDetailsEntity(
             id = recipe.id ?: 0,
             image = recipe.image,
@@ -48,6 +51,9 @@ class RecipeDetailsDbConvertor {
     }
 
     fun map(recipe: RecipeDetailsEntity): RecipeDetails {
+        android.util.Log.d("RecipeDetailsDbConvertor", "Loading recipe: ${recipe.title}")
+        android.util.Log.d("RecipeDetailsDbConvertor", "Ingredients count: ${recipe.extendedIngredients?.size ?: 0}")
+        android.util.Log.d("RecipeDetailsDbConvertor", "Instructions count: ${recipe.analyzedInstructions?.size ?: 0}")
         return RecipeDetails(
             id = recipe.id,
             image = recipe.image,

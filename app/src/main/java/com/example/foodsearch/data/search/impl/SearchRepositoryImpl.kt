@@ -131,7 +131,18 @@ class SearchRepositoryImpl @Inject constructor(
         val cachedRecipe = getRecipeDetailsFromMemoryById(id)
         if (cachedRecipe != null) {
             Log.d("SearchRepositoryImpl", "Recipe $id found in cache")
-            return cachedRecipe
+            Log.d("SearchRepositoryImpl", "Cached ingredients count: ${cachedRecipe.extendedIngredients?.size ?: 0}")
+            Log.d("SearchRepositoryImpl", "Cached instructions count: ${cachedRecipe.analyzedInstructions?.size ?: 0}")
+            
+            // Если в кеше нет ингредиентов и инструкций, загружаем из сети
+            if ((cachedRecipe.extendedIngredients?.isEmpty() != false) && 
+                (cachedRecipe.analyzedInstructions?.isEmpty() != false)) {
+                Log.d("SearchRepositoryImpl", "Cached recipe has no ingredients/instructions, loading from network")
+                // Удаляем старую запись из кеша
+                mainDb.recipeDetailsDao().deleteRecipeById(id)
+            } else {
+                return cachedRecipe
+            }
         }
         
         // Если в кеше нет, загружаем из сети
@@ -341,6 +352,15 @@ class SearchRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             Log.e("SearchRepositoryImpl", "Error saving recipes to cache", e)
+        }
+    }
+    
+    override suspend fun clearCache() {
+        try {
+            mainDb.recipeDetailsDao().deleteAllRecipes()
+            Log.d("SearchRepositoryImpl", "Cache cleared successfully")
+        } catch (e: Exception) {
+            Log.e("SearchRepositoryImpl", "Error clearing cache", e)
         }
     }
 

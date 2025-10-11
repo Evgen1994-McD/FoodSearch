@@ -58,5 +58,9 @@ class SearchInteractorImpl @Inject constructor(
     override suspend fun saveRecipesToCache(recipes: List<RecipeSummary>) {
         searchRepository.saveRecipesToCache(recipes)
     }
+    
+    override suspend fun clearCache() {
+        searchRepository.clearCache()
+    }
 
 }

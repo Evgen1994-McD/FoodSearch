@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
@@ -85,6 +86,19 @@ fun DetailsScreen(
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
             )
+            
+            Spacer(modifier = Modifier.weight(1f))
+            
+            // Кнопка очистки кеша для тестирования
+            IconButton(
+                onClick = { viewModel.clearCache() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Clear Cache",
+                    tint = Color.Red
+                )
+            }
         }
         
         when (uiState) {
