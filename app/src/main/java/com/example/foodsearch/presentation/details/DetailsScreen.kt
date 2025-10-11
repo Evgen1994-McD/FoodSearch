@@ -67,7 +67,7 @@ fun DetailsScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(top = 48.dp, start = 16.dp, end = 16.dp, bottom = 16.dp), // Добавляем отступ сверху для системной панели
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(

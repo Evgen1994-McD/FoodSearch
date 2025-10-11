@@ -61,7 +61,7 @@ fun SearchScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(top = 48.dp, start = 20.dp, end = 20.dp, bottom = 20.dp), // Добавляем отступ сверху для системной панели
             placeholder = { Text("Search recipes...") },
             leadingIcon = {
                 Icon(
