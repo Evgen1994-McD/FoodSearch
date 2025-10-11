@@ -31,6 +31,12 @@ fun BookScreen(
         viewModel.setCurrentTabPosition(pagerState.currentPage)
     }
     
+    LaunchedEffect(currentTabPosition) {
+        if (currentTabPosition != pagerState.currentPage) {
+            pagerState.animateScrollToPage(currentTabPosition)
+        }
+    }
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,6 +48,9 @@ fun BookScreen(
         ) {
             Tab(
                 selected = pagerState.currentPage == 0,
+                onClick = {
+                    viewModel.setCurrentTabPosition(0)
+                },
                 text = {
                     Text(
                         text = stringResource(R.string.favorite),
@@ -52,6 +61,9 @@ fun BookScreen(
             )
             Tab(
                 selected = pagerState.currentPage == 1,
+                onClick = {
+                    viewModel.setCurrentTabPosition(1)
+                },
                 text = {
                     Text(
                         text = stringResource(R.string.book_menu),
