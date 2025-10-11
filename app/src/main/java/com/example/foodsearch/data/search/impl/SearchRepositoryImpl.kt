@@ -308,7 +308,7 @@ class SearchRepositoryImpl @Inject constructor(
     }
     
     // Метод для массового сохранения рецептов в кеш
-    suspend fun saveRecipesToCache(recipes: List<RecipeSummary>) {
+   override suspend fun saveRecipesToCache(recipes: List<RecipeSummary>) {
         try {
             recipes.forEach { recipe ->
                 val recipeDetails = RecipeDetails(
@@ -367,7 +367,7 @@ class SearchRepositoryImpl @Inject constructor(
     }
     
     // Метод для получения рецептов с проверкой сети
-    suspend fun getRecipesWithNetworkCheck(query: String, pageNumber: Int, pageSize: Int): Flow<PagingData<RecipeSummary>> {
+   override suspend fun getRecipesWithNetworkCheck(query: String, pageNumber: Int, pageSize: Int): Flow<PagingData<RecipeSummary>> {
         return if (networkUtils.isNetworkAvailable()) {
             Log.d("SearchRepositoryImpl", "Network available, loading from API")
             // Сеть доступна - загружаем из API
@@ -385,7 +385,7 @@ class SearchRepositoryImpl @Inject constructor(
     }
     
     // Метод для получения случайных рецептов с проверкой сети
-    suspend fun getRandomRecipesWithNetworkCheck(pageNumber: Int, pageSize: Int, type: String?): Flow<PagingData<RecipeSummary>> {
+    override suspend fun getRandomRecipesWithNetworkCheck(pageNumber: Int, pageSize: Int, type: String?): Flow<PagingData<RecipeSummary>> {
         return if (networkUtils.isNetworkAvailable()) {
             Log.d("SearchRepositoryImpl", "Network available, loading random recipes from API")
             // Сеть доступна - загружаем из API
