@@ -89,13 +89,13 @@ fun DetailsScreen(
             
             Spacer(modifier = Modifier.weight(1f))
             
-            // Кнопка очистки кеша для тестирования
+            // Кнопка удаления текущего рецепта
             IconButton(
                 onClick = { viewModel.clearCache() }
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Clear Cache",
+                    contentDescription = "Delete Recipe",
                     tint = Color.Red
                 )
             }

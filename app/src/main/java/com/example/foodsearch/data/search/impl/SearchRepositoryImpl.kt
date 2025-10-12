@@ -366,6 +366,15 @@ class SearchRepositoryImpl @Inject constructor(
         }
     }
     
+    override suspend fun deleteRecipeById(id: Int) {
+        try {
+            mainDb.recipeDetailsDao().deleteRecipeById(id)
+            Log.d("SearchRepositoryImpl", "Recipe $id deleted successfully")
+        } catch (e: Exception) {
+            Log.e("SearchRepositoryImpl", "Error deleting recipe $id", e)
+        }
+    }
+    
     // Метод для получения рецептов с проверкой сети
    override suspend fun getRecipesWithNetworkCheck(query: String, pageNumber: Int, pageSize: Int): Flow<PagingData<RecipeSummary>> {
         return if (networkUtils.isNetworkAvailable()) {

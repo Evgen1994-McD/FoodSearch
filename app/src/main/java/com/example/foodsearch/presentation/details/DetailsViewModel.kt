@@ -120,10 +120,10 @@ class DetailsViewModel @Inject constructor(
     
     fun clearCache() = viewModelScope.launch {
         try {
-            searchInteractor.clearCache()
-            Log.d("DetailsViewModel", "Cache cleared")
+            searchInteractor.deleteRecipeById(id)
+            Log.d("DetailsViewModel", "Recipe $id deleted from cache")
         } catch (e: Exception) {
-            Log.e("DetailsViewModel", "Error clearing cache", e)
+            Log.e("DetailsViewModel", "Error deleting recipe from cache", e)
         }
     }
 }
