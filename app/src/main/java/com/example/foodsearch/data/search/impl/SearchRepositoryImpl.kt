@@ -48,8 +48,10 @@ class SearchRepositoryImpl @Inject constructor(
 
     override suspend fun getRecipeSummaryFromMemory(query: String?): Flow<PagingData<RecipeSummary>> {
         return Pager(
-
-            config = PagingConfig(pageSize = 5),
+            config = PagingConfig(
+                pageSize = 4,
+                prefetchDistance = 1
+            ),
             pagingSourceFactory = {
                 DbRecipePagingSource(
                     mainDb,
@@ -69,15 +71,20 @@ class SearchRepositoryImpl @Inject constructor(
 
     override suspend fun getRecipeDetailsFromMemoryById(id: Int): RecipeDetails? {
         val recipe = mainDb.recipeDetailsDao().getRecipeById(id)
-        return recipeDetailsDbConvertor.map(recipe[0])
-
+        return if (recipe.isNotEmpty()) {
+            recipeDetailsDbConvertor.map(recipe[0])
+        } else {
+            null
+        }
     }
 
     override fun getRandomRecipes(query: String?): Flow<PagingData<RecipeSummary>> {
 
         return Pager(
-
-            config = PagingConfig(pageSize = 1),
+            config = PagingConfig(
+                pageSize = 4,
+                prefetchDistance = 1
+            ),
             pagingSourceFactory = { RandomPagingSource(networkClient,query) }
         ).flow.map { pagingData ->
             pagingData.map { dto ->
@@ -96,7 +103,10 @@ class SearchRepositoryImpl @Inject constructor(
     override fun searchRecipe(expression: String): Flow<PagingData<RecipeSummary>> {
 
         return Pager(
-            config = PagingConfig(pageSize = 5),
+            config = PagingConfig(
+                pageSize = 4,
+                prefetchDistance = 1
+            ),
             pagingSourceFactory = { RecipesPagingSource(networkClient, expression) }
         ).flow.map { pagingData ->
             pagingData.map { dto ->
@@ -377,15 +387,24 @@ class SearchRepositoryImpl @Inject constructor(
     
     // Метод для получения рецептов с проверкой сети
    override suspend fun getRecipesWithNetworkCheck(query: String, pageNumber: Int, pageSize: Int): Flow<PagingData<RecipeSummary>> {
-        return if (networkUtils.isNetworkAvailable()) {
+        Log.d("SearchRepositoryImpl", "getRecipesWithNetworkCheck called with query: '$query', page: $pageNumber, size: $pageSize")
+        val isNetworkAvailable = networkUtils.isNetworkAvailable()
+        Log.d("SearchRepositoryImpl", "Network available: $isNetworkAvailable")
+        
+        return if (isNetworkAvailable) {
             Log.d("SearchRepositoryImpl", "Network available, loading from API")
             // Сеть доступна - загружаем из API
             Pager(
-                config = PagingConfig(pageSize = pageSize),
+                config = PagingConfig(
+                    pageSize = 4,
+                    prefetchDistance = 1
+                ),
                 pagingSourceFactory = {
+                    Log.d("SearchRepositoryImpl", "Creating RecipesPagingSource with query: '$query'")
                     RecipesPagingSource(networkClient, query)
                 }
             ).flow.map { pagingData ->
+                Log.d("SearchRepositoryImpl", "Mapping paging data from API")
                 pagingData.map { dto ->
                     mapToDomain(dto)
                 }
@@ -403,7 +422,10 @@ class SearchRepositoryImpl @Inject constructor(
             Log.d("SearchRepositoryImpl", "Network available, loading random recipes from API")
             // Сеть доступна - загружаем из API
             Pager(
-                config = PagingConfig(pageSize = pageSize),
+                config = PagingConfig(
+                    pageSize = 4,
+                    prefetchDistance = 1
+                ),
                 pagingSourceFactory = {
                     RandomPagingSource(networkClient, type)
                 }
