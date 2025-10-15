@@ -32,6 +32,8 @@ private val type: String?
             }
         } catch (e: IOException) {
             LoadResult.Error(e)
+        } catch (e: Exception) {
+            LoadResult.Error(e)
         }
     }
 

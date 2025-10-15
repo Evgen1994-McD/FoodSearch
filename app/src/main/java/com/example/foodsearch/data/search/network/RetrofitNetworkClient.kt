@@ -7,9 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : NetworkClient {
-    private val apiKey45 = "91225f5085c54860b6c9d5d0298b460b"
-    private val apiKey11 = "9c69449bd45d4cb0abc8dedbcff5867c"
-    private val apiKey = "132e04b6aa4d4bddb00fc04b0fe73967"
+    private val apiKey = "91225f5085c54860b6c9d5d0298b460b"
+    private val dfdfdfdfddd = "9c69449bd45d4cb0abc8dedbcff5867c"
+    private val sdsdsd = "9c69449bd45d4cb0abc8dedbcff5867c"
     private val yyy = "fc9779e7ffdb4a0394b69e0af48c6392"
     private val dfdfdfdf = "1f90d4229d854fb2a5f83b7c55c7d068"
     private val вааа = "7be5813cd34e4ee381ede45891148d22"
@@ -21,12 +21,16 @@ class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : Networ
     private val apiKey233 = "b14c803d4ea443d3b6acd83d37e71677"
 
     override suspend fun doRequest(dto: String, pageNumber: Int, pageSize: Int): Response {
+        android.util.Log.d("RetrofitNetworkClient", "doRequest called with query: '$dto', page: $pageNumber, size: $pageSize")
         return withContext(Dispatchers.IO) {
             try {
+                android.util.Log.d("RetrofitNetworkClient", "Making API call to Spoonacular...")
                 val response =
                     spoonacularApi.getRecipes(dto, true, pageNumber, pageSize, apiKey = apiKey)
+                android.util.Log.d("RetrofitNetworkClient", "API call successful, response: ${response.results?.size ?: 0} recipes")
                 response.apply { resultCode = 200 }
             } catch (e: Throwable) {
+                android.util.Log.e("RetrofitNetworkClient", "API call failed", e)
                 Response().apply { resultCode = 500 }
             }
         }

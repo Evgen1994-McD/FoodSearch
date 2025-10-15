@@ -8,4 +8,5 @@ sealed class SearchScreenState {
     data class SearchResults(val data: PagingData<RecipeSummary>) : SearchScreenState()
     data class ErrorNotFound(val error: PagingData<RecipeSummary>) : SearchScreenState()
     object OfflineMode : SearchScreenState()
+    object SearchReady : SearchScreenState() // Новое состояние для готового поиска
 }

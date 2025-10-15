@@ -68,7 +68,6 @@ fun BookScreen(
     ) {
         // Tab Row
         TabRow(
-            modifier = Modifier.padding(top = 24.dp), // Уменьшаем отступ сверху
             selectedTabIndex = pagerState.currentPage
         ) {
             Tab(

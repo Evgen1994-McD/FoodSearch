@@ -84,7 +84,9 @@ fun DetailsScreen(
                 text = "Recipe Details",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = Color.Black,
+                modifier = Modifier
+                    .padding(top = 20.dp, bottom = 20.dp)
             )
             
             Spacer(modifier = Modifier.weight(1f))
@@ -342,7 +344,8 @@ fun IngredientsSection(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA)) // Светло-серый фон
     ) {
         Column {
             Row(
@@ -413,10 +416,17 @@ fun IngredientItem(
         placeholder = painterResource(R.drawable.ic_ph_kitchen)
     )
     
-    Row(
+    Card(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFBFC)) // Очень светлый фон для элементов
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
         Image(
             painter = painter,
             contentDescription = ingredient.name,
@@ -428,18 +438,19 @@ fun IngredientItem(
         
         Spacer(modifier = Modifier.width(12.dp))
         
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = ingredient.name,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.Black
-            )
-            Text(
-                text = "${ingredient.amount} ${ingredient.unit}",
-                fontSize = 12.sp,
-                color = Color.Gray
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = ingredient.name,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Black
+                )
+                Text(
+                    text = "${ingredient.amount} ${ingredient.unit}",
+                    fontSize = 12.sp,
+                    color = Color.Gray
+                )
+            }
         }
     }
 }
@@ -452,7 +463,8 @@ fun InstructionsSection(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA)) // Светло-серый фон
     ) {
         Column {
             Row(
@@ -510,35 +522,43 @@ fun InstructionItem(
     stepNumber: Int,
     instruction: String
 ) {
-    Row(
+    Card(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Top
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFBFC)) // Очень светлый фон для элементов
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .size(24.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.Top
         ) {
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stepNumber.toString(),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
             Text(
-                text = stepNumber.toString(),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
+                text = instruction,
+                fontSize = 14.sp,
+                color = Color.Black,
+                modifier = Modifier.weight(1f)
             )
         }
-        
-        Spacer(modifier = Modifier.width(12.dp))
-        
-        Text(
-            text = instruction,
-            fontSize = 14.sp,
-            color = Color.Black,
-            modifier = Modifier.weight(1f)
-        )
     }
 }
 
@@ -570,7 +590,7 @@ fun ErrorState() {
 
 private fun getTags(recipe: RecipeDetails?): List<String> {
     val tags = mutableListOf<String>()
-    
+
     if (recipe?.vegetarian == true) tags.add("vegetarian")
     if (recipe?.vegan == true) tags.add("vegan")
     if (recipe?.glutenFree == true) tags.add("gluten-free")
@@ -580,7 +600,8 @@ private fun getTags(recipe: RecipeDetails?): List<String> {
     if (recipe?.veryPopular == true) tags.add("very popular")
     if (recipe?.sustainable == true) tags.add("sustainable")
     if (recipe?.lowFodmap == true) tags.add("low FODMAP")
-    
+
     return tags
 }
+
 

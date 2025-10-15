@@ -1,5 +1,6 @@
 package com.example.foodsearch.presentation.search
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -31,12 +32,15 @@ class SearchViewModel @Inject constructor(
     val currentPagingFlow: StateFlow<Flow<PagingData<RecipeSummary>>?> = _currentPagingFlow.asStateFlow()
     
     init {
+        Log.d("SearchViewModel", "ViewModel initialized")
         // Observe search query changes and trigger search
         searchQuery
-            .debounce(2000)
+            .debounce(500) // Уменьшаем debounce до 500ms для более быстрого поиска
             .distinctUntilChanged()
             .onEach { query ->
+                Log.d("SearchViewModel", "Search query changed: '$query'")
                 if (query.isNotEmpty()) {
+                    Log.d("SearchViewModel", "Triggering search for: '$query'")
                     searchRecipes(query)
                 }
             }
@@ -44,60 +48,92 @@ class SearchViewModel @Inject constructor(
     }
 
     fun searchRecipes(query: String) {
+        Log.d("SearchViewModel", "searchRecipes called with query: '$query'")
         _uiState.value = SearchScreenState.Loading
 
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                val pagingFlow = searchInteractor.getRecipesWithNetworkCheck(query, 1, 20)
+                Log.d("SearchViewModel", "Starting search with network check")
+                val isNetworkAvailable = networkUtils.isNetworkAvailable()
+                Log.d("SearchViewModel", "Network available: $isNetworkAvailable")
+                
+                val pagingFlow = searchInteractor.getRecipesWithNetworkCheck(query, 1, 4)
+                Log.d("SearchViewModel", "Got paging flow from interactor")
                 _currentPagingFlow.value = pagingFlow
                 
-                if (!networkUtils.isNetworkAvailable()) {
+                if (!isNetworkAvailable) {
+                    Log.d("SearchViewModel", "No network, setting offline mode")
                     _uiState.value = SearchScreenState.OfflineMode
                 } else {
-                    _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
+                    Log.d("SearchViewModel", "Network available, setting search ready state")
+                    // Устанавливаем состояние готовности для показа результатов из PagingData
+                    _uiState.value = SearchScreenState.SearchReady
                 }
                 
                 // Рецепты из поиска будут сохранены в кеш при клике на них
                 // через метод saveRecipeToCache в MainActivity
             } catch (e: Exception) {
+                Log.e("SearchViewModel", "Error in searchRecipes", e)
                 _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
             }
         }
     }
 
     fun getRandomRecipes(query: String?) {
+        Log.d("SearchViewModel", "getRandomRecipes called with query: '$query'")
         _uiState.value = SearchScreenState.Loading
 
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                val pagingFlow = searchInteractor.getRandomRecipesWithNetworkCheck(1, 20, query)
+                val isNetworkAvailable = networkUtils.isNetworkAvailable()
+                Log.d("SearchViewModel", "Network available for random recipes: $isNetworkAvailable")
+                
+                val pagingFlow = searchInteractor.getRandomRecipesWithNetworkCheck(1, 4, query)
+                Log.d("SearchViewModel", "Got random recipes paging flow")
                 _currentPagingFlow.value = pagingFlow
                 
-                if (!networkUtils.isNetworkAvailable()) {
+                if (!isNetworkAvailable) {
+                    Log.d("SearchViewModel", "No network, setting offline mode for random recipes")
                     _uiState.value = SearchScreenState.OfflineMode
                 } else {
-                    _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
+                    Log.d("SearchViewModel", "Network available, setting search ready state for random recipes")
+                    // Устанавливаем состояние готовности для показа результатов из PagingData
+                    _uiState.value = SearchScreenState.SearchReady
                 }
                 
                 // Сохраняем рецепты из категорий в кеш для офлайн доступа
                 // Это будет происходить автоматически при загрузке деталей рецепта
             } catch (e: Exception) {
+                Log.e("SearchViewModel", "Error in getRandomRecipes", e)
                 _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
             }
         }
     }
 
     fun getRecipeFromDb(query: String?) = viewModelScope.launch {
+        Log.d("SearchViewModel", "getRecipeFromDb called with query: '$query'")
         try {
             val pagingFlow = searchInteractor.getRecipeFromMemory(query)
+            Log.d("SearchViewModel", "Got cached recipes paging flow")
             _currentPagingFlow.value = pagingFlow
-            _uiState.value = SearchScreenState.SearchResults(PagingData.empty())
+            
+            // Проверяем, есть ли сеть
+            val isNetworkAvailable = networkUtils.isNetworkAvailable()
+            if (!isNetworkAvailable) {
+                Log.d("SearchViewModel", "No network, setting offline mode for cached recipes")
+                _uiState.value = SearchScreenState.OfflineMode
+            } else {
+                Log.d("SearchViewModel", "Network available, setting search ready state for cached recipes")
+                _uiState.value = SearchScreenState.SearchReady
+            }
         } catch (e: Exception) {
+            Log.e("SearchViewModel", "Error in getRecipeFromDb", e)
             _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
         }
     }
     
     fun updateSearchQuery(query: String) {
+        Log.d("SearchViewModel", "updateSearchQuery called with: '$query'")
         _searchQuery.value = query
     }
     
