@@ -159,7 +159,7 @@ fun RecipeDetailsContent(
             android.util.Log.d("DetailsScreen", "Instructions count: ${it.analyzedInstructions?.size ?: 0}")
         }
     }
-    
+    // ref
     if (recipe == null) {
         Box(
             modifier = Modifier.fillMaxSize(),
