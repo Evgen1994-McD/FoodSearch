@@ -28,6 +28,8 @@ interface RecipeSummaryDao {
     @Query("SELECT * FROM recipe_summary_table WHERE id=:id")
     suspend fun getRecipeById(id: Int): List<RecipeSummaryEntity>
 
+    @Query("SELECT COUNT(*) FROM recipe_summary_table")
+    suspend fun getRecipeCount(): Int
 
 }
 

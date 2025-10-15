@@ -45,6 +45,9 @@ class SearchViewModel @Inject constructor(
                 }
             }
             .launchIn(viewModelScope)
+            
+        // Инициализация при запуске - проверяем сеть и загружаем соответствующие данные
+        initializeOnStartup()
     }
 
     fun searchRecipes(query: String) {
@@ -57,24 +60,23 @@ class SearchViewModel @Inject constructor(
                 val isNetworkAvailable = networkUtils.isNetworkAvailable()
                 Log.d("SearchViewModel", "Network available: $isNetworkAvailable")
                 
-                val pagingFlow = searchInteractor.getRecipesWithNetworkCheck(query, 1, 4)
-                Log.d("SearchViewModel", "Got paging flow from interactor")
-                _currentPagingFlow.value = pagingFlow
-                
-                if (!isNetworkAvailable) {
-                    Log.d("SearchViewModel", "No network, setting offline mode")
-                    _uiState.value = SearchScreenState.OfflineMode
+                if (isNetworkAvailable) {
+                    try {
+                        val pagingFlow = searchInteractor.getRecipesWithNetworkCheck(query, 1, 4)
+                        Log.d("SearchViewModel", "Got paging flow from interactor")
+                        _currentPagingFlow.value = pagingFlow
+                        _uiState.value = SearchScreenState.SearchReady
+                    } catch (e: Exception) {
+                        Log.e("SearchViewModel", "Network request failed, showing offline mode", e)
+                        _uiState.value = SearchScreenState.OfflineMode
+                    }
                 } else {
-                    Log.d("SearchViewModel", "Network available, setting search ready state")
-                    // Устанавливаем состояние готовности для показа результатов из PagingData
-                    _uiState.value = SearchScreenState.SearchReady
+                    Log.d("SearchViewModel", "No network, showing offline mode")
+                    _uiState.value = SearchScreenState.OfflineMode
                 }
-                
-                // Рецепты из поиска будут сохранены в кеш при клике на них
-                // через метод saveRecipeToCache в MainActivity
             } catch (e: Exception) {
                 Log.e("SearchViewModel", "Error in searchRecipes", e)
-                _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
+                _uiState.value = SearchScreenState.OfflineMode
             }
         }
     }
@@ -88,48 +90,51 @@ class SearchViewModel @Inject constructor(
                 val isNetworkAvailable = networkUtils.isNetworkAvailable()
                 Log.d("SearchViewModel", "Network available for random recipes: $isNetworkAvailable")
                 
-                val pagingFlow = searchInteractor.getRandomRecipesWithNetworkCheck(1, 4, query)
-                Log.d("SearchViewModel", "Got random recipes paging flow")
-                _currentPagingFlow.value = pagingFlow
-                
-                if (!isNetworkAvailable) {
-                    Log.d("SearchViewModel", "No network, setting offline mode for random recipes")
-                    _uiState.value = SearchScreenState.OfflineMode
+                if (isNetworkAvailable) {
+                    try {
+                        val pagingFlow = searchInteractor.getRandomRecipesWithNetworkCheck(1, 4, query)
+                        Log.d("SearchViewModel", "Got random recipes paging flow")
+                        _currentPagingFlow.value = pagingFlow
+                        _uiState.value = SearchScreenState.SearchReady
+                    } catch (e: Exception) {
+                        Log.e("SearchViewModel", "Random recipes network request failed, showing offline mode", e)
+                        _uiState.value = SearchScreenState.OfflineMode
+                    }
                 } else {
-                    Log.d("SearchViewModel", "Network available, setting search ready state for random recipes")
-                    // Устанавливаем состояние готовности для показа результатов из PagingData
-                    _uiState.value = SearchScreenState.SearchReady
+                    Log.d("SearchViewModel", "No network, showing offline mode")
+                    _uiState.value = SearchScreenState.OfflineMode
                 }
-                
-                // Сохраняем рецепты из категорий в кеш для офлайн доступа
-                // Это будет происходить автоматически при загрузке деталей рецепта
             } catch (e: Exception) {
                 Log.e("SearchViewModel", "Error in getRandomRecipes", e)
-                _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
+                _uiState.value = SearchScreenState.OfflineMode
             }
         }
     }
-
+    
     fun getRecipeFromDb(query: String?) = viewModelScope.launch {
         Log.d("SearchViewModel", "getRecipeFromDb called with query: '$query'")
         try {
             val pagingFlow = searchInteractor.getRecipeFromMemory(query)
-            Log.d("SearchViewModel", "Got cached recipes paging flow")
+            Log.d("SearchViewModel", "Got cached recipes paging flow: ${pagingFlow != null}")
             _currentPagingFlow.value = pagingFlow
             
-            // Проверяем, есть ли сеть
-            val isNetworkAvailable = networkUtils.isNetworkAvailable()
-            if (!isNetworkAvailable) {
-                Log.d("SearchViewModel", "No network, setting offline mode for cached recipes")
-                _uiState.value = SearchScreenState.OfflineMode
-            } else {
-                Log.d("SearchViewModel", "Network available, setting search ready state for cached recipes")
-                _uiState.value = SearchScreenState.SearchReady
-            }
+            // Всегда устанавливаем OfflineMode для кешированных рецептов
+            Log.d("SearchViewModel", "Setting offline mode for cached recipes")
+            _uiState.value = SearchScreenState.OfflineMode
+            Log.d("SearchViewModel", "UI state set to OfflineMode")
         } catch (e: Exception) {
             Log.e("SearchViewModel", "Error in getRecipeFromDb", e)
-            _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
+            // Если нет кешированных рецептов, показываем соответствующее состояние
+            val isNetworkAvailable = networkUtils.isNetworkAvailable()
+            if (!isNetworkAvailable) {
+                Log.d("SearchViewModel", "No network and no cache, showing offline state")
+                _uiState.value = SearchScreenState.OfflineMode
+            } else {
+                Log.d("SearchViewModel", "Network available but no cache, showing error")
+                _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
+            }
         }
+        Log.d("SearchViewModel", "getRecipeFromDb completed")
     }
     
     fun updateSearchQuery(query: String) {
@@ -188,6 +193,30 @@ class SearchViewModel @Inject constructor(
                 searchInteractor.insertRecipeDetails(recipeDetails)
             } catch (e: Exception) {
                 // Игнорируем ошибки сохранения, так как это не критично
+            }
+        }
+    }
+    
+    private fun initializeOnStartup() {
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
+                Log.d("SearchViewModel", "Initializing on startup")
+                val isNetworkAvailable = networkUtils.isNetworkAvailable()
+                Log.d("SearchViewModel", "Network available on startup: $isNetworkAvailable")
+                
+                if (!isNetworkAvailable) {
+                    Log.d("SearchViewModel", "No network on startup, showing offline mode")
+                    _uiState.value = SearchScreenState.OfflineMode
+                } else {
+                    Log.d("SearchViewModel", "Network available on startup, loading random recipes")
+                    // Есть сеть - загружаем случайные рецепты
+                    getRandomRecipes(null)
+                    setRandomSearchComplete()
+                }
+            } catch (e: Exception) {
+                Log.e("SearchViewModel", "Error during startup initialization", e)
+                // В случае ошибки показываем офлайн режим
+                _uiState.value = SearchScreenState.OfflineMode
             }
         }
     }

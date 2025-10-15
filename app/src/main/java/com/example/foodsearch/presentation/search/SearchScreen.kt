@@ -40,6 +40,17 @@ fun SearchScreen(
     
     var searchText by remember { mutableStateOf("") }
     
+    // Создаем LazyPagingItems вне when блока для избежания проблем с recomposition
+    val lazyPagingItems = currentPagingFlow?.collectAsLazyPagingItems()
+    
+    // Добавляем логирование для отладки
+    LaunchedEffect(lazyPagingItems) {
+        android.util.Log.d("SearchScreen", "LazyPagingItems changed: ${lazyPagingItems != null}")
+        lazyPagingItems?.let { items ->
+            android.util.Log.d("SearchScreen", "LazyPagingItems itemCount: ${items.itemCount}")
+        }
+    }
+    
     // Добавляем логирование для отладки
     LaunchedEffect(uiState) {
         android.util.Log.d("SearchScreen", "UI State changed: $uiState")
@@ -50,21 +61,9 @@ fun SearchScreen(
     }
     
     LaunchedEffect(Unit) {
-        if (!viewModel.isRandomSearchComplete.value) {
-            android.util.Log.d("SearchScreen", "Loading random recipes")
-            viewModel.getRandomRecipes(null)
-            viewModel.setRandomSearchComplete()
-        }
-    }
-    
-    // Проверяем офлайн режим при запуске и загружаем кешированные рецепты
-    LaunchedEffect(Unit) {
-        // Небольшая задержка для инициализации ViewModel
-        kotlinx.coroutines.delay(100)
-        if (currentPagingFlow == null) {
-            android.util.Log.d("SearchScreen", "No paging flow, checking for cached recipes")
-            viewModel.getRecipeFromDb(null)
-        }
+        android.util.Log.d("SearchScreen", "SearchScreen initialized")
+        // ViewModel теперь сам управляет инициализацией при запуске
+        // Дополнительная логика не нужна
     }
     
     Column(
@@ -111,7 +110,20 @@ fun SearchScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(48.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Поиск рецептов...",
+                            fontSize = 16.sp,
+                            color = Color.Gray
+                        )
+                    }
                 }
             }
             
@@ -121,51 +133,56 @@ fun SearchScreen(
             
             is SearchScreenState.OfflineMode -> {
                 android.util.Log.d("SearchScreen", "Showing offline mode")
-                // Показываем кешированные рецепты в офлайн режиме
-                currentPagingFlow?.let { pagingFlow ->
-                    android.util.Log.d("SearchScreen", "Paging flow available in offline mode")
-                    val lazyPagingItems = pagingFlow.collectAsLazyPagingItems()
-                    Column {
-                        // Заголовок офлайн режима
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3CD))
-                        ) {
-                            Text(
-                                text = "Offline Mode - Showing cached recipes",
-                                modifier = Modifier.padding(12.dp),
-                                fontSize = 14.sp,
-                                color = Color(0xFF856404)
-                            )
-                        }
-                        
-                        RecipeList(
-                            lazyPagingItems = lazyPagingItems,
-                            onRecipeClick = onRecipeClick
-                        )
-                    }
-                } ?: run {
-                    android.util.Log.d("SearchScreen", "No paging flow in offline mode, showing offline state")
-                    OfflineState()
-                }
+                OfflineState()
             }
             
             is SearchScreenState.SearchResults -> {
-                currentPagingFlow?.let { pagingFlow ->
-                    val lazyPagingItems = pagingFlow.collectAsLazyPagingItems()
-                    RecipeList(
-                        lazyPagingItems = lazyPagingItems,
-                        onRecipeClick = onRecipeClick
-                    )
+                lazyPagingItems?.let { items ->
+                    if (items.itemCount > 0) {
+                        RecipeList(
+                            lazyPagingItems = items,
+                            onRecipeClick = onRecipeClick
+                        )
+                    } else {
+                        // Показываем сообщение "ничего не найдено"
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(32.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.ph_not_found),
+                                    contentDescription = "No Results",
+                                    modifier = Modifier.size(100.dp)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "Ничего не найдено",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Попробуйте изменить поисковый запрос",
+                                    fontSize = 14.sp,
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
                 } ?: run {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No recipes found",
+                            text = "Ничего не найдено",
                             fontSize = 16.sp,
                             color = Color.Gray
                         )
@@ -175,21 +192,54 @@ fun SearchScreen(
             
             is SearchScreenState.SearchReady -> {
                 android.util.Log.d("SearchScreen", "Showing SearchReady state")
-                currentPagingFlow?.let { pagingFlow ->
-                    android.util.Log.d("SearchScreen", "Paging flow available, creating lazy paging items")
-                    val lazyPagingItems = pagingFlow.collectAsLazyPagingItems()
-                    RecipeList(
-                        lazyPagingItems = lazyPagingItems,
-                        onRecipeClick = onRecipeClick
-                    )
+                lazyPagingItems?.let { items ->
+                    android.util.Log.d("SearchScreen", "LazyPagingItems available, showing recipe list")
+                    if (items.itemCount > 0) {
+                        RecipeList(
+                            lazyPagingItems = items,
+                            onRecipeClick = onRecipeClick
+                        )
+                    } else {
+                        // Показываем сообщение "ничего не найдено"
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(32.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.ph_not_found),
+                                    contentDescription = "No Results",
+                                    modifier = Modifier.size(100.dp)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "Ничего не найдено",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Попробуйте изменить поисковый запрос",
+                                    fontSize = 14.sp,
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
                 } ?: run {
-                    android.util.Log.d("SearchScreen", "No paging flow available")
+                    android.util.Log.d("SearchScreen", "No LazyPagingItems available")
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No recipes found",
+                            text = "Загрузка рецептов...",
                             fontSize = 16.sp,
                             color = Color.Gray
                         )
@@ -296,19 +346,27 @@ fun ErrorState() {
         contentAlignment = Alignment.Center
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(32.dp)
         ) {
             Image(
                 painter = painterResource(R.drawable.ph_not_found),
-                contentDescription = "Not found",
+                contentDescription = "Error",
                 modifier = Modifier.size(100.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = stringResource(R.string.nothing_to_show),
+                text = "Ошибка загрузки",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black,
+                color = Color.Gray,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Попробуйте еще раз",
+                fontSize = 14.sp,
+                color = Color.Gray,
                 textAlign = TextAlign.Center
             )
         }
@@ -450,7 +508,7 @@ fun OfflineState() {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "No Internet Connection",
+                text = "Offline mode",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Gray,
@@ -458,7 +516,7 @@ fun OfflineState() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "No cached recipes available",
+                text = "Можно посмотреть сохраненные рецепты в книге",
                 fontSize = 14.sp,
                 color = Color.Gray,
                 textAlign = TextAlign.Center

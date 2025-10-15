@@ -47,12 +47,19 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRecipeSummaryFromMemory(query: String?): Flow<PagingData<RecipeSummary>> {
+        Log.d("SearchRepositoryImpl", "getRecipeSummaryFromMemory called with query: '$query'")
+        
+        // Проверяем количество рецептов в базе данных
+        val recipeCount = mainDb.recipeSummaryDao().getRecipeCount()
+        Log.d("SearchRepositoryImpl", "Found $recipeCount recipes in database")
+        
         return Pager(
             config = PagingConfig(
                 pageSize = 4,
                 prefetchDistance = 1
             ),
             pagingSourceFactory = {
+                Log.d("SearchRepositoryImpl", "Creating DbRecipePagingSource with query: '$query'")
                 DbRecipePagingSource(
                     mainDb,
                     recipeSummaryDbConvertor,
@@ -60,13 +67,10 @@ class SearchRepositoryImpl @Inject constructor(
                 )
             }
         ).flow
-
             .catch { e ->
+                Log.e("SearchRepositoryImpl", "Error in getRecipeSummaryFromMemory", e)
                 emit(PagingData.empty())
-
             }
-
-
     }
 
     override suspend fun getRecipeDetailsFromMemoryById(id: Int): RecipeDetails? {
