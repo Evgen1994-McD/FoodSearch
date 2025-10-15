@@ -112,5 +112,26 @@ abstract class SearchModule {
     abstract fun bindSearchInteractor(searchInteractorImpl: SearchInteractorImpl): SearchInteractor
 }
 
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class UseCaseModule {
+    // Use Cases будут автоматически созданы через @Inject конструкторы
+    // Dagger Hilt автоматически предоставит зависимости
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class DataSourceModule {
+    // Data Sources будут автоматически созданы через @Inject конструкторы
+    // Dagger Hilt автоматически предоставит зависимости
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class MapperModule {
+    // Mappers будут автоматически созданы через @Inject конструкторы
+    // Dagger Hilt автоматически предоставит зависимости
+}
+
 
 

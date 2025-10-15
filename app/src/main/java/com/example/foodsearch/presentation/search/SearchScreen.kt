@@ -40,48 +40,22 @@ fun SearchScreen(
     
     var searchText by remember { mutableStateOf("") }
     
-    // Создаем LazyPagingItems вне when блока для избежания проблем с recomposition
     val lazyPagingItems = currentPagingFlow?.collectAsLazyPagingItems()
-    
-    // Добавляем логирование для отладки
-    LaunchedEffect(lazyPagingItems) {
-        android.util.Log.d("SearchScreen", "LazyPagingItems changed: ${lazyPagingItems != null}")
-        lazyPagingItems?.let { items ->
-            android.util.Log.d("SearchScreen", "LazyPagingItems itemCount: ${items.itemCount}")
-        }
-    }
-    
-    // Добавляем логирование для отладки
-    LaunchedEffect(uiState) {
-        android.util.Log.d("SearchScreen", "UI State changed: $uiState")
-    }
-    
-    LaunchedEffect(currentPagingFlow) {
-        android.util.Log.d("SearchScreen", "Paging flow changed: ${currentPagingFlow != null}")
-    }
-    
-    LaunchedEffect(Unit) {
-        android.util.Log.d("SearchScreen", "SearchScreen initialized")
-        // ViewModel теперь сам управляет инициализацией при запуске
-        // Дополнительная логика не нужна
-    }
     
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // Search Bar
         OutlinedTextField(
             value = searchText,
             onValueChange = { newText ->
-                android.util.Log.d("SearchScreen", "Search text changed: '$newText'")
                 searchText = newText
                 viewModel.updateSearchQuery(newText)
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp, start = 20.dp, end = 20.dp, bottom = 20.dp), // Уменьшаем отступ сверху
+                .padding(top = 24.dp, start = 20.dp, end = 20.dp, bottom = 20.dp),
             placeholder = { Text("Search recipes...") },
             leadingIcon = {
                 Icon(
@@ -96,14 +70,12 @@ fun SearchScreen(
             )
         )
         
-        // Categories
         CategorySection(
             onCategoryClick = { category ->
                 viewModel.getRandomRecipes(category)
             }
         )
         
-        // Content
         when (uiState) {
             is SearchScreenState.Loading -> {
                 Box(
@@ -132,7 +104,6 @@ fun SearchScreen(
             }
             
             is SearchScreenState.OfflineMode -> {
-                android.util.Log.d("SearchScreen", "Showing offline mode")
                 OfflineState()
             }
             
@@ -191,16 +162,13 @@ fun SearchScreen(
             }
             
             is SearchScreenState.SearchReady -> {
-                android.util.Log.d("SearchScreen", "Showing SearchReady state")
                 lazyPagingItems?.let { items ->
-                    android.util.Log.d("SearchScreen", "LazyPagingItems available, showing recipe list")
                     if (items.itemCount > 0) {
                         RecipeList(
                             lazyPagingItems = items,
                             onRecipeClick = onRecipeClick
                         )
                     } else {
-                        // Показываем сообщение "ничего не найдено"
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
@@ -233,7 +201,6 @@ fun SearchScreen(
                         }
                     }
                 } ?: run {
-                    android.util.Log.d("SearchScreen", "No LazyPagingItems available")
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -336,8 +303,6 @@ fun CategoryItem(
         )
     }
 }
-
-// RecipeList и RecipeItem временно удалены для упрощения
 
 @Composable
 fun ErrorState() {

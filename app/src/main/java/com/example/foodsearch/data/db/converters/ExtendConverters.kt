@@ -23,51 +23,7 @@ class ExtendConverters {
         return gson.toJson(list)
     }
 
-    @TypeConverter
-    fun fromStringToUsMeasures(value: String?): UsMeasures? {
-        return Gson().fromJson(value, UsMeasures::class.java)
-    }
 
-    @TypeConverter
-    fun fromUsMeasures(usMeasures: UsMeasures?): String? {
-        return Gson().toJson(usMeasures)
-    }
-
-    @TypeConverter
-    fun fromStringToMetricMeasures(value: String?): MetricMeasures? {
-        return Gson().fromJson(value, MetricMeasures::class.java)
-    }
-
-    @TypeConverter
-    fun fromMetricMeasures(metricMeasures: MetricMeasures?): String? {
-        return Gson().toJson(metricMeasures)
-    }
-
-    @TypeConverter
-    fun fromStringToAnalyzedInstruction(value: String?): AnalyzedInstruction? {
-        return Gson().fromJson(value, AnalyzedInstruction::class.java)
-    }
-
-
-    @TypeConverter
-    fun fromStringToStep(value: String?): Step? {
-        return Gson().fromJson(value, Step::class.java)
-    }
-
-    @TypeConverter
-    fun fromStep(step: Step?): String? {
-        return Gson().toJson(step)
-    }
-
-    @TypeConverter
-    fun fromStringToEquipment(value: String?): Equipment? {
-        return Gson().fromJson(value, Equipment::class.java)
-    }
-
-    @TypeConverter
-    fun fromEquipment(equipment: Equipment?): String? {
-        return Gson().toJson(equipment)
-    }
 
 
     @TypeConverter
