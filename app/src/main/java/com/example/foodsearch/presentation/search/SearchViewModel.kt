@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import com.example.foodsearch.domain.cache.usecase.SaveRecipeToCacheUseCase
+import com.example.foodsearch.domain.common.Result
 import com.example.foodsearch.domain.models.RecipeSummary
-import com.example.foodsearch.domain.search.SearchInteractor
-import com.example.foodsearch.utils.NetworkUtils
+import com.example.foodsearch.domain.search.usecase.GetRandomRecipesUseCase
+import com.example.foodsearch.domain.search.usecase.SearchRecipesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -15,8 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val searchInteractor: SearchInteractor,
-    private val networkUtils: NetworkUtils,
+    private val searchRecipesUseCase: SearchRecipesUseCase,
+    private val getRandomRecipesUseCase: GetRandomRecipesUseCase,
+    private val saveRecipeToCacheUseCase: SaveRecipeToCacheUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SearchScreenState>(SearchScreenState.Loading)
@@ -32,103 +35,46 @@ class SearchViewModel @Inject constructor(
     val currentPagingFlow: StateFlow<Flow<PagingData<RecipeSummary>>?> = _currentPagingFlow.asStateFlow()
     
     init {
-        Log.d("SearchViewModel", "ViewModel initialized")
-        // Observe search query changes and trigger search
         searchQuery
-            .debounce(500) // Уменьшаем debounce до 500ms для более быстрого поиска
+            .debounce(500)
             .distinctUntilChanged()
             .onEach { query ->
-                Log.d("SearchViewModel", "Search query changed: '$query'")
                 if (query.isNotEmpty()) {
-                    Log.d("SearchViewModel", "Triggering search for: '$query'")
                     searchRecipes(query)
                 }
             }
             .launchIn(viewModelScope)
+            
+        initializeOnStartup()
     }
 
     fun searchRecipes(query: String) {
-        Log.d("SearchViewModel", "searchRecipes called with query: '$query'")
         _uiState.value = SearchScreenState.Loading
 
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                Log.d("SearchViewModel", "Starting search with network check")
-                val isNetworkAvailable = networkUtils.isNetworkAvailable()
-                Log.d("SearchViewModel", "Network available: $isNetworkAvailable")
-                
-                val pagingFlow = searchInteractor.getRecipesWithNetworkCheck(query, 1, 4)
-                Log.d("SearchViewModel", "Got paging flow from interactor")
+                val pagingFlow = searchRecipesUseCase(query)
                 _currentPagingFlow.value = pagingFlow
-                
-                if (!isNetworkAvailable) {
-                    Log.d("SearchViewModel", "No network, setting offline mode")
-                    _uiState.value = SearchScreenState.OfflineMode
-                } else {
-                    Log.d("SearchViewModel", "Network available, setting search ready state")
-                    // Устанавливаем состояние готовности для показа результатов из PagingData
-                    _uiState.value = SearchScreenState.SearchReady
-                }
-                
-                // Рецепты из поиска будут сохранены в кеш при клике на них
-                // через метод saveRecipeToCache в MainActivity
+                _uiState.value = SearchScreenState.SearchReady
             } catch (e: Exception) {
-                Log.e("SearchViewModel", "Error in searchRecipes", e)
-                _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
+                Log.e("SearchViewModel", "Error searching recipes", e)
+                _uiState.value = SearchScreenState.OfflineMode
             }
         }
     }
 
     fun getRandomRecipes(query: String?) {
-        Log.d("SearchViewModel", "getRandomRecipes called with query: '$query'")
         _uiState.value = SearchScreenState.Loading
 
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                val isNetworkAvailable = networkUtils.isNetworkAvailable()
-                Log.d("SearchViewModel", "Network available for random recipes: $isNetworkAvailable")
-                
-                val pagingFlow = searchInteractor.getRandomRecipesWithNetworkCheck(1, 4, query)
-                Log.d("SearchViewModel", "Got random recipes paging flow")
+                val pagingFlow = getRandomRecipesUseCase(query)
                 _currentPagingFlow.value = pagingFlow
-                
-                if (!isNetworkAvailable) {
-                    Log.d("SearchViewModel", "No network, setting offline mode for random recipes")
-                    _uiState.value = SearchScreenState.OfflineMode
-                } else {
-                    Log.d("SearchViewModel", "Network available, setting search ready state for random recipes")
-                    // Устанавливаем состояние готовности для показа результатов из PagingData
-                    _uiState.value = SearchScreenState.SearchReady
-                }
-                
-                // Сохраняем рецепты из категорий в кеш для офлайн доступа
-                // Это будет происходить автоматически при загрузке деталей рецепта
-            } catch (e: Exception) {
-                Log.e("SearchViewModel", "Error in getRandomRecipes", e)
-                _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
-            }
-        }
-    }
-
-    fun getRecipeFromDb(query: String?) = viewModelScope.launch {
-        Log.d("SearchViewModel", "getRecipeFromDb called with query: '$query'")
-        try {
-            val pagingFlow = searchInteractor.getRecipeFromMemory(query)
-            Log.d("SearchViewModel", "Got cached recipes paging flow")
-            _currentPagingFlow.value = pagingFlow
-            
-            // Проверяем, есть ли сеть
-            val isNetworkAvailable = networkUtils.isNetworkAvailable()
-            if (!isNetworkAvailable) {
-                Log.d("SearchViewModel", "No network, setting offline mode for cached recipes")
-                _uiState.value = SearchScreenState.OfflineMode
-            } else {
-                Log.d("SearchViewModel", "Network available, setting search ready state for cached recipes")
                 _uiState.value = SearchScreenState.SearchReady
+            } catch (e: Exception) {
+                Log.e("SearchViewModel", "Error getting random recipes", e)
+                _uiState.value = SearchScreenState.OfflineMode
             }
-        } catch (e: Exception) {
-            Log.e("SearchViewModel", "Error in getRecipeFromDb", e)
-            _uiState.value = SearchScreenState.ErrorNotFound(PagingData.empty())
         }
     }
     
@@ -144,55 +90,24 @@ class SearchViewModel @Inject constructor(
     // Метод для сохранения рецепта в кеш при клике
     fun saveRecipeToCache(recipe: RecipeSummary) {
         viewModelScope.launch(Dispatchers.IO) {
+            saveRecipeToCacheUseCase(recipe)
+                .onError { error ->
+                    Log.e("SearchViewModel", "Error saving recipe to cache", error)
+                }
+        }
+    }
+    
+    private fun initializeOnStartup() {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
-                // Конвертируем RecipeSummary в RecipeDetails для сохранения
-                val recipeDetails = com.example.foodsearch.domain.models.RecipeDetails(
-                    id = recipe.id,
-                    image = recipe.image,
-                    imageType = null,
-                    title = recipe.title,
-                    readyInMinutes = recipe.readyInMinutes,
-                    servings = recipe.servings,
-                    sourceUrl = null,
-                    vegetarian = null,
-                    vegan = null,
-                    glutenFree = null,
-                    dairyFree = null,
-                    veryHealthy = null,
-                    cheap = null,
-                    veryPopular = null,
-                    sustainable = null,
-                    lowFodmap = null,
-                    weightWatcherSmartPoints = null,
-                    gaps = null,
-                    preparationMinutes = null,
-                    cookingMinutes = null,
-                    aggregateLikes = null,
-                    healthScore = null,
-                    creditsText = null,
-                    license = null,
-                    sourceName = null,
-                    pricePerServing = null,
-                    extendedIngredients = null,
-                    summary = recipe.summary,
-                    cuisines = null,
-                    dishTypes = null,
-                    diets = null,
-                    occasions = null,
-                    instructions = null,
-                    analyzedInstructions = null,
-                    spoonacularScore = null,
-                    spoonacularSourceUrl = null,
-                    isLike = false
-                )
-                searchInteractor.insertRecipeDetails(recipeDetails)
+                Log.d("SearchViewModel", "Initializing on startup")
+                // Загружаем случайные рецепты при запуске
+                getRandomRecipes(null)
+                setRandomSearchComplete()
             } catch (e: Exception) {
-                // Игнорируем ошибки сохранения, так как это не критично
+                Log.e("SearchViewModel", "Error during startup initialization", e)
+                _uiState.value = SearchScreenState.OfflineMode
             }
         }
     }
 }
-
-
-
-

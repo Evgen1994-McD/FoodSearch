@@ -18,28 +18,38 @@ class DbRecipePagingSource(
         val pageIndex = params.key ?: 0 // Начальная страница равна нулю
         val limit = params.loadSize // Количество элементов на странице
 
+        android.util.Log.d("DbRecipePagingSource", "Loading page $pageIndex with limit $limit, query: '$query'")
+
         return try {
             // Определяем смещение для выборки данных
             val offset = pageIndex * limit
 
             // Выполняем запрос к базе данных
             val result = if (query.isNullOrEmpty()) {
+                android.util.Log.d("DbRecipePagingSource", "Loading all recipes with offset $offset, limit $limit")
                 db.recipeSummaryDao().getAllRecipes(offset, limit)
             } else {
+                android.util.Log.d("DbRecipePagingSource", "Searching recipes by name '$query' with offset $offset, limit $limit")
                 db.recipeSummaryDao().getRecipesByName(query, offset, limit)
             }
+            
+            android.util.Log.d("DbRecipePagingSource", "Got ${result.size} recipes from database")
+            
             // Преобразовываем данные с помощью конвертера
             val mappedEntities = result.map { entity -> converter.map(entity) }
+            android.util.Log.d("DbRecipePagingSource", "Mapped ${mappedEntities.size} entities")
 
             // Определяем ключ для следующей страницы
             val nextKey = if (mappedEntities.isEmpty()) null else pageIndex + 1
+            android.util.Log.d("DbRecipePagingSource", "Next key: $nextKey")
 
             LoadResult.Page(
                 data = mappedEntities,
                 prevKey = null, // Только последовательная пагинация вперед
                 nextKey = nextKey
             )
-        } catch (ex: IOException) {
+        } catch (ex: Exception) {
+            android.util.Log.e("DbRecipePagingSource", "Error loading data", ex)
             LoadResult.Error(ex)
         }
     }

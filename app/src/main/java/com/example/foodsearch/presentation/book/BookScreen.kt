@@ -68,7 +68,10 @@ fun BookScreen(
     ) {
         // Tab Row
         TabRow(
-            selectedTabIndex = pagerState.currentPage
+            selectedTabIndex = pagerState.currentPage,
+            modifier = Modifier.
+            padding( bottom = 20.dp)
+                .height(85.dp)
         ) {
             Tab(
                 selected = pagerState.currentPage == 0,

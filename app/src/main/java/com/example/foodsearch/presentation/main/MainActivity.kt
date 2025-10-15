@@ -46,9 +46,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
-    viewModel: MainViewModel = hiltViewModel()
-) {
+fun MainScreen() {
     val navController = rememberNavController()
     
     Scaffold(

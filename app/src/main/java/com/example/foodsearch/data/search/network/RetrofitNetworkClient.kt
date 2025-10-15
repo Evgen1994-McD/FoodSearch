@@ -7,18 +7,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(private val spoonacularApi: SpoonacularApi) : NetworkClient {
-    private val apiKey = "91225f5085c54860b6c9d5d0298b460b"
-    private val dfdfdfdfddd = "9c69449bd45d4cb0abc8dedbcff5867c"
-    private val sdsdsd = "9c69449bd45d4cb0abc8dedbcff5867c"
-    private val yyy = "fc9779e7ffdb4a0394b69e0af48c6392"
-    private val dfdfdfdf = "1f90d4229d854fb2a5f83b7c55c7d068"
-    private val вааа = "7be5813cd34e4ee381ede45891148d22"
-    private val ва = "c3a4ad3a8035467c80953f24b8f3cc83"
-    private val dfdf = "3c4e3432dd7e432b826d041e71b923b8"
-    private val sdasd = "e75cda5befa3464ca0c178e307ae9620"
-    private val fdf = "03f1f1d6fced433a92729d7f1a99fdd0"
-    private val apiKey222 = "54e75716e30a4ce784b258783f6f4eac"
-    private val apiKey233 = "b14c803d4ea443d3b6acd83d37e71677"
+//    private val apiKey = "91225f5085c54860b6c9d5d0298b460b"
+//    private val apiKey = "9c69449bd45d4cb0abc8dedbcff5867c"
+//    private val apiKey = "9c69449bd45d4cb0abc8dedbcff5867c"
+//    private val apiKey = "fc9779e7ffdb4a0394b69e0af48c6392"
+//    private val apiKey = "1f90d4229d854fb2a5f83b7c55c7d068"
+//    private val apiKey = "7be5813cd34e4ee381ede45891148d22"
+//    private val apiKey = "c3a4ad3a8035467c80953f24b8f3cc83"
+//    private val apiKey = "3c4e3432dd7e432b826d041e71b923b8"
+//    private val apiKey = "e75cda5befa3464ca0c178e307ae9620"
+//    private val apiKey = "03f1f1d6fced433a92729d7f1a99fdd0"
+//    private val apiKey = "54e75716e30a4ce784b258783f6f4eac"
+    private val apiKey = "b14c803d4ea443d3b6acd83d37e71677"
 
     override suspend fun doRequest(dto: String, pageNumber: Int, pageSize: Int): Response {
         android.util.Log.d("RetrofitNetworkClient", "doRequest called with query: '$dto', page: $pageNumber, size: $pageSize")

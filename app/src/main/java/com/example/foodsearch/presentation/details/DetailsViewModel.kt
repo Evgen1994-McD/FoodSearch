@@ -4,8 +4,13 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodsearch.domain.cache.usecase.DeleteRecipeFromCacheUseCase
+import com.example.foodsearch.domain.cache.usecase.GetCachedRecipeByIdUseCase
+import com.example.foodsearch.domain.common.Result
 import com.example.foodsearch.domain.models.RecipeDetails
-import com.example.foodsearch.domain.search.SearchInteractor
+import com.example.foodsearch.domain.search.usecase.GetRecipeDetailsUseCase
+import com.example.foodsearch.domain.search.usecase.RemoveRecipeFromFavoritesUseCase
+import com.example.foodsearch.domain.search.usecase.SaveRecipeToFavoritesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -14,7 +19,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
-    private val searchInteractor: SearchInteractor,
+    private val getRecipeDetailsUseCase: GetRecipeDetailsUseCase,
+    private val saveRecipeToFavoritesUseCase: SaveRecipeToFavoritesUseCase,
+    private val removeRecipeFromFavoritesUseCase: RemoveRecipeFromFavoritesUseCase,
+    private val getCachedRecipeByIdUseCase: GetCachedRecipeByIdUseCase,
+    private val deleteRecipeFromCacheUseCase: DeleteRecipeFromCacheUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     
@@ -32,49 +41,41 @@ class DetailsViewModel @Inject constructor(
     val isLiked: StateFlow<Boolean> = _isLiked.asStateFlow()
 
     suspend fun tryGetRecipeFromDataBase() {
-        try {
-            val recipe = searchInteractor.getRecipeDetailsById(id)
-            _isLiked.value = recipe?.isLike == true
-        } catch (e: Exception) {
-            Log.e("DetailsViewModel", "Error in tryGetRecipeFromDataBase()", e)
-            _isLiked.value = false
-        }
-    }
-
-    suspend fun replaceRecipe(recipeDetails: RecipeDetails) {
-        try {
-            searchInteractor.insertRecipeDetails(recipeDetails)
-        } catch (e: Exception) {
-            Log.e("DetailsViewModel", "Error in replaceRecipe()", e)
-            throw e
-        }
+        getCachedRecipeByIdUseCase(id)
+            .onSuccess { recipe ->
+                _isLiked.value = recipe?.isLike == true
+            }
+            .onError { error ->
+                Log.e("DetailsViewModel", "Error getting recipe from database", error)
+                _isLiked.value = false
+            }
     }
 
     fun like() = viewModelScope.launch {
-        try {
-            currentRecipe?.let { recipe ->
-                val updatedRecipe = recipe.copy(isLike = true)
-                replaceRecipe(updatedRecipe)
-                currentRecipe = updatedRecipe
-                _isLiked.value = true
-                Log.d("DetailsViewModel", "Recipe liked: ${recipe.title}")
-            }
-        } catch (e: Exception) {
-            Log.e("DetailsViewModel", "Error in like()", e)
+        currentRecipe?.let { recipe ->
+            saveRecipeToFavoritesUseCase(recipe)
+                .onSuccess {
+                    currentRecipe = recipe.copy(isLike = true)
+                    _isLiked.value = true
+                    Log.d("DetailsViewModel", "Recipe liked: ${recipe.title}")
+                }
+                .onError { error ->
+                    Log.e("DetailsViewModel", "Error liking recipe", error)
+                }
         }
     }
 
     fun disLike() = viewModelScope.launch {
-        try {
-            currentRecipe?.let { recipe ->
-                val updatedRecipe = recipe.copy(isLike = false)
-                replaceRecipe(updatedRecipe)
-                currentRecipe = updatedRecipe
-                _isLiked.value = false
-                Log.d("DetailsViewModel", "Recipe disliked: ${recipe.title}")
-            }
-        } catch (e: Exception) {
-            Log.e("DetailsViewModel", "Error in disLike()", e)
+        currentRecipe?.let { recipe ->
+            removeRecipeFromFavoritesUseCase(recipe)
+                .onSuccess {
+                    currentRecipe = recipe.copy(isLike = false)
+                    _isLiked.value = false
+                    Log.d("DetailsViewModel", "Recipe disliked: ${recipe.title}")
+                }
+                .onError { error ->
+                    Log.e("DetailsViewModel", "Error disliking recipe", error)
+                }
         }
     }
 
@@ -95,35 +96,45 @@ class DetailsViewModel @Inject constructor(
             }
 
             _uiState.value = DetailsSearchScreenState.Loading
-            val recipe = searchInteractor.searchRecipeDetailsInfo(recipeId)
             
-            if (recipe != null) {
-                currentRecipe = recipe
-                _uiState.value = DetailsSearchScreenState.SearchResults(recipe)
-                Log.d("DetailsViewModel", "Recipe $recipeId loaded successfully")
-                Log.d("DetailsViewModel", "Ingredients count: ${recipe.extendedIngredients?.size ?: 0}")
-                Log.d("DetailsViewModel", "Instructions count: ${recipe.analyzedInstructions?.size ?: 0}")
-            } else {
-                // Проверяем, есть ли рецепт в кеше как последняя попытка
-                val cachedRecipe = searchInteractor.getRecipeDetailsById(recipeId)
-                if (cachedRecipe != null) {
-                    currentRecipe = cachedRecipe
-                    _uiState.value = DetailsSearchScreenState.SearchResults(cachedRecipe)
-                    Log.d("DetailsViewModel", "Recipe $recipeId loaded from cache as fallback")
-                } else {
-                    _uiState.value = DetailsSearchScreenState.ErrorNotFound(null)
-                    Log.w("DetailsViewModel", "Recipe $recipeId not found in cache or network")
+            getRecipeDetailsUseCase(recipeId)
+                .onSuccess { recipe ->
+                    currentRecipe = recipe
+                    _uiState.value = DetailsSearchScreenState.SearchResults(recipe)
+                    Log.d("DetailsViewModel", "Recipe $recipeId loaded successfully")
+                    Log.d("DetailsViewModel", "Ingredients count: ${recipe.extendedIngredients?.size ?: 0}")
+                    Log.d("DetailsViewModel", "Instructions count: ${recipe.analyzedInstructions?.size ?: 0}")
                 }
-            }
+                .onError { error ->
+                    Log.e("DetailsViewModel", "Error loading recipe from network", error)
+                    
+                    // Проверяем, есть ли рецепт в кеше как последняя попытка
+                    getCachedRecipeByIdUseCase(recipeId)
+                        .onSuccess { cachedRecipe ->
+                            if (cachedRecipe != null) {
+                                currentRecipe = cachedRecipe
+                                _uiState.value = DetailsSearchScreenState.SearchResults(cachedRecipe)
+                                Log.d("DetailsViewModel", "Recipe $recipeId loaded from cache as fallback")
+                            } else {
+                                _uiState.value = DetailsSearchScreenState.ErrorNotFound(null)
+                                Log.w("DetailsViewModel", "Recipe $recipeId not found in cache or network")
+                            }
+                        }
+                        .onError { cacheError ->
+                            Log.e("DetailsViewModel", "Error loading recipe from cache", cacheError)
+                            _uiState.value = DetailsSearchScreenState.ErrorNotFound(null)
+                        }
+                }
         }
     }
     
     fun clearCache() = viewModelScope.launch {
-        try {
-            searchInteractor.deleteRecipeById(id)
-            Log.d("DetailsViewModel", "Recipe $id deleted from cache")
-        } catch (e: Exception) {
-            Log.e("DetailsViewModel", "Error deleting recipe from cache", e)
-        }
+        deleteRecipeFromCacheUseCase(id)
+            .onSuccess {
+                Log.d("DetailsViewModel", "Recipe $id deleted from cache")
+            }
+            .onError { error ->
+                Log.e("DetailsViewModel", "Error deleting recipe from cache", error)
+            }
     }
 }
