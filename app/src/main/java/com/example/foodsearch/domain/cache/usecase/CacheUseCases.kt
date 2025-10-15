@@ -50,20 +50,6 @@ class GetCachedRecipeByIdUseCase @Inject constructor(
 }
 
 /**
- * Use Case для очистки кеша
- */
-class ClearCacheUseCase @Inject constructor(
-    private val searchRepository: SearchRepository
-) {
-    
-    suspend operator fun invoke(): Result<Unit> {
-        return safeSuspendCall {
-            searchRepository.clearCache()
-        }
-    }
-}
-
-/**
  * Use Case для удаления конкретного рецепта из кеша
  */
 class DeleteRecipeFromCacheUseCase @Inject constructor(
